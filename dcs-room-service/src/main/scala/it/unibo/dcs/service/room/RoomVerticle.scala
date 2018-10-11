@@ -7,15 +7,16 @@ import it.unibo.dcs.commons.RxHelper
 import it.unibo.dcs.commons.interactor.ThreadExecutorExecutionContext
 import it.unibo.dcs.commons.interactor.executor.PostExecutionThread
 import it.unibo.dcs.commons.service.{HttpEndpointPublisher, ServiceVerticle}
-import it.unibo.dcs.service.room.interactor.{CreateUserUseCase, DeleteRoomUseCase}
+import it.unibo.dcs.service.room.interactor.{CreateRoomUseCase, CreateUserUseCase, DeleteRoomUseCase}
 import it.unibo.dcs.service.room.repository.RoomRepository
-import it.unibo.dcs.service.room.request.{CreateUserRequest, DeleteRoomRequest}
-import it.unibo.dcs.service.room.subscriber.CreateUserSubscriber
+import it.unibo.dcs.service.room.request.{CreateRoomRequest, CreateUserRequest, DeleteRoomRequest}
+import it.unibo.dcs.service.room.subscriber.{CreateRoomSubscriber, CreateUserSubscriber}
 
 final class RoomVerticle(private[this] val roomRepository: RoomRepository, val publisher: HttpEndpointPublisher) extends ServiceVerticle {
 
   private[this] var deleteRoomUseCase: DeleteRoomUseCase = _
   private[this] var createUserUseCase: CreateUserUseCase = _
+  private[this] var createRoomUseCase: CreateRoomUseCase = _
 
   private[this] var host: String = _
   private[this] var port: Int = _
@@ -42,6 +43,16 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
         val username = routingContext.getBodyAsJson.get.getString("username")
         val request = CreateUserRequest(username)
         createUserUseCase(request, new CreateUserSubscriber(routingContext.response()))
+      })
+
+    router.post("/createRoom")
+      .consumes("application/json")
+      .produces("application/json")
+      .handler(routingContext => {
+        val name = routingContext.getBodyAsJson.get.getString("name")
+        val username = routingContext.getBodyAsJson.get.getString("username")
+        val request = CreateRoomRequest(name, username)
+        createRoomUseCase(request, new CreateRoomSubscriber(routingContext.response()))
       })
 
     router.post("/deleteRoom")

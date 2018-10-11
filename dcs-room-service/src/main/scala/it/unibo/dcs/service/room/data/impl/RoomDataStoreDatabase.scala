@@ -6,8 +6,9 @@ import it.unibo.dcs.commons.VertxHelper
 import it.unibo.dcs.commons.VertxHelper.Implicits.functionToHandler
 import it.unibo.dcs.service.room.data.RoomDataStore
 import it.unibo.dcs.service.room.data.impl.RoomDataStoreDatabase.Implicits._
-import it.unibo.dcs.service.room.data.impl.RoomDataStoreDatabase.{deleteRoomQuery, insertUserQuery}
-import it.unibo.dcs.service.room.request.{CreateUserRequest, DeleteRoomRequest}
+import it.unibo.dcs.service.room.data.impl.RoomDataStoreDatabase.{deleteRoomQuery, insertRoomQuery, insertUserQuery}
+import it.unibo.dcs.service.room.request
+import it.unibo.dcs.service.room.request.{CreateRoomRequest, CreateUserRequest, DeleteRoomRequest}
 import rx.lang.scala.Observable
 
 final class RoomDataStoreDatabase(private[this] val connection: SQLConnection) extends RoomDataStore {
@@ -24,11 +25,19 @@ final class RoomDataStoreDatabase(private[this] val connection: SQLConnection) e
     }
       .map(_ => ())
 
+  override def createRoom(request: CreateRoomRequest): Observable[Unit] = {
+    VertxHelper.toObservable[UpdateResult] {
+      connection.updateWithParams(insertRoomQuery, request, _)
+    }
+      .map(_ => ())
+  }
 }
 
 object RoomDataStoreDatabase {
 
   private[impl] val insertUserQuery = "INSERT INTO `users` (`username`) VALUES (?);"
+
+  private[impl] val insertRoomQuery = "INSERT INTO `rooms` (`name`,`username`) VALUES (?,?);"
 
   private[impl] val deleteRoomQuery = "DELETE FROM `rooms` WHERE `name` = ? AND `owner_username` = ?;"
 
@@ -36,6 +45,10 @@ object RoomDataStoreDatabase {
 
     implicit def requestToParams(request: CreateUserRequest): JsonArray = {
       new JsonArray().add(request.username)
+    }
+
+    implicit def requestToParams(request: CreateRoomRequest): JsonArray = {
+      new JsonArray().add(request.name).add(request.username)
     }
 
     implicit def requestToParams(request: DeleteRoomRequest): JsonArray = {
