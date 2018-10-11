@@ -6,7 +6,7 @@ import io.vertx.scala.core.{Vertx, VertxOptions}
 import io.vertx.scala.ext.jdbc.JDBCClient
 import io.vertx.scala.ext.sql.SQLConnection
 import io.vertx.servicediscovery.{Record, ServiceDiscovery}
-import it.unibo.dcs.commons.VertxHelper
+import it.unibo.dcs.commons.{IoHelper, VertxHelper}
 import it.unibo.dcs.commons.VertxHelper.Implicits._
 import it.unibo.dcs.commons.service.HttpEndpointPublisherImpl
 import it.unibo.dcs.commons.service.codecs.RecordMessageCodec
@@ -20,7 +20,7 @@ object Launcher extends App {
 
   VertxHelper.toObservable[Vertx](Vertx.clusteredVertx(VertxOptions(), _))
     .flatMap { vertx =>
-      val config = VertxHelper.readJsonObject("/db_config.json")
+      val config = IoHelper.readJsonObject("/db_config.json")
       VertxHelper.toObservable[SQLConnection](JDBCClient.createNonShared(vertx, config).getConnection(_))
         .map((vertx, _))
     }

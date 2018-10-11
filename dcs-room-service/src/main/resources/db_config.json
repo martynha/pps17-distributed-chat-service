@@ -1,6 +1,6 @@
 {
-    "url": "mysql1.gear.host",
-    "driver_class": "com.mysql.jdbc.Driver",
+    "url": "jdbc:mysql://mysql1.gear.host/roomservice",
+    "driver_class": "com.mysql.cj.jdbc.Driver",
     "user": "roomservice",
     "password": "teddy_95"
 }

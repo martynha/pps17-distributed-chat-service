@@ -23,7 +23,7 @@ abstract class ServiceVerticle extends ScalaVerticle {
     initializeRouter(_router)
   }
 
-  protected final def startHttpServer(host: String,
+  protected[this] final def startHttpServer(host: String,
                                       port: Int,
                                       options: HttpServerOptions = DEFAULT_OPTIONS): Observable[HttpServer] =
     VertxHelper.toObservable[HttpServer] {
@@ -32,9 +32,9 @@ abstract class ServiceVerticle extends ScalaVerticle {
         .listen(port, host, _)
     }
 
-  protected def initializeRouter(router: Router): Unit
+  protected[this] def initializeRouter(router: Router): Unit
 
-  protected final def eventBus: EventBus = _eventBus
+  protected[this]  final def eventBus: EventBus = _eventBus
 
 }
 

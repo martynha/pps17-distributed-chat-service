@@ -1,0 +1,6 @@
+{
+  "url": "jdbc:sqlite::memory:",
+  "driver_class": "org.sqlite.JDBC",
+  "user": "SA",
+  "password": ""
+}

@@ -17,16 +17,19 @@ object InsertParams {
     val columnNames = mutable.Buffer[String]()
     val values = mutable.Buffer[String]()
     for ((columnName, value) <- jsonObject.getMap.asScala) {
-      columnNames += columnName
+      columnNames += escape(columnName)
       values += toValue(value)
     }
     new InsertParams(join(columnNames), join(values))
   }
 
-  private def toValue(value: Any): String = value match {
+  private[dataaccess] def escape(columnName: String): String = s"`$columnName`"
+
+  private[dataaccess] def toValue(value: Any): String = value match {
     case s: String => s"'$s'"
     case n: Number => n.toString
-    case b: Boolean => b.toString.toUpperCase
+    case b: Boolean => if (b) "'1'" else "'0'"
+    case _ => throw new IllegalArgumentException("Expected value to ba a String, a Number or a Boolean.")
   }
 
 }
