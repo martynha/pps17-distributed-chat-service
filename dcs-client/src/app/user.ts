@@ -15,6 +15,8 @@ export interface User {
 
     lastSeen: Date;
 
+    token: string;
+
     rooms: Room[];
 
     participaitons: Participation[];

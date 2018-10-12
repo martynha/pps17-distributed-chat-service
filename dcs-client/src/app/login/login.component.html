@@ -5,13 +5,13 @@
         <form>
           <h1>Login Form</h1>
           <div>
-            <input type="text" class="form-control" placeholder="Username" id="username" name="username" />
+            <input type="text" class="form-control" placeholder="Username" id="username" name="username" [(ngModel)] ="username" />
           </div>
           <div>
-            <input type="password" class="form-control" placeholder="Password" id="password" name="password" />
+            <input type="password" class="form-control" placeholder="Password" id="password" name="password" [(ngModel)] ="password" />
           </div>
           <div>
-            <a class="btn btn-block btn-default submit" routerLink="/">Log in</a>
+            <button type="button" class="btn btn-block btn-default submit" (click)="login()">Log in</button>
           </div>
 
           <div class="clearfix"></div>

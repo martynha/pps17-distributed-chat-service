@@ -5,22 +5,22 @@
         <form>
           <h1>Create Account</h1>
           <div>
-            <input type="text" class="form-control" placeholder="Username" id="username" name="username" />
+            <input type="text" class="form-control" placeholder="Username" id="username" name="username" [(ngModel)]="username" />
           </div>
           <div>
-            <input type="text" class="form-control" placeholder="First Name" id="firstName" name="firstName" />
+            <input type="text" class="form-control" placeholder="First Name" id="firstName" name="firstName" [(ngModel)]="firstName" />
           </div>
           <div>
-            <input type="text" class="form-control" placeholder="Last Name" id="lastName" name="lastName" />
+            <input type="text" class="form-control" placeholder="Last Name" id="lastName" name="lastName" [(ngModel)]="lastName" />
           </div>
           <div>
-            <input type="password" class="form-control" placeholder="Password" id="password" name="password" />
+            <input type="password" class="form-control" placeholder="Password" id="password" name="password" [(ngModel)]="password" />
           </div>
           <div>
-            <input type="password" class="form-control" placeholder="Password Confirm" id="passwordConfirm" name="passwordConfirm" />
+            <input type="password" class="form-control" placeholder="Password Confirm" id="passwordConfirm" name="passwordConfirm" [(ngModel)]="passwordConfirm" />
           </div>
           <div>
-            <a class="btn btn-block btn-default submit" routerLink="/">Submit</a>
+            <button type="button" class="btn btn-block btn-default submit" (click)="register()">Submit</button>
           </div>
 
           <div class="clearfix"></div>

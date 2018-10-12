@@ -21,7 +21,6 @@ subprojects {
         testCompile group: 'org.scalamock', name: 'scalamock_2.12', version: scalaMockVersion
 
         testRuntime group: 'org.xerial', name: 'sqlite-jdbc', version: sqliteVersion
-
     }
 }
 
