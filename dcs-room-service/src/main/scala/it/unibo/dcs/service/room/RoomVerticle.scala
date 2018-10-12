@@ -7,17 +7,10 @@ import it.unibo.dcs.commons.RxHelper
 import it.unibo.dcs.commons.interactor.ThreadExecutorExecutionContext
 import it.unibo.dcs.commons.interactor.executor.PostExecutionThread
 import it.unibo.dcs.commons.service.{HttpEndpointPublisher, ServiceVerticle}
-<<<<<<< HEAD
 import it.unibo.dcs.service.room.interactor.{CreateRoomUseCase, CreateUserUseCase, DeleteRoomUseCase}
 import it.unibo.dcs.service.room.repository.RoomRepository
 import it.unibo.dcs.service.room.request.{CreateRoomRequest, CreateUserRequest, DeleteRoomRequest}
 import it.unibo.dcs.service.room.subscriber.{CreateRoomSubscriber, CreateUserSubscriber}
-=======
-import it.unibo.dcs.service.room.interactor.{CreateUserUseCase, DeleteRoomUseCase}
-import it.unibo.dcs.service.room.repository.RoomRepository
-import it.unibo.dcs.service.room.request.{CreateUserRequest, DeleteRoomRequest}
-import it.unibo.dcs.service.room.subscriber.CreateUserSubscriber
->>>>>>> 44c3b974db8f5c7fb7e17912136c51c9fa55c9f9
 
 final class RoomVerticle(private[this] val roomRepository: RoomRepository, val publisher: HttpEndpointPublisher) extends ServiceVerticle {
 
