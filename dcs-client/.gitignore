@@ -35,3 +35,12 @@ testem.log
  # System Files
 .DS_Store
 Thumbs.db
+
+### Sass ###
+
+.sass-cache/
+*.css.map
+*.sass.map
+*.scss.map
+
+# End of https://www.gitignore.io/api/sass

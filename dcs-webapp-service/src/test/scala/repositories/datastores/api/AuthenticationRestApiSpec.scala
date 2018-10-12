@@ -4,8 +4,8 @@ import java.util.Date
 
 import io.vertx.scala.ext.web.client.WebClient
 import it.unibo.dcs.commons.service.HttpEndpointDiscovery
+import it.unibo.dcs.service.webapp.interaction.Requests.RegisterUserRequest
 import it.unibo.dcs.service.webapp.model.User
-import it.unibo.dcs.service.webapp.repositories.Requests.RegisterUserRequest
 import it.unibo.dcs.service.webapp.repositories.datastores.api.impl.AuthenticationRestApi
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, OneInstancePerTest}

@@ -3,16 +3,17 @@ package it.unibo.dcs.service.webapp.verticles.requesthandler.impl
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.scala.core.Context
 import io.vertx.scala.ext.web.RoutingContext
-import it.unibo.dcs.service.webapp.repositories.Requests.Implicits._
-import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, UserRepository}
-import it.unibo.dcs.service.webapp.usecases.Results.Implicits._
-import it.unibo.dcs.service.webapp.usecases.{LoginUserUseCase, LogoutUserUseCase, RegisterUserUseCase}
+import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
+import it.unibo.dcs.service.webapp.interaction.Results.Implicits._
+import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, RoomRepository, UserRepository}
+import it.unibo.dcs.service.webapp.usecases._
 import it.unibo.dcs.service.webapp.verticles.requesthandler.ServiceRequestHandler
 
 import scala.language.postfixOps
 
 final class ServiceRequestHandlerImpl(private val userRepository: UserRepository,
-                                      private val authRepository: AuthenticationRepository)
+                                      private val authRepository: AuthenticationRepository,
+                                      private val roomRepository: RoomRepository)
   extends ServiceRequestHandler {
 
   override def handleRegistration(context: RoutingContext)(implicit ctx: Context): Unit = {
@@ -37,6 +38,13 @@ final class ServiceRequestHandlerImpl(private val userRepository: UserRepository
   override def handleLogin(context: RoutingContext)(implicit ctx: Context): Unit = {
     context.getBodyAsJson().fold(responseNotAcceptable(context, "Missing logout information")) {
       val useCase = LoginUserUseCase.create(authRepository, userRepository)
+      useCase(_) subscribe (result => context response() end result)
+    }
+  }
+
+  override def handleRoomCreation(context: RoutingContext)(implicit ctx: Context): Unit = {
+    context.getBodyAsJson().fold(responseNotAcceptable(context, "Missing room creation information")) {
+      val useCase = CreateRoomUseCase.create(authRepository, roomRepository)
       useCase(_) subscribe (result => context response() end result)
     }
   }

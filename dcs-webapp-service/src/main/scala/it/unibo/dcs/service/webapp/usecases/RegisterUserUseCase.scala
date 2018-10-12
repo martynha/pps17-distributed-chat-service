@@ -4,9 +4,9 @@ import io.vertx.scala.core.Context
 import it.unibo.dcs.commons.RxHelper
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
 import it.unibo.dcs.commons.interactor.{ThreadExecutorExecutionContext, UseCase}
-import it.unibo.dcs.service.webapp.repositories.Requests.RegisterUserRequest
+import it.unibo.dcs.service.webapp.interaction.Requests.RegisterUserRequest
+import it.unibo.dcs.service.webapp.interaction.Results.RegisterResult
 import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, UserRepository}
-import it.unibo.dcs.service.webapp.usecases.Results.RegisterResult
 import rx.lang.scala.Observable
 
 final class RegisterUserUseCase(private[this] val threadExecutor: ThreadExecutor,

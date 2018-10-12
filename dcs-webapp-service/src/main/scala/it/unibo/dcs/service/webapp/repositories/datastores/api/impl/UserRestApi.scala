@@ -2,9 +2,9 @@ package it.unibo.dcs.service.webapp.repositories.datastores.api.impl
 
 import io.vertx.scala.ext.web.client.WebClient
 import it.unibo.dcs.commons.service.{AbstractApi, HttpEndpointDiscovery}
+import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
+import it.unibo.dcs.service.webapp.interaction.Requests.RegisterUserRequest
 import it.unibo.dcs.service.webapp.model.User
-import it.unibo.dcs.service.webapp.repositories.Requests.Implicits._
-import it.unibo.dcs.service.webapp.repositories.Requests.RegisterUserRequest
 import it.unibo.dcs.service.webapp.repositories.datastores.api.UserApi
 import it.unibo.dcs.service.webapp.repositories.datastores.api.exceptions.{GetUserResponseException, UserCreationResponseException}
 import rx.lang.scala.Observable
@@ -18,15 +18,11 @@ class UserRestApi(private[this] val discovery: HttpEndpointDiscovery)
   override def createUser(registrationRequest: RegisterUserRequest): Observable[User] = {
     request((userWebClient: WebClient) =>
       Observable.from(userWebClient.post("/register").sendJsonObjectFuture(registrationRequest)))
-      .map(response => response.bodyAsJsonObject()
-        .getOrElse(throw UserCreationResponseException())
-      )
+      .map(response => response.bodyAsJsonObject().getOrElse(throw UserCreationResponseException()))
   }
 
   override def getUserByUsername(username: String): Observable[User] =
     request((userWebClient: WebClient) =>
       Observable.from(userWebClient.post("/user/" + username).sendJsonObjectFuture(username)))
-      .map(response => response.bodyAsJsonObject()
-        .getOrElse(throw GetUserResponseException())
-      )
+      .map(response => response.bodyAsJsonObject().getOrElse(throw GetUserResponseException()))
 }

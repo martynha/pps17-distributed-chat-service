@@ -2,8 +2,8 @@ package repositories.datastores
 
 import java.util.Date
 
-import it.unibo.dcs.service.webapp.model.User
-import it.unibo.dcs.service.webapp.repositories.Requests.{LoginUserRequest, RegisterUserRequest}
+import it.unibo.dcs.service.webapp.interaction.Requests.{CreateRoomRequest, LoginUserRequest, LogoutUserRequest, RegisterUserRequest}
+import it.unibo.dcs.service.webapp.model.{Room, User}
 import it.unibo.dcs.service.webapp.repositories.datastores.AuthenticationDataStore
 import it.unibo.dcs.service.webapp.repositories.datastores.api.AuthenticationApi
 import it.unibo.dcs.service.webapp.repositories.datastores.impl.AuthenticationDataStoreNetwork
@@ -15,17 +15,33 @@ import scala.language.postfixOps
 
 class AuthenticationDataStoreSpec extends FlatSpec with MockFactory with OneInstancePerTest {
 
-  val authApi: AuthenticationApi = mock[AuthenticationApi]
-  val dataStore: AuthenticationDataStore = new AuthenticationDataStoreNetwork(authApi)
-  val user = User("niklegend", "nicola", "piscaglia", "bla", visible = true, new Date())
-  val registerRequest = RegisterUserRequest(user.username, "password", user.firstName,
+  private val authApi: AuthenticationApi = mock[AuthenticationApi]
+  private val dataStore: AuthenticationDataStore = new AuthenticationDataStoreNetwork(authApi)
+  private val user = User("niklegend", "nicola", "piscaglia", "bla", visible = true, new Date())
+  private val room = Room("Room 1")
+  private val token = "token"
+  private val registerRequest = RegisterUserRequest(user.username, "password", user.firstName,
     user.lastName)
-  val loginUserRequest = LoginUserRequest(user.username, "password")
-  val registeredSubscriber: Subscriber[String] = stub[Subscriber[String]]
-  val loginSubscriber: Subscriber[String] = stub[Subscriber[String]]
-  val logoutSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
-  val token = "token"
+  private val loginUserRequest = LoginUserRequest(user.username, "password")
+  private val logoutUserRequest = LogoutUserRequest(user.username, token)
+  private val roomCreationRequest = CreateRoomRequest(room.name, user, token)
+  private val registeredSubscriber: Subscriber[String] = stub[Subscriber[String]]
+  private val roomCreationSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
+  private val loginSubscriber: Subscriber[String] = stub[Subscriber[String]]
+  private val logoutSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
 
+
+  it should "check the creation of a new room" in {
+    // Given
+    (authApi createRoom _) expects roomCreationRequest returns (Observable just token)
+
+    // When
+    dataStore.createRoom(roomCreationRequest).subscribe(roomCreationSubscriber)
+
+    // Then
+    // Verify that `subscriber.onCompleted` has been called once
+    (() => roomCreationSubscriber onCompleted) verify() once()
+  }
 
   it should "register a new user" in {
     // Given
@@ -63,11 +79,11 @@ class AuthenticationDataStoreSpec extends FlatSpec with MockFactory with OneInst
   it should "logout a logged user" in {
     // Given
     (authApi loginUser _) expects loginUserRequest returns (Observable just token)
-    (authApi logoutUser _) expects user.username returns Observable.empty
+    (authApi logoutUser _) expects logoutUserRequest returns Observable.empty
 
     // When
     dataStore.loginUser(loginUserRequest).subscribe(_ => {
-      dataStore.logoutUser(user.username).subscribe(logoutSubscriber)
+      dataStore.logoutUser(logoutUserRequest).subscribe(logoutSubscriber)
     })
 
     // Then
