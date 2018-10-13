@@ -4,6 +4,7 @@ import io.vertx.core.json.JsonObject
 import io.vertx.scala.core.DeploymentOptions
 import it.unibo.dcs.commons.IoHelper
 
+/** It contains some useful methods to deploy the service. */
 object DeploymentUtils {
 
   def deploymentOptions: DeploymentOptions = {

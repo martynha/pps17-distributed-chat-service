@@ -5,6 +5,7 @@ import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
 import it.unibo.dcs.service.webapp.interaction.Requests.{CreateRoomRequest, LoginUserRequest, LogoutUserRequest, RegisterUserRequest}
 import it.unibo.dcs.service.webapp.repositories.datastores.api.AuthenticationApi
 import it.unibo.dcs.service.webapp.repositories.datastores.api.exceptions.{LoginResponseException, RegistrationResponseException, RoomCreationException}
+import it.unibo.dcs.service.webapp.repositories.datastores.api.routes._
 import rx.lang.scala.Observable
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -12,12 +13,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class AuthenticationRestApi(private[this] val discovery: HttpEndpointDiscovery)
   extends AbstractApi(discovery, "AuthenticationService") with AuthenticationApi {
-
-  /* URIs */
-  private val loginUserURI = "/api/login"
-  private val registerUserURI = "/api/register"
-  private val logoutUserURI = "/protected/logout"
-  private val createRoomURI = "/protected/register"
 
   /* JWT Token labels */
   private val authenticationKeyLabel = "Authorization"
@@ -49,8 +44,8 @@ class AuthenticationRestApi(private[this] val discovery: HttpEndpointDiscovery)
 
   override def createRoom(roomCreationRequest: CreateRoomRequest): Observable[Unit] =
     request(roomWebClient =>
-      Observable.from(roomWebClient.post(createRoomURI)
-          .putHeader(authenticationKeyLabel, tokenPrefix + roomCreationRequest.token)
+      Observable.from(roomWebClient.post(protectedRoomURI)
+        .putHeader(authenticationKeyLabel, tokenPrefix + roomCreationRequest.token)
         .sendJsonObjectFuture(roomCreationRequest)))
       .map(response => response.bodyAsString().getOrElse(throw RoomCreationException()))
 }

@@ -25,7 +25,5 @@ dependencies {
     compile project(':dcs-data-access-commons')
     compile project(':dcs-interactor-commons')
 
-    compile group: 'com.google.code.gson', name: 'gson', version: '1.7.1'
-
     testCompile "io.vertx:vertx-unit:3.5.4"
 }

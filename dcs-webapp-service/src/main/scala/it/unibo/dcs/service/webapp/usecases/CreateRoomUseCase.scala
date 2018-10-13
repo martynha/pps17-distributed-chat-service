@@ -9,6 +9,9 @@ import it.unibo.dcs.service.webapp.interaction.Results.RoomCreationResult
 import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, RoomRepository}
 import rx.lang.scala.Observable
 
+/** It represents the room creation functionality.
+  * It calls the authentication service to check the token validity and then
+  * it contacts the room service to store the new room. */
 final class CreateRoomUseCase(private[this] val threadExecutor: ThreadExecutor,
                               private[this] val postExecutionThread: PostExecutionThread,
                               private[this] val authRepository: AuthenticationRepository,

@@ -7,6 +7,7 @@ import it.unibo.dcs.service.webapp.model.{Room, User}
 
 import scala.language.implicitConversions
 
+/** It wraps all requests used by request handler, use cases, repositories, datastores and APIs */
 object Requests {
 
   final case class LoginUserRequest(username: String, password: String)
@@ -19,6 +20,7 @@ object Requests {
   final case class CreateRoomRequest(roomName: String, creator: User, token: String)
 
 
+  /** It enables implicit conversions in order to clean code that deal with requests. */
   object Implicits {
 
     implicit def createRoomRequestToJson(createRoomRequest: CreateRoomRequest): JsonObject = {

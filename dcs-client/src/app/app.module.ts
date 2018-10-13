@@ -11,6 +11,7 @@ import { ChatComponent } from './chat/chat.component';
 import { RegisterComponent } from './register/register.component';
 import { EventBusService } from './event-bus.service';
 import { ChatService } from './chat.service';
+import { RoomEntryComponent } from './room-entry/room-entry.component';
 
 const appRoutes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -25,7 +26,8 @@ const appRoutes: Routes = [
     AppComponent,
     LoginComponent,
     ChatComponent,
-    RegisterComponent
+    RegisterComponent,
+    RoomEntryComponent
   ],
   imports: [
     BrowserModule,

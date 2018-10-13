@@ -8,6 +8,8 @@ import it.unibo.dcs.service.webapp.interaction.Requests.LogoutUserRequest
 import it.unibo.dcs.service.webapp.repositories.AuthenticationRepository
 import rx.lang.scala.Observable
 
+/** It represents the logout functionality.
+  * It calls the authentication service to check the token validity and invalidate it. */
 final class LogoutUserUseCase(private[this] val threadExecutor: ThreadExecutor,
                               private[this] val postExecutionThread: PostExecutionThread,
                               private[this] val authRepository: AuthenticationRepository)

@@ -1,4 +1,4 @@
-package it.unibo.dcs.service.webapp.verticles.requesthandler
+package it.unibo.dcs.service.webapp.verticles.handler
 
 import io.vertx.core.Vertx
 import io.vertx.scala.core.Context
@@ -11,8 +11,10 @@ import it.unibo.dcs.service.webapp.repositories.datastores.api.AuthenticationApi
 import it.unibo.dcs.service.webapp.repositories.datastores.api.RoomApi.roomRestApi
 import it.unibo.dcs.service.webapp.repositories.datastores.api.UserApi.userRestApi
 import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, RoomRepository, UserRepository}
-import it.unibo.dcs.service.webapp.verticles.requesthandler.impl.ServiceRequestHandlerImpl
+import it.unibo.dcs.service.webapp.verticles.handler.impl.ServiceRequestHandlerImpl
 
+/** It encapsulates the business logic of the service.
+  * It handles all the incoming request to the service APIs. */
 trait ServiceRequestHandler {
 
   def handleLogin(context: RoutingContext)(implicit ctx: Context): Unit

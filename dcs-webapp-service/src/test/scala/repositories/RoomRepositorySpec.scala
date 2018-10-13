@@ -2,8 +2,8 @@ package repositories
 
 import java.util.Date
 
-import it.unibo.dcs.service.webapp.model.{Room, User}
 import it.unibo.dcs.service.webapp.interaction.Requests.CreateRoomRequest
+import it.unibo.dcs.service.webapp.model.{Room, User}
 import it.unibo.dcs.service.webapp.repositories.RoomRepository
 import it.unibo.dcs.service.webapp.repositories.datastores.RoomDataStore
 import it.unibo.dcs.service.webapp.repositories.impl.RoomRepositoryImpl

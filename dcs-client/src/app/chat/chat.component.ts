@@ -1,4 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {ChatService} from "../chat.service";
+import {RoomDeletionRequest} from "../requests";
+import {Room} from "../room";
+import remove from "lodash"
 
 @Component({
   selector: 'app-chat',
@@ -7,9 +11,22 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ChatComponent implements OnInit {
 
-  constructor() { }
+  rooms: Room[];
 
-  ngOnInit() {
+  constructor(private service: ChatService) {
   }
 
+  ngOnInit() {
+    // to debug
+    this.rooms = [];
+    this.rooms.push({
+      name: "Room 1",
+      participations: []
+    });
+  }
+
+  deleteRoom(room: Room) {
+    this.service.deleteRoom(RoomDeletionRequest(room.name, "")).subscribe(
+      deletedRoom => remove(this.rooms, room => room.name === deletedRoom.name))
+  }
 }

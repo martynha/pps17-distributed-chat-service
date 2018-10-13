@@ -2,8 +2,8 @@ package repositories.datastores
 
 import java.util.Date
 
-import it.unibo.dcs.service.webapp.model.{Room, User}
 import it.unibo.dcs.service.webapp.interaction.Requests.CreateRoomRequest
+import it.unibo.dcs.service.webapp.model.{Room, User}
 import it.unibo.dcs.service.webapp.repositories.datastores.RoomDataStore
 import it.unibo.dcs.service.webapp.repositories.datastores.api.RoomApi
 import it.unibo.dcs.service.webapp.repositories.datastores.impl.RoomDataStoreNetwork

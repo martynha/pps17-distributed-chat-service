@@ -2,8 +2,8 @@ package repositories.datastores
 
 import java.util.Date
 
-import it.unibo.dcs.service.webapp.model.User
 import it.unibo.dcs.service.webapp.interaction.Requests.RegisterUserRequest
+import it.unibo.dcs.service.webapp.model.User
 import it.unibo.dcs.service.webapp.repositories.datastores.UserDataStore
 import it.unibo.dcs.service.webapp.repositories.datastores.api.UserApi
 import it.unibo.dcs.service.webapp.repositories.datastores.impl.UserDataStoreNetwork

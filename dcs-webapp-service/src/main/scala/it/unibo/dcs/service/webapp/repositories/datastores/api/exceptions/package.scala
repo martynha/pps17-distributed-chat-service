@@ -1,5 +1,6 @@
 package it.unibo.dcs.service.webapp.repositories.datastores.api
 
+/** It contains all the exceptions used by the APIs */
 package object exceptions {
 
   final case class RegistrationResponseException() extends RuntimeException
@@ -11,4 +12,5 @@ package object exceptions {
   final case class UserCreationResponseException() extends RuntimeException
 
   final case class RoomCreationException() extends RuntimeException
+
 }

@@ -6,7 +6,6 @@ import io.vertx.servicediscovery.ServiceDiscovery
 import it.unibo.dcs.commons.service.HttpEndpointDiscoveryImpl
 import it.unibo.dcs.service.webapp.interaction.Requests.RegisterUserRequest
 import it.unibo.dcs.service.webapp.model.User
-import it.unibo.dcs.service.webapp.interaction.Requests.RegisterUserRequest
 import it.unibo.dcs.service.webapp.repositories.datastores.api.impl.UserRestApi
 import rx.lang.scala.Observable
 

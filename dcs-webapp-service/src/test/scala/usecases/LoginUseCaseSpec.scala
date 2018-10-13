@@ -3,11 +3,11 @@ package usecases
 import java.util.Date
 
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
-import it.unibo.dcs.service.webapp.model.User
 import it.unibo.dcs.service.webapp.interaction.Requests.LoginUserRequest
+import it.unibo.dcs.service.webapp.interaction.Results.LoginResult
+import it.unibo.dcs.service.webapp.model.User
 import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, UserRepository}
 import it.unibo.dcs.service.webapp.usecases.LoginUserUseCase
-import it.unibo.dcs.service.webapp.interaction.Results.LoginResult
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, OneInstancePerTest}
 import rx.lang.scala.{Observable, Subscriber}

@@ -5,10 +5,13 @@ import it.unibo.dcs.commons.RxHelper
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
 import it.unibo.dcs.commons.interactor.{ThreadExecutorExecutionContext, UseCase}
 import it.unibo.dcs.service.webapp.interaction.Requests.RegisterUserRequest
-import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, UserRepository}
 import it.unibo.dcs.service.webapp.interaction.Results.RegisterResult
+import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, UserRepository}
 import rx.lang.scala.Observable
 
+/** It represents the user registration functionality.
+  * It calls the authentication service to retrieve the token,
+  * then it contacts the User Service to store the new User. */
 final class RegisterUserUseCase(private[this] val threadExecutor: ThreadExecutor,
                                 private[this] val postExecutionThread: PostExecutionThread,
                                 private[this] val authRepository: AuthenticationRepository,
@@ -16,7 +19,6 @@ final class RegisterUserUseCase(private[this] val threadExecutor: ThreadExecutor
   extends UseCase[RegisterResult, RegisterUserRequest](threadExecutor, postExecutionThread) {
 
   override protected[this] def createObservable(registerRequest: RegisterUserRequest): Observable[RegisterResult] = {
-    /* Monadic style */
     for {
       token <- authRepository.registerUser(registerRequest)
       user <- userRepository.registerUser(registerRequest)

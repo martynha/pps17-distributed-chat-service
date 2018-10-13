@@ -7,7 +7,8 @@ import it.unibo.dcs.commons.VertxHelper.Implicits._
 import it.unibo.dcs.service.webapp.verticles.WebAppVerticle
 import it.unibo.dcs.service.webapp.verticles.utils.DeploymentUtils.deploymentOptions
 
-
+/** Entry point of the application.
+  * It launches the verticle associated with WebAppService in clustered mode. */
 object Launcher extends App {
 
   private val logger = ScalaLogger.getLogger(getClass.getName)

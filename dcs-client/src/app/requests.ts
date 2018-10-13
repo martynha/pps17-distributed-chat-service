@@ -1,29 +1,29 @@
 export interface LoginRequest {
 
-    username: string;
+  username: string;
 
-    password: string;
+  password: string;
 
 }
 
 export function LoginRequest(username: string, password: string): LoginRequest {
-    return {
-        username,
-        password
-    };
+  return {
+    username,
+    password
+  };
 }
 
 export interface RegisterRequest {
 
-    username: string;
+  username: string;
 
-    firstName: string;
+  firstName: string;
 
-    lastName: string;
+  lastName: string;
 
-    password: string;
+  password: string;
 
-    passwordConfirm: string;
+  passwordConfirm: string;
 
 }
 
@@ -32,23 +32,37 @@ export function RegisterRequest(username: string,
                                 lastName: string,
                                 password: string,
                                 passwordConfirm: string): RegisterRequest {
-    return {
-        username,
-        firstName,
-        lastName,
-        password,
-        passwordConfirm
-    };
+  return {
+    username,
+    firstName,
+    lastName,
+    password,
+    passwordConfirm
+  };
 }
 
 export interface LogoutRequest {
 
-    token: string;
+  token: string;
 
 }
 
 export function LogoutRequest(token: string): LogoutRequest {
-    return {
-        token
-    };
+  return {
+    token
+  };
+}
+
+export interface RoomDeletionRequest {
+
+  name: string;
+  token: string;
+
+}
+
+export function RoomDeletionRequest(name: string, token: string): RoomDeletionRequest {
+  return {
+    name,
+    token
+  };
 }
