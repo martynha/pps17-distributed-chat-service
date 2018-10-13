@@ -1,45 +1,31 @@
 package it.unibo.dcs.service.room.data.impl
 
 import io.vertx.core.json.JsonArray
-import io.vertx.scala.ext.sql.{SQLConnection, UpdateResult}
-import it.unibo.dcs.commons.VertxHelper
-import it.unibo.dcs.commons.VertxHelper.Implicits.functionToHandler
+import io.vertx.scala.ext.sql.SQLConnection
+import it.unibo.dcs.commons.dataaccess.DataStoreDatabase
 import it.unibo.dcs.service.room.data.RoomDataStore
 import it.unibo.dcs.service.room.data.impl.RoomDataStoreDatabase.Implicits._
 import it.unibo.dcs.service.room.data.impl.RoomDataStoreDatabase.{deleteRoomQuery, insertRoomQuery, insertUserQuery}
-import it.unibo.dcs.service.room.request
 import it.unibo.dcs.service.room.request.{CreateRoomRequest, CreateUserRequest, DeleteRoomRequest}
 import rx.lang.scala.Observable
 
-final class RoomDataStoreDatabase(private[this] val connection: SQLConnection) extends RoomDataStore {
+final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDatabase(connection) with RoomDataStore {
 
-  override def createUser(request: CreateUserRequest): Observable[Unit] =
-    VertxHelper.toObservable[UpdateResult] {
-      connection.updateWithParams(insertUserQuery, request, _)
-    }
-      .map(_ => ())
+  override def createUser(request: CreateUserRequest): Observable[Unit] = execute(insertUserQuery, request)
 
-  override def deleteRoom(request: DeleteRoomRequest): Observable[Unit] =
-    VertxHelper.toObservable[UpdateResult] {
-      connection.updateWithParams(deleteRoomQuery, request, _)
-    }
-      .map(_ => ())
+  override def deleteRoom(request: DeleteRoomRequest): Observable[Unit] = execute(deleteRoomQuery, request)
 
-  override def createRoom(request: CreateRoomRequest): Observable[Unit] = {
-    VertxHelper.toObservable[UpdateResult] {
-      connection.updateWithParams(insertRoomQuery, request, _)
-    }
-      .map(_ => ())
-  }
+  override def createRoom(request: CreateRoomRequest): Observable[Unit] = execute(insertRoomQuery, request)
+
 }
 
-object RoomDataStoreDatabase {
+private[impl] object RoomDataStoreDatabase {
 
-  private[impl] val insertUserQuery = "INSERT INTO `users` (`username`) VALUES (?);"
+  val insertUserQuery = "INSERT INTO `users` (`username`) VALUES (?);"
 
-  private[impl] val insertRoomQuery = "INSERT INTO `rooms` (`name`,`username`) VALUES (?,?);"
+  val insertRoomQuery = "INSERT INTO `rooms` (`name`,`owner_username`) VALUES (?, ?);"
 
-  private[impl] val deleteRoomQuery = "DELETE FROM `rooms` WHERE `name` = ? AND `owner_username` = ?;"
+  val deleteRoomQuery = "DELETE FROM `rooms` WHERE `name` = ? AND `owner_username` = ?;"
 
   object Implicits {
 

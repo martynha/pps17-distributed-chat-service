@@ -1,15 +1,13 @@
 package it.unibo.dcs.service.user.subscriber
 
 import io.netty.handler.codec.http.HttpResponseStatus
-import io.vertx.core.json.JsonObject
 import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.core.http.HttpServerResponse
+import it.unibo.dcs.service.user.model.Implicits._
 import it.unibo.dcs.service.user.model.User
 import it.unibo.dcs.service.user.model.exception.UserNotFoundException
+import it.unibo.dcs.service.user.subscriber.Implicits.httpResponseStatusToJsonObject
 import rx.lang.scala.Subscriber
-
-import it.unibo.dcs.service.user.request.Implicits._
-import Implicits.httpResponseStatusToJsonObject
 
 final class GetUserSubscriber(private[this] val response: HttpServerResponse) extends Subscriber[User] {
   override def onNext(user: User): Unit = {

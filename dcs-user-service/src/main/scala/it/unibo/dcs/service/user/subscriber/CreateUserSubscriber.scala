@@ -7,7 +7,7 @@ import it.unibo.dcs.service.user.model.User
 import it.unibo.dcs.service.user.model.exception.UserNotFoundException
 import rx.lang.scala.Subscriber
 
-import it.unibo.dcs.service.user.request.Implicits._
+import it.unibo.dcs.service.user.model.Implicits._
 
 import Implicits.httpResponseStatusToJsonObject
 

@@ -1,8 +1,11 @@
 package it.unibo.dcs.service.room
 
+import java.net.InetAddress
+
 import io.vertx.core.eventbus.{EventBus => JEventBus}
 import io.vertx.lang.scala.ScalaLogger
-import io.vertx.scala.core.{Vertx, VertxOptions}
+import io.vertx.lang.scala.json.JsonObject
+import io.vertx.scala.core.{DeploymentOptions, Vertx, VertxOptions}
 import io.vertx.scala.ext.jdbc.JDBCClient
 import io.vertx.scala.ext.sql.SQLConnection
 import io.vertx.servicediscovery.{Record, ServiceDiscovery}
@@ -32,7 +35,10 @@ object Launcher extends App {
         val publisher = new HttpEndpointPublisherImpl(discovery, eventBus)
         val roomDataStore: RoomDataStore = new RoomDataStoreDatabase(connection)
         val roomRepository = new RoomRepositoryImpl(roomDataStore)
-        vertx.deployVerticle(new RoomVerticle(roomRepository, publisher))
+        val config = new JsonObject()
+            .put("host", InetAddress.getLocalHost.getAddress)
+            .put("port", args(0))
+        vertx.deployVerticle(new RoomVerticle(roomRepository, publisher), DeploymentOptions().setConfig(config))
     }, cause => logger.error("", cause))
 
 }

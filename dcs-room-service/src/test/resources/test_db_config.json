@@ -1,5 +1,5 @@
 {
-  "url": "jdbc:sqlite::memory:?shutdown=true",
+  "url": "jdbc:sqlite::memory:",
   "driver_class": "org.sqlite.JDBC",
   "max_pool_size": 30,
   "user": "SA",

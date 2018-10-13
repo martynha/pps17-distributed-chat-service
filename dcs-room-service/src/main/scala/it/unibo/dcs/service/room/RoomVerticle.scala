@@ -10,7 +10,7 @@ import it.unibo.dcs.commons.service.{HttpEndpointPublisher, ServiceVerticle}
 import it.unibo.dcs.service.room.interactor.{CreateRoomUseCase, CreateUserUseCase, DeleteRoomUseCase}
 import it.unibo.dcs.service.room.repository.RoomRepository
 import it.unibo.dcs.service.room.request.{CreateRoomRequest, CreateUserRequest, DeleteRoomRequest}
-import it.unibo.dcs.service.room.subscriber.{CreateRoomSubscriber, CreateUserSubscriber}
+import it.unibo.dcs.service.room.subscriber.{CreateRoomSubscriber, CreateUserSubscriber, DeleteRoomSubscriber}
 
 final class RoomVerticle(private[this] val roomRepository: RoomRepository, val publisher: HttpEndpointPublisher) extends ServiceVerticle {
 
@@ -30,6 +30,7 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
     val threadExecutor = ThreadExecutorExecutionContext(vertx)
     val postExecutionThread = PostExecutionThread(RxHelper.scheduler(this.ctx))
     createUserUseCase = new CreateUserUseCase(threadExecutor, postExecutionThread, roomRepository)
+    createRoomUseCase = new CreateRoomUseCase(threadExecutor, postExecutionThread, roomRepository)
     deleteRoomUseCase = new DeleteRoomUseCase(threadExecutor, postExecutionThread, roomRepository)
   }
 
@@ -40,7 +41,7 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
       .consumes("application/json")
       .produces("application/json")
       .handler(routingContext => {
-        val username = routingContext.getBodyAsJson.get.getString("username")
+        val username = routingContext.getBodyAsJson.head.getString("username")
         val request = CreateUserRequest(username)
         createUserUseCase(request, new CreateUserSubscriber(routingContext.response()))
       })
@@ -49,8 +50,8 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
       .consumes("application/json")
       .produces("application/json")
       .handler(routingContext => {
-        val name = routingContext.getBodyAsJson.get.getString("name")
-        val username = routingContext.getBodyAsJson.get.getString("username")
+        val name = routingContext.getBodyAsJson.head.getString("name")
+        val username = routingContext.getBodyAsJson.head.getString("username")
         val request = CreateRoomRequest(name, username)
         createRoomUseCase(request, new CreateRoomSubscriber(routingContext.response()))
       })
@@ -59,10 +60,10 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
       .consumes("application/json")
       .produces("application/json")
       .handler(routingContext => {
-        val name = routingContext.getBodyAsJson.get.getString("name")
-        val username = routingContext.getBodyAsJson.get.getString("username")
+        val name = routingContext.getBodyAsJson.head.getString("name")
+        val username = routingContext.getBodyAsJson.head.getString("username")
         val request = DeleteRoomRequest(name, username)
-        deleteRoomUseCase(request).subscribe()
+        deleteRoomUseCase(request, new DeleteRoomSubscriber(routingContext.response))
       })
   }
 

@@ -1,6 +1,7 @@
 package it.unibo.dcs.authentication_service.interactor
 
 import java.time.LocalDateTime
+import java.util.Date
 
 import it.unibo.dcs.authentication_service.repository.AuthenticationRepository
 import it.unibo.dcs.authentication_service.request.LogoutUserRequest
@@ -14,5 +15,5 @@ final class LogoutUserUseCase(private[this] val threadExecutor: ThreadExecutor,
   extends UseCase[Unit, LogoutUserRequest](threadExecutor, postExecutionThread) {
 
   override protected[this] def createObservable(request: LogoutUserRequest): Observable[Unit] =
-    authRepository.invalidToken(request.token, LocalDateTime.now())
+    authRepository.invalidToken(request.token, new Date())
 }

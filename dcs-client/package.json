@@ -33,6 +33,7 @@
     "@angular/language-service": "^5.2.0",
     "@types/jasmine": "~2.8.3",
     "@types/jasminewd2": "~2.0.2",
+    "@types/lodash": "^4.14.117",
     "@types/node": "~6.0.60",
     "browser-sync": "^2.26.0",
     "codelyzer": "^4.0.1",

@@ -1,6 +1,6 @@
 package it.unibo.dcs.authentication_service.repository
 
-import java.time.LocalDateTime
+import java.util.Date
 
 import it.unibo.dcs.authentication_service.data.AuthenticationDataStore
 import org.scalamock.scalatest.MockFactory
@@ -12,7 +12,7 @@ class AuthenticationRepositoryTest extends FlatSpec with MockFactory {
   val username = "ale"
   val password = "123"
   val token = "token"
-  val tokenExpirationDate: LocalDateTime = LocalDateTime.now
+  val tokenExpirationDate = new Date()
   val expectedResult: Unit = Unit
   val expectedTokenInvalidityResult = true
   val authDataStore: AuthenticationDataStore = mock[AuthenticationDataStore]

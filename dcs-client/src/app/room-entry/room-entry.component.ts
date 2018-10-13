@@ -1,6 +1,6 @@
 import {Component, Inject, Input, OnInit} from '@angular/core';
-import {Room} from "../room";
-import {ChatComponent} from "../chat/chat.component";
+import {Room} from '../model';
+import {ChatComponent} from '../chat/chat.component';
 
 @Component({
   selector: 'app-room-entry',
@@ -12,15 +12,14 @@ export class RoomEntryComponent implements OnInit {
   @Input()
   room: Room;
 
-  constructor(@Inject(ChatComponent)
-              private parent: ChatComponent) {
+  constructor(@Inject(ChatComponent) private parent: ChatComponent) {
   }
 
   ngOnInit() {
   }
 
   deleteRoom() {
-    console.log("deleteRoom: " + this.room);
+    console.log('deleteRoom: ' + this.room);
     this.parent.deleteRoom(this.room);
   }
 

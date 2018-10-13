@@ -1,27 +1,27 @@
 package it.unibo.dcs.authentication_service.data
 
-import java.sql.Date
-import java.time.LocalDateTime
+import java.util.Date
+
 import io.vertx.core.Future
 import io.vertx.lang.scala.json.Json
 import io.vertx.scala.ext.sql.SQLConnection
 import it.unibo.dcs.commons.VertxHelper
-import it.unibo.dcs.commons.dataaccess.{DataStoreDatabase, InsertParams}
+import it.unibo.dcs.commons.dataaccess.DataStoreDatabase
+import it.unibo.dcs.commons.dataaccess.Implicits.dateToString
 import rx.lang.scala.Observable
 
-class AuthenticationDataStoreDatabase(protected val connection: SQLConnection)
-  extends DataStoreDatabase with AuthenticationDataStore {
+class AuthenticationDataStoreDatabase(private[this] val connection: SQLConnection)
+  extends DataStoreDatabase(connection) with AuthenticationDataStore {
 
   override def createUser(username: String, password: String): Observable[Unit] = {
-    insert("users", InsertParams(Json.obj(("username", username), ("password", password))))
+    execute(AuthenticationDataStoreDatabase.insertUser, Json.arr(username, password))
   }
 
   override def checkUserExistence(username: String, password: String): Observable[Unit] =
     checkRecordPresence("users", ("username", username), ("password", password))
 
-  override def invalidToken(token: String, expirationDate: LocalDateTime): Observable[Unit] =
-    insert("invalid_tokens", InsertParams(Json.obj(("token", token),
-      ("expiration_date", Date.valueOf(expirationDate.toLocalDate).toString))))
+  override def invalidToken(token: String, expirationDate: Date): Observable[Unit] =
+    execute(AuthenticationDataStoreDatabase.insertInvalidToken, Json.arr(token, dateToString(expirationDate)))
 
   override def isTokenInvalid(token: String): Observable[Boolean] =
     checkAtLeastOneRecord("SELECT * FROM invalid_tokens WHERE token = " + token)
@@ -57,4 +57,12 @@ class AuthenticationDataStoreDatabase(protected val connection: SQLConnection)
       })
     }
   }
+}
+
+private[data] object AuthenticationDataStoreDatabase {
+
+  val insertUser = "INSERT INTO `users` (`username`) VALUES (?);"
+
+  val insertInvalidToken = "INSERT INTO `invalid_tokens` (`token`, `expiration_date`) VALUES (?, ?);"
+
 }

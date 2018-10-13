@@ -624,9 +624,6 @@ a:active,
 .navbar-right {
   margin-right: 0; }
 
-.navbar-right:hover {
-  background-color: yellow !important; }
-
 .top_nav .navbar-right {
   margin: 0;
   width: 70%;
@@ -3208,7 +3205,7 @@ ul.project_files li a i {
  * bootstrap-vertical-tabs - v1.2.1
  * https://dbtek.github.io/bootstrap-vertical-tabs
  * 2014-11-07
- * Copyright (c) 2014 ─░smail Demirbilek
+ * Copyright (c) 2014 İsmail Demirbilek
  * License: MIT
  */
 .tabs-left,
