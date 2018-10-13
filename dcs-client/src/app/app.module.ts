@@ -16,6 +16,7 @@ import { RoomEntryComponent } from './room-entry/room-entry.component';
 
 import { EventBusService } from './event-bus.service';
 import { ChatService } from './chat.service';
+import { AddRoomComponent } from './add-room/add-room.component';
 
 const appRoutes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -33,7 +34,8 @@ const appRoutes: Routes = [
     RegisterComponent,
     RegisterFormComponent,
     LoginFormComponent,
-    RoomEntryComponent
+    RoomEntryComponent,
+    AddRoomComponent
   ],
   imports: [
     BrowserModule,

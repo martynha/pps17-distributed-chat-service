@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { remove } from 'lodash';
 
 import { ChatService } from '../chat.service';
-import { DeleteRoomRequest } from '../requests';
+import { DeleteRoomRequest, CreateRoomRequest } from '../requests';
 import { Room } from '../model';
 
 @Component({
@@ -29,6 +29,12 @@ export class ChatComponent implements OnInit {
   deleteRoom(room: Room) {
     this.service.deleteRoom(new DeleteRoomRequest(room.name, '')).subscribe(
       deletedRoom => remove(this.rooms, r => r.name === deletedRoom.name)
+    );
+  }
+
+  createRoom(request: CreateRoomRequest) {
+    this.service.createRoom(request).subscribe(
+      partecipation => this.rooms.push(partecipation.room)
     );
   }
 }
