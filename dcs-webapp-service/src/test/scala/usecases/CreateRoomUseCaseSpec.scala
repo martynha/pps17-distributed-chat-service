@@ -18,7 +18,7 @@ class CreateRoomUseCaseSpec extends FlatSpec with MockFactory with OneInstancePe
   private val user = User("niklegend", "Nicola", "Piscaglia", "bio", visible = true, new Date)
   private val room = Room("Room 1")
   private val token = "token"
-  private val createRoomRequest = CreateRoomRequest("Room 1", user, token)
+  private val createRoomRequest = CreateRoomRequest("Room 1", user.username, token)
   private val roomCreationResult = RoomCreationResult(room)
 
   private val threadExecutor: ThreadExecutor = mock[ThreadExecutor]

@@ -16,7 +16,10 @@ export class LoginFormComponent {
 
   login() {
     this.service.login(this.request)
-    .subscribe(user => this.router.navigateByUrl('/'),
+    .subscribe(user => {
+                      this.service.setUser(user);
+                      this.router.navigateByUrl('/');
+              },
                error => console.error(error));
   }
 

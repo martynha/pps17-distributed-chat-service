@@ -22,7 +22,7 @@ export class AddRoomComponent implements OnInit {
         console.log("Insert a name to add new room!");
     } else {
       console.log("Create new Room: " + this.name);
-      this.parent.createRoom(new CreateRoomRequest(this.name, "", ""));
+      this.parent.createRoom(new CreateRoomRequest(this.name, this.parent.getUser().username, "token"));
       this.name = null;
     }
   }

@@ -17,14 +17,14 @@ object Requests {
 
   final case class LogoutUserRequest(username: String, token: String)
 
-  final case class CreateRoomRequest(roomName: String, creator: User, token: String)
+  final case class CreateRoomRequest(roomName: String, username: String, token: String)
 
 
   /** It enables implicit conversions in order to clean code that deal with requests. */
   object Implicits {
 
     implicit def createRoomRequestToJsonObject(request: CreateRoomRequest): JsonObject = {
-      Json.obj(("name", request.roomName), ("username", request.creator))
+      Json.obj(("name", request.roomName), ("username", request.username))
     }
 
     implicit def registerUserRequestToJsonObject(request: RegisterUserRequest): JsonObject = {
@@ -70,8 +70,8 @@ object Requests {
     }
 
     implicit def jsonObjectToCreateRoomRequest(json: JsonObject): CreateRoomRequest = {
-      CreateRoomRequest(json.getString("name"), json.getJsonObject("user"),
-        json.getString("authorization"))
+      CreateRoomRequest(json.getString("name"), json.getString("username"),
+        json.getString("token"))
     }
   }
 

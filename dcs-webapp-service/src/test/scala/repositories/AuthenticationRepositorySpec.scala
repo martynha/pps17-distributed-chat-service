@@ -22,7 +22,7 @@ class AuthenticationRepositorySpec extends FlatSpec with MockFactory with OneIns
     user.lastName, "password", "password")
   private val room = Room("Room 1")
   private val token = "token"
-  private val roomCreationRequest = CreateRoomRequest(room.name, user, token)
+  private val roomCreationRequest = CreateRoomRequest(room.name, user.username, token)
   private val loginUserRequest = LoginUserRequest(user.username, "password")
   private val logoutUserRequest = LogoutUserRequest(user.username, token)
   private val registeredSubscriber: Subscriber[String] = stub[Subscriber[String]]

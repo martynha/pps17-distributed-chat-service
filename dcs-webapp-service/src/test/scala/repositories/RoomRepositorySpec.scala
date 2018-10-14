@@ -19,7 +19,7 @@ class RoomRepositorySpec extends FlatSpec with MockFactory with OneInstancePerTe
   private val user = User("niklegend", "nicola", "piscaglia", "bla", visible = true, new Date())
   private val room = Room("Room 1")
   private val token = "token"
-  private val roomCreationRequest = CreateRoomRequest("Room 1", user, token)
+  private val roomCreationRequest = CreateRoomRequest("Room 1", user.username, token)
   private val createRoomSubscriber: Subscriber[Room] = stub[Subscriber[Room]]
 
   it should "create a new room" in {
