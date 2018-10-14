@@ -52,7 +52,8 @@ export class ChatService {
     this.user = user;
   }
 
-  getUser():User {
+  getUser(): User {
     return this.user;
   }
+
 }

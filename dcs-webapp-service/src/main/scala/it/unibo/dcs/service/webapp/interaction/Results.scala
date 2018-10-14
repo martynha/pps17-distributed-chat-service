@@ -9,12 +9,11 @@ import scala.language.implicitConversions
 /** It wraps all results produces by the use cases executions. */
 object Results {
 
-  final case class LoginResult(loggedUser: User, token: String)
+  final case class LoginResult(user: User, token: String)
 
-  final case class RegisterResult(registeredUser: User, token: String)
+  final case class RegisterResult(user: User, token: String)
 
-  final case class RoomCreationResult(createdRoom: Room)
-
+  final case class RoomCreationResult(room: Room)
 
   /** It enables implicit conversions in order to clean code that deal with results. */
   object Implicits {
@@ -22,18 +21,18 @@ object Results {
     private val gsonInstance = new Gson()
 
     implicit def registrationResultToJsonString(result: RegisterResult): String = {
-      val registeredUserJson = gsonInstance.toJson(result.registeredUser)
-      Json.obj(("token", result.token), ("user", registeredUserJson)).encodePrettily()
+      val json = Json.fromObjectString(gsonInstance.toJson(result.user))
+      json.put("token", result.token).encode()
     }
 
     implicit def loginResultToJsonString(result: LoginResult): String = {
-      val loggedUserJson = gsonInstance.toJson(result.loggedUser)
-      Json.obj(("token", result.token), ("user", loggedUserJson)).encodePrettily()
+      val json = Json.fromObjectString(gsonInstance.toJson(result.user))
+      json.put("token", result.token).encode()
     }
 
     implicit def roomCreationResultToJsonString(result: RoomCreationResult): String = {
-      val createdRoomJson = gsonInstance.toJson(result)
-      Json.obj(("room", createdRoomJson)).encodePrettily()
+      val json = Json.fromObjectString(gsonInstance.toJson(result))
+      json.encode()
     }
   }
 

@@ -34,4 +34,3 @@ private[impl] object UserRestApi {
   def getUserURI(username: String) = s"getUser/$username"
 
 }
-

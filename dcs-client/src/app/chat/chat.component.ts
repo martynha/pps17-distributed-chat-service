@@ -3,7 +3,7 @@ import { remove } from 'lodash';
 
 import { ChatService } from '../chat.service';
 import { DeleteRoomRequest, CreateRoomRequest } from '../requests';
-import { Room, User} from '../model';
+import { Room, User } from '../model';
 
 @Component({
   selector: 'app-chat',
@@ -14,8 +14,9 @@ export class ChatComponent implements OnInit {
 
   rooms: Room[];
 
-  constructor(private service: ChatService) {
-  }
+  create = false;
+
+  constructor(private service: ChatService) {}
 
   ngOnInit() {
     // to debug
@@ -31,15 +32,28 @@ export class ChatComponent implements OnInit {
   }
 
   deleteRoom(room: Room) {
-    this.service.deleteRoom(new DeleteRoomRequest(room.name, 'TODO: replace with username', 'TODO: replace with token'))
-      .subscribe(
-        deletedRoom => remove(this.rooms, r => r.name === deletedRoom.name)
+    this.service
+      .deleteRoom(
+        new DeleteRoomRequest(
+          room.name,
+          this.service.getUser().username,
+          this.service.getUser().token
+        )
+      )
+      .subscribe(deletedRoom =>
+        remove(this.rooms, r => r.name === deletedRoom.name)
       );
   }
   
   createRoom(request: CreateRoomRequest) {
-    this.service.createRoom(request).subscribe(
-      partecipation => this.rooms.push(partecipation.room)
-    );
+    this.service.createRoom(request).subscribe(partecipation => {
+      this.create = false;
+      this.rooms.push(partecipation.room);
+    });
   }
+
+  toggleCreate() {
+    this.create = !this.create;
+  }
+
 }
