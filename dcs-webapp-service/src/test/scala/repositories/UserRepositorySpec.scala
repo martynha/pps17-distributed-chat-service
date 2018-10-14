@@ -17,8 +17,8 @@ class UserRepositorySpec extends FlatSpec with MockFactory with OneInstancePerTe
   private val userDataStore: UserDataStore = mock[UserDataStore]
   private val repository: UserRepository = new UserRepositoryImpl(userDataStore)
   private val user = User("niklegend", "nicola", "piscaglia", "bla", visible = true, new Date())
-  private val registerRequest = RegisterUserRequest(user.username, "password", user.firstName,
-    user.lastName)
+  private val registerRequest = RegisterUserRequest(user.username, user.firstName,
+    user.lastName, "password", "password")
   private val createUserSubscriber: Subscriber[User] = stub[Subscriber[User]]
   private val getUserSubscriber: Subscriber[User] = stub[Subscriber[User]]
 

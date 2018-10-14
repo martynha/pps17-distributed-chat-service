@@ -15,6 +15,16 @@ buildscript {
 
 apply plugin: "cz.augi.gradle.wartremover"
 
+jar {
+    manifest {
+        attributes 'Main-Class': 'it.unibo.dcs.service.webapp.Launcher'
+    }
+
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
 wartremover {
     warningWarts.remove("NonUnitStatements")
     warningWarts.remove("Var")

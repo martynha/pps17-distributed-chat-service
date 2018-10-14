@@ -2,6 +2,7 @@ package it.unibo.dcs.service.user.repository
 
 import java.util.Date
 
+import it.unibo.dcs.service.user.data.UserDataStore
 import it.unibo.dcs.service.user.model.User
 import it.unibo.dcs.service.user.repository.impl.UserRepositoryImpl
 import it.unibo.dcs.service.user.request.{CreateUserRequest, GetUserRequest}

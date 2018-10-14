@@ -12,8 +12,8 @@ object Requests {
 
   final case class LoginUserRequest(username: String, password: String)
 
-  final case class RegisterUserRequest(username: String, password: String,
-                                       firstName: String, lastName: String)
+  final case class RegisterUserRequest(username: String,
+                                       firstName: String, lastName: String, password: String, passwordConfirm: String)
 
   final case class LogoutUserRequest(username: String, token: String)
 
@@ -23,52 +23,53 @@ object Requests {
   /** It enables implicit conversions in order to clean code that deal with requests. */
   object Implicits {
 
-    implicit def createRoomRequestToJson(createRoomRequest: CreateRoomRequest): JsonObject = {
-      Json.obj(("name", createRoomRequest.roomName), ("user", createRoomRequest.creator))
+    implicit def createRoomRequestToJsonObject(request: CreateRoomRequest): JsonObject = {
+      Json.obj(("name", request.roomName), ("username", request.creator))
     }
 
-    implicit def registerRequestToJson(registerRequest: RegisterUserRequest): JsonObject = {
-      Json.obj(("username", registerRequest.firstName), ("lastname", registerRequest.lastName),
-        ("password", registerRequest.password), ("username", registerRequest.username))
+    implicit def registerUserRequestToJsonObject(request: RegisterUserRequest): JsonObject = {
+      Json.obj(("username", request.username), ("firstName", request.firstName),
+        ("lastName", request.lastName), ("password", request.password),
+        ("passwordConfirm", request.passwordConfirm))
     }
 
-    implicit def JsonToRegisterRequest(json: JsonObject): RegisterUserRequest = {
-      RegisterUserRequest(json.getString("username"), json.getString("password"),
-        json.getString("firstname"), json.getString("lastname"))
+    implicit def jsonObjectToRegisterUserRequest(json: JsonObject): RegisterUserRequest = {
+      RegisterUserRequest(json.getString("username"), json.getString("firstName"),
+        json.getString("lastName"), json.getString("password"), json.getString("passwordConfirm"))
     }
 
-    implicit def logoutRequestToJson(logoutUserRequest: LogoutUserRequest): JsonObject = {
-      Json.obj(("username", logoutUserRequest.username))
+    implicit def logoutUserRequestToJsonObject(request: LogoutUserRequest): JsonObject = {
+      Json.obj(("username", request.username))
     }
 
-    implicit def usernameToJson(username: String): JsonObject = Json.obj(("username", username))
+    implicit def usernameToJsonObject(username: String): JsonObject = Json.obj(("username", username))
 
-    implicit def jsonToUsername(json: JsonObject): String = {
+    implicit def jsonObjectToUsername(json: JsonObject): String = {
       json.getString("username")
     }
 
-    implicit def loginRequestToJson(loginUserRequest: LoginUserRequest): JsonObject = {
-      Json.obj(("username", loginUserRequest.username), ("password", loginUserRequest.password))
+    implicit def loginUserRequestToJsonObject(request: LoginUserRequest): JsonObject = {
+      Json.obj(("username", request.username), ("password", request.password))
     }
 
-    implicit def jsonToLoginRequest(json: JsonObject): LoginUserRequest = {
+    implicit def jsonObjectToLoginUserRequest(json: JsonObject): LoginUserRequest = {
       LoginUserRequest(json.getString("username"), json.getString("password"))
     }
 
-    implicit def jsonToLogoutRequest(json: JsonObject): LogoutUserRequest = {
+    implicit def jsonObjectToLogoutUserRequest(json: JsonObject): LogoutUserRequest = {
       LogoutUserRequest(json.getString("username"), json.getString("authentication"))
     }
 
-    implicit def jsonToUser(userJson: JsonObject): User = {
-      User(userJson.getString("username"), userJson.getString("firstname"),
-        userJson.getString("lastname"), "", visible = true, new Date)
+    implicit def jsonObjectToUser(json: JsonObject): User = {
+      User(json.getString("username"), json.getString("firstname"),
+        json.getString("lastname"), "", visible = true, new Date)
     }
 
-    implicit def jsonToRoom(roomJson: JsonObject): Room = {
-      Room(roomJson.getString("name"))
+    implicit def jsonObjectToRoom(json: JsonObject): Room = {
+      Room(json.getString("name"))
     }
 
-    implicit def jsonToRoomCreationRequest(json: JsonObject): CreateRoomRequest = {
+    implicit def jsonObjectToCreateRoomRequest(json: JsonObject): CreateRoomRequest = {
       CreateRoomRequest(json.getString("name"), json.getJsonObject("user"),
         json.getString("authorization"))
     }

@@ -1,4 +1,4 @@
-package it.unibo.dcs.service.user.repository
+package it.unibo.dcs.service.user.data
 
 import it.unibo.dcs.service.user.model.User
 import it.unibo.dcs.service.user.request.{CreateUserRequest, GetUserRequest}

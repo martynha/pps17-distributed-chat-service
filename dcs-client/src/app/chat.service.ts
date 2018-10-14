@@ -45,4 +45,5 @@ export class ChatService {
   deleteRoom(request: DeleteRoomRequest): Observable<Room> {
     return this.client.post<Room>(ChatService.ROOMS + '/' + request.name, request);
   }
+
 }

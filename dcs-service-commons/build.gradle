@@ -10,4 +10,5 @@ dependencies {
 
     compile group: 'io.vertx', name: 'vertx-service-discovery', version: vertxVersion
 
+    compile group: 'io.vertx', name: 'vertx-hazelcast', version: vertxVersion
 }

@@ -1,8 +1,10 @@
 package it.unibo.dcs.service.user
 
+import io.vertx.core.http.HttpMethod._
 import io.vertx.core.{AbstractVerticle, Context, Vertx}
+import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.ext.web.Router
-import io.vertx.scala.ext.web.handler.BodyHandler
+import io.vertx.scala.ext.web.handler.{BodyHandler, CorsHandler}
 import it.unibo.dcs.commons.RxHelper
 import it.unibo.dcs.commons.interactor.ThreadExecutorExecutionContext
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
@@ -10,6 +12,7 @@ import it.unibo.dcs.commons.service.{HttpEndpointPublisher, ServiceVerticle}
 import it.unibo.dcs.service.user.interactor.{CreateUserUseCase, GetUserUseCase}
 import it.unibo.dcs.service.user.repository.UserRepository
 import it.unibo.dcs.service.user.request.{CreateUserRequest, GetUserRequest}
+import it.unibo.dcs.service.user.UserVerticle.Implicits._
 import it.unibo.dcs.service.user.subscriber.{CreateUserSubscriber, GetUserSubscriber}
 
 final class UserVerticle(private[this] val userRepository: UserRepository, private[this] val publisher: HttpEndpointPublisher) extends ServiceVerticle {
@@ -36,33 +39,58 @@ final class UserVerticle(private[this] val userRepository: UserRepository, priva
     startHttpServer(host, port)
       .doOnCompleted(
         publisher.publish(name = "user-service", host = host, port = port)
-          .subscribe(_ => println("Record published!"),
-            cause => println(s"Could not publish record: ${cause.getMessage}")))
-      .subscribe(server => println(s"Server started at http://$host:${server.actualPort}"),
-        cause => println(s"Could not start server at http://$host:$port: ${cause.getMessage}"))
+          .subscribe(record => log.info(s"${record.getName} record published!"),
+            log.error(s"Could not publish record", _)))
+      .subscribe(server => log.info(s"Server started at http://$host:${server.actualPort}"),
+        log.error(s"Could not start server at http://$host:$port", _))
   }
 
   override protected def initializeRouter(router: Router): Unit = {
-
     router.route().handler(BodyHandler.create())
 
-    router.get("/users/:username")
+    router.route().handler(CorsHandler.create("*")
+      .allowedMethod(GET)
+      .allowedMethod(POST)
+      .allowedMethod(PATCH)
+      .allowedMethod(PUT)
+      .allowedMethod(DELETE)
+      .allowedHeader("Access-Control-Allow-Method")
+      .allowedHeader("Access-Control-Allow-Origin")
+      .allowedHeader("Access-Control-Allow-Credentials")
+      .allowedHeader("Content-Type"))
+
+    router.get("/getUser/:username")
+      .produces("application/json")
       .handler(routingContext => {
-        val username = routingContext.request().getParam("username").get
-        val subscriber: GetUserSubscriber = new GetUserSubscriber(routingContext.response())
-        getUserUseCase(GetUserRequest(username)).subscribe(subscriber)
+        val username = routingContext.request().getParam("username").head
+        val subscriber = new GetUserSubscriber(routingContext.response())
+        getUserUseCase(username, subscriber)
     })
 
-    router.post("/users")
+    router.post("/createUser")
       .consumes("application/json")
       .produces("application/json")
       .handler(routingContext => {
-        val user = routingContext.getBodyAsJson().get
-        val subscriber: CreateUserSubscriber = new CreateUserSubscriber(routingContext.response())
-        createUserUseCase(CreateUserRequest(user.getString("username"),
-          user.getString("first_name"), user.getString("last_name"))).subscribe(subscriber)
+        val request = routingContext.getBodyAsJson().head
+        log.info(s"Received request: $request")
+        val subscriber = new CreateUserSubscriber(routingContext.response())
+        createUserUseCase(request, subscriber)
     })
   }
 
 }
 
+object UserVerticle {
+
+  object Implicits {
+
+    implicit def jsonObjectToRequest(json: JsonObject): CreateUserRequest =
+      CreateUserRequest(json.getString("username"),
+        json.getString("firstName"), json.getString("lastName"))
+
+    implicit def stringToRequest(username: String): GetUserRequest =
+      GetUserRequest(username)
+
+  }
+
+}

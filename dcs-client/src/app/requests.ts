@@ -34,7 +34,7 @@ export class CreateRoomRequest {
 
 export class DeleteRoomRequest {
 
-  constructor(public name: string, public token: string) {
+  constructor(public name: string, public username: string, public token: string) {
   }
 
 }

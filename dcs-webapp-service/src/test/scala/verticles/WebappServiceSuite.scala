@@ -21,7 +21,7 @@ object WebappServiceSuite extends App {
 
       /* Verticle clustered deployment*/
       VertxHelper.toObservable[Vertx](Vertx.clusteredVertx(VertxOptions(), _))
-        .subscribe(vertx => vertx.deployVerticle(nameForVerticle[WebAppVerticle], deploymentOptions,
+        .subscribe(vertx => vertx.deployVerticle(nameForVerticle[WebAppVerticle], deploymentOptions(args(0).toInt),
           context.asyncAssertSuccess()), cause => logger.error("", cause))
     }).after(_ => System.exit(0))
     .run(new TestOptions().addReporter(new ReportOptions().setTo("console")))

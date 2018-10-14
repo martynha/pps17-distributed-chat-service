@@ -1,15 +1,14 @@
-package it.unibo.dcs.service.user.repository.impl
+package it.unibo.dcs.service.user.data.impl
 
 import io.vertx.lang.scala.json.{JsonArray, JsonObject}
 import io.vertx.scala.ext.sql.SQLConnection
 import it.unibo.dcs.commons.dataaccess.Implicits.{dateToString, _}
 import it.unibo.dcs.commons.dataaccess.{DataStoreDatabase, ResultSetHelper}
+import it.unibo.dcs.service.user.data.UserDataStore
+import it.unibo.dcs.service.user.data.impl.UserDataStoreDatabase.Implicits._
+import it.unibo.dcs.service.user.data.impl.UserDataStoreDatabase._
 import it.unibo.dcs.service.user.model.User
 import it.unibo.dcs.service.user.model.exception.UserNotFoundException
-import it.unibo.dcs.service.user.repository.UserDataStore
-import it.unibo.dcs.service.user.model.Implicits._
-import it.unibo.dcs.service.user.request.Implicits._
-import it.unibo.dcs.service.user.repository.impl.UserDataStoreDatabase._
 import it.unibo.dcs.service.user.request.{CreateUserRequest, GetUserRequest}
 import rx.lang.scala.Observable
 
@@ -35,6 +34,25 @@ private[impl] object UserDataStoreDatabase {
 
   val selectUserByUsername = "SELECT * FROM `users` WHERE `username` = ?"
 
-  val insertUser = "INSERT INTO `users` (`username`, `first_name`, `last_name`) VALUES (?, ?)"
+  val insertUser = "INSERT INTO `users` (`username`, `first_name`, `last_name`) VALUES (?, ?, ?)"
+
+  object Implicits {
+
+    implicit def requestToParams(request: CreateUserRequest): JsonArray =
+      new JsonArray().add(request.username).add(request.firstName).add(request.lastName)
+
+    implicit def requestToParams(request: GetUserRequest): JsonArray =
+      new JsonArray().add(request.username)
+
+    implicit def jsonObjectToUser(userJsonObject: JsonObject): User = {
+      User(userJsonObject.getString("username"),
+        userJsonObject.getString("first_name"),
+        userJsonObject.getString("last_name"),
+        userJsonObject.getString("bio"),
+        userJsonObject.getString("visible"),
+        userJsonObject.getString("last_seen"))
+    }
+
+  }
 
 }

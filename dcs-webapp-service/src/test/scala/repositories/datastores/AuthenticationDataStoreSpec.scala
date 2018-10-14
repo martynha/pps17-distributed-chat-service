@@ -20,8 +20,8 @@ class AuthenticationDataStoreSpec extends FlatSpec with MockFactory with OneInst
   private val user = User("niklegend", "nicola", "piscaglia", "bla", visible = true, new Date())
   private val room = Room("Room 1")
   private val token = "token"
-  private val registerRequest = RegisterUserRequest(user.username, "password", user.firstName,
-    user.lastName)
+  private val registerRequest = RegisterUserRequest(user.username, user.firstName,
+    user.lastName, "password", "password")
   private val loginUserRequest = LoginUserRequest(user.username, "password")
   private val logoutUserRequest = LogoutUserRequest(user.username, token)
   private val roomCreationRequest = CreateRoomRequest(room.name, user, token)

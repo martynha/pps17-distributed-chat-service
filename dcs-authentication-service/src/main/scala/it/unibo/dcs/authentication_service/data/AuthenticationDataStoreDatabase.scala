@@ -5,6 +5,7 @@ import java.util.Date
 import io.vertx.core.Future
 import io.vertx.lang.scala.json.Json
 import io.vertx.scala.ext.sql.SQLConnection
+import it.unibo.dcs.authentication_service.data.AuthenticationDataStoreDatabase.{insertInvalidToken, insertUser}
 import it.unibo.dcs.commons.VertxHelper
 import it.unibo.dcs.commons.dataaccess.DataStoreDatabase
 import it.unibo.dcs.commons.dataaccess.Implicits.dateToString
@@ -14,14 +15,14 @@ class AuthenticationDataStoreDatabase(private[this] val connection: SQLConnectio
   extends DataStoreDatabase(connection) with AuthenticationDataStore {
 
   override def createUser(username: String, password: String): Observable[Unit] = {
-    execute(AuthenticationDataStoreDatabase.insertUser, Json.arr(username, password))
+    execute(insertUser, Json.arr(username, password))
   }
 
   override def checkUserExistence(username: String, password: String): Observable[Unit] =
     checkRecordPresence("users", ("username", username), ("password", password))
 
   override def invalidToken(token: String, expirationDate: Date): Observable[Unit] =
-    execute(AuthenticationDataStoreDatabase.insertInvalidToken, Json.arr(token, dateToString(expirationDate)))
+    execute(insertInvalidToken, Json.arr(token, dateToString(expirationDate)))
 
   override def isTokenInvalid(token: String): Observable[Boolean] =
     checkAtLeastOneRecord("SELECT * FROM invalid_tokens WHERE token = " + token)
@@ -61,7 +62,7 @@ class AuthenticationDataStoreDatabase(private[this] val connection: SQLConnectio
 
 private[data] object AuthenticationDataStoreDatabase {
 
-  val insertUser = "INSERT INTO `users` (`username`) VALUES (?);"
+  val insertUser = "INSERT INTO `users` (`username`, `password`) VALUES (?, ?);"
 
   val insertInvalidToken = "INSERT INTO `invalid_tokens` (`token`, `expiration_date`) VALUES (?, ?);"
 

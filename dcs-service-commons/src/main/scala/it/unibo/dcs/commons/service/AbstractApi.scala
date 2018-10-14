@@ -12,7 +12,10 @@ abstract class AbstractApi(private[this] val discovery: HttpEndpointDiscovery,
 
   private[this] def discoverClient(): Unit = {
     discovery.getWebClient(serviceName)
-      .subscribe(c => clientOption = Some(c))
+      .subscribe(c => {
+        println("Got web client")
+        clientOption = Some(c)
+      })
   }
 
   protected final def request[T](action: WebClient => Observable[HttpResponse[T]]): Observable[HttpResponse[T]] =

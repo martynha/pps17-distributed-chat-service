@@ -17,7 +17,7 @@ import scala.language.postfixOps
 class RegisterUseCaseSpec extends FlatSpec with MockFactory with OneInstancePerTest {
 
   private val user = User("niklegend", "Nicola", "Piscaglia", "bio", visible = true, new Date)
-  private val registerRequest = RegisterUserRequest(user.username, "password", user.firstName, user.lastName)
+  private val registerRequest = RegisterUserRequest(user.username, user.firstName, user.lastName, "password", "password")
 
   private val threadExecutor: ThreadExecutor = mock[ThreadExecutor]
   private val postExecutionThread: PostExecutionThread = mock[PostExecutionThread]

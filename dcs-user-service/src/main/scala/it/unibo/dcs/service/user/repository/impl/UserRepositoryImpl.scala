@@ -1,7 +1,8 @@
 package it.unibo.dcs.service.user.repository.impl
 
+import it.unibo.dcs.service.user.data.UserDataStore
 import it.unibo.dcs.service.user.model.User
-import it.unibo.dcs.service.user.repository.{UserDataStore, UserRepository}
+import it.unibo.dcs.service.user.repository.UserRepository
 import it.unibo.dcs.service.user.request.{CreateUserRequest, GetUserRequest}
 import rx.lang.scala.Observable
 

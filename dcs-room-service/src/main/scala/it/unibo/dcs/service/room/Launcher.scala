@@ -9,13 +9,15 @@ import io.vertx.scala.core.{DeploymentOptions, Vertx, VertxOptions}
 import io.vertx.scala.ext.jdbc.JDBCClient
 import io.vertx.scala.ext.sql.SQLConnection
 import io.vertx.servicediscovery.{Record, ServiceDiscovery}
-import it.unibo.dcs.commons.{IoHelper, VertxHelper}
 import it.unibo.dcs.commons.VertxHelper.Implicits._
 import it.unibo.dcs.commons.service.HttpEndpointPublisherImpl
 import it.unibo.dcs.commons.service.codecs.RecordMessageCodec
+import it.unibo.dcs.commons.{IoHelper, VertxHelper}
 import it.unibo.dcs.service.room.data.RoomDataStore
 import it.unibo.dcs.service.room.data.impl.RoomDataStoreDatabase
 import it.unibo.dcs.service.room.repository.impl.RoomRepositoryImpl
+
+import scala.language.implicitConversions
 
 object Launcher extends App {
 
@@ -36,8 +38,8 @@ object Launcher extends App {
         val roomDataStore: RoomDataStore = new RoomDataStoreDatabase(connection)
         val roomRepository = new RoomRepositoryImpl(roomDataStore)
         val config = new JsonObject()
-            .put("host", InetAddress.getLocalHost.getAddress)
-            .put("port", args(0))
+          .put("host", InetAddress.getLocalHost.getHostAddress)
+          .put("port", args(0).toInt)
         vertx.deployVerticle(new RoomVerticle(roomRepository, publisher), DeploymentOptions().setConfig(config))
     }, cause => logger.error("", cause))
 

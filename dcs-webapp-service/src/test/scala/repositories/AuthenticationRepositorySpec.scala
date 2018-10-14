@@ -18,8 +18,8 @@ class AuthenticationRepositorySpec extends FlatSpec with MockFactory with OneIns
   private val dataStore: AuthenticationDataStore = mock[AuthenticationDataStore]
   private val repository: AuthenticationRepository = new AuthenticationRepositoryImpl(dataStore)
   private val user = User("niklegend", "nicola", "piscaglia", "bla", visible = true, new Date())
-  private val registerRequest = RegisterUserRequest(user.username, "password", user.firstName,
-    user.lastName)
+  private val registerRequest = RegisterUserRequest (user.username, user.firstName,
+    user.lastName, "password", "password")
   private val room = Room("Room 1")
   private val token = "token"
   private val roomCreationRequest = CreateRoomRequest(room.name, user, token)

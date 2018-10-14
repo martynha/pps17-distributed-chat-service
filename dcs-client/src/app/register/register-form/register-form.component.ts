@@ -15,8 +15,9 @@ export class RegisterFormComponent {
   constructor(private service: ChatService, private router: Router) { }
 
   register() {
-    this.service.register(this.request);
-    // .subscribe();
+    this.service.register(this.request)
+      .subscribe(user => this.router.navigateByUrl('/'),
+                 err => console.error(err));
   }
 
 }

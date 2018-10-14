@@ -18,8 +18,8 @@ class UserDataStoreSpec extends FlatSpec with MockFactory with OneInstancePerTes
   private val userApi: UserApi = mock[UserApi]
   private val dataStore: UserDataStore = new UserDataStoreNetwork(userApi)
   private val user = User("niklegend", "nicola", "piscaglia", "bla", visible = true, new Date())
-  private val registerRequest = RegisterUserRequest(user.username, "password", user.firstName,
-    user.lastName)
+  private val registerRequest = RegisterUserRequest(user.username, user.firstName,
+    user.lastName, "password", "password")
   private val createUserSubscriber: Subscriber[User] = stub[Subscriber[User]]
   private val getUserSubscriber: Subscriber[User] = stub[Subscriber[User]]
 

@@ -13,4 +13,5 @@ final class RoomRepositoryImpl(private[this] val roomDataStore: RoomDataStore) e
   override def deleteRoom(request: DeleteRoomRequest): Observable[Unit] = roomDataStore.deleteRoom(request)
 
   override def createRoom(request: CreateRoomRequest): Observable[Unit] = roomDataStore.createRoom(request)
+
 }

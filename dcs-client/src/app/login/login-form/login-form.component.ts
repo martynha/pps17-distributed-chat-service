@@ -15,8 +15,9 @@ export class LoginFormComponent {
   constructor(private service: ChatService, private router: Router) { }
 
   login() {
-    this.service.login(this.request);
-    // .subscribe();
+    this.service.login(this.request)
+    .subscribe(user => this.router.navigateByUrl('/'),
+               error => console.error(error));
   }
 
 }

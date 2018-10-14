@@ -24,6 +24,16 @@ buildscript {
     }
 }
 
+jar {
+    manifest {
+        attributes 'Main-Class': 'it.unibo.dcs.authentication_service.server.Launcher'
+    }
+
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
 apply plugin: "cz.augi.gradle.wartremover"
 
 wartremover {
