@@ -9,12 +9,16 @@ import it.unibo.dcs.commons.RxHelper
 import it.unibo.dcs.commons.interactor.ThreadExecutorExecutionContext
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
 import it.unibo.dcs.commons.service.{HttpEndpointPublisher, ServiceVerticle}
+import it.unibo.dcs.commons.validation.Validator
 import it.unibo.dcs.service.user.UserVerticle.Implicits._
-import it.unibo.dcs.service.user.interactor.{CreateUserUseCase, GetUserUseCase}
+import it.unibo.dcs.service.user.interactor.usecases.{CreateUserUseCase, GetUserUseCase}
+import it.unibo.dcs.service.user.interactor.validations.ValidateUserCreation
 import it.unibo.dcs.service.user.repository.UserRepository
 import it.unibo.dcs.service.user.request.{CreateUserRequest, GetUserRequest}
-import it.unibo.dcs.service.user.UserVerticle.Implicits._
-import it.unibo.dcs.service.user.subscriber.{CreateUserSubscriber, GetUserSubscriber}
+import it.unibo.dcs.service.user.subscriber.{CreateUserSubscriber, GetUserSubscriber, ValidateUserCreationSubscriber}
+import it.unibo.dcs.service.user.validator.UserCreationValidator
+
+import scala.language.implicitConversions
 
 final class UserVerticle(private[this] val userRepository: UserRepository, private[this] val publisher: HttpEndpointPublisher) extends ServiceVerticle {
 
@@ -23,6 +27,7 @@ final class UserVerticle(private[this] val userRepository: UserRepository, priva
 
   private var getUserUseCase: GetUserUseCase = _
   private var createUserUseCase: CreateUserUseCase = _
+  private var validateUserCreation: ValidateUserCreation = _
 
   override def init(jVertx: Vertx, context: Context, verticle: AbstractVerticle): Unit = {
     super.init(jVertx, context, verticle)
@@ -32,8 +37,11 @@ final class UserVerticle(private[this] val userRepository: UserRepository, priva
     val threadExecutor: ThreadExecutor = ThreadExecutorExecutionContext(vertx)
     val postExecutionThread: PostExecutionThread = PostExecutionThread(RxHelper.scheduler(this.ctx))
 
+    val validator: Validator[CreateUserRequest] = UserCreationValidator(userRepository)
+
     getUserUseCase = new GetUserUseCase(threadExecutor, postExecutionThread, userRepository)
     createUserUseCase = new CreateUserUseCase(threadExecutor, postExecutionThread, userRepository)
+    validateUserCreation = new ValidateUserCreation(threadExecutor, postExecutionThread, validator)
   }
 
   override def start(): Unit = {
@@ -77,6 +85,17 @@ final class UserVerticle(private[this] val userRepository: UserRepository, priva
         val subscriber = new CreateUserSubscriber(routingContext.response())
         createUserUseCase(request, subscriber)
       })
+
+    router.post("/validateRegistration")
+      .consumes("application/json")
+      .produces("application/json")
+      .handler(routingContext => {
+        val request = routingContext.getBodyAsJson().head
+        log.info(s"Received request: $request")
+        val subscriber = new ValidateUserCreationSubscriber(routingContext.response())
+        validateUserCreation(request, subscriber)
+      })
+
   }
 
 }

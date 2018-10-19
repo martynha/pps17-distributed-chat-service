@@ -54,7 +54,6 @@ export class ChatComponent implements OnInit {
         remove(this.rooms, r => r.name === deletedRoom.name)
       );
   }
-  
   createRoom(request: CreateRoomRequest) {
     this.service.createRoom(request).subscribe(partecipation => {
       this.create = false;

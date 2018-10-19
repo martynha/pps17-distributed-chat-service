@@ -31,7 +31,7 @@ task stage(type: Copy) {
     }
 }
 
-task scalaDoc(type: ScalaDoc, description: 'Generate scaladocs from all child projects as if it were a single project', group: 'Documentation') {
+task scalaDoc(type: ScalaDoc, description: 'Generate scaladoc', group: 'Documentation') {
     destinationDir = file("$buildDir/docs/scaladoc")
     title = "$project.name $version API"
 }

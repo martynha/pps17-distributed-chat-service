@@ -10,6 +10,9 @@ import rx.lang.scala.Observable
 /** Structure that allows access to user data by different means (e.g. network, file, database, ecc) */
 trait UserDataStore {
 
+  def checkUserRegistration(request: RegisterUserRequest): Observable[Unit]
+
+
   /** Fetch the user with the given username
     *
     * @param username username provided to uniquely identify a user

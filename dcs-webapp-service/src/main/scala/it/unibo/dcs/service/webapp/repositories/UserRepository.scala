@@ -21,6 +21,18 @@ trait UserRepository {
     * Needed information to register a new user
     * @return an observable stream composed by the created user */
   def registerUser(request: RegisterUserRequest): Observable[User]
+
+  def checkUserRegistration(request: RegisterUserRequest): Observable[Unit]
+}
+
+/** Companion object */
+object UserRepository {
+
+  /** Factory method to create the user repository
+    *
+    * @param userDataStore user data store reference
+    * @return the UserRepository instance */
+  def apply(userDataStore: UserDataStore): UserRepository = new UserRepositoryImpl(userDataStore)
 }
 
 /** Companion object */

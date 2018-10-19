@@ -12,6 +12,9 @@ import rx.lang.scala.Observable
 /** Utility wrapper for making requests to the User Service via the network */
 trait UserApi {
 
+  def checkUserRegistration(request: RegisterUserRequest): Observable[Unit]
+
+
   /** It tells user service to create a new user and returns it as Observable
     *
     * @param request user information needed to perform a registration

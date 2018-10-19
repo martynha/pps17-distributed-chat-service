@@ -5,10 +5,14 @@ import io.vertx.lang.scala.ScalaLogger
 import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.core.http.HttpServerResponse
 import it.unibo.dcs.commons.dataaccess.Implicits.{booleanToString, dateToString}
+import it.unibo.dcs.commons.service.ErrorHandler
+import it.unibo.dcs.exceptions.{MissingFirstNameException, MissingLastNameException, MissingUsernameException, UsernameAlreadyTaken}
 import it.unibo.dcs.service.user.model.User
 import it.unibo.dcs.service.user.model.exception.UserNotFoundException
-import rx.lang.scala.Subscriber
 import it.unibo.dcs.service.user.subscriber.Implicits._
+import rx.lang.scala.Subscriber
+
+import scala.language.implicitConversions
 
 package object subscriber {
 
@@ -21,20 +25,37 @@ package object subscriber {
       log.info(s"Answering with user: $json")
       response.end(json)
     }
-
-    override def onCompleted(): Unit = ()
-
-    override def onError(error: Throwable): Unit = error match {
-      case UserNotFoundException(username) =>
-        val statusJson: JsonObject = HttpResponseStatus.BAD_REQUEST
-        val extras = new JsonObject().put("username", username)
-        response.setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
-        response.end(new JsonObject().put("status", statusJson).put("extras", extras).toString)
-    }
-
   }
 
-  final class GetUserSubscriber(private[this] val response: HttpServerResponse) extends Subscriber[User] {
+  final class ValidateUserCreationSubscriber(private[this] val response: HttpServerResponse)
+    extends Subscriber[Unit] with ErrorHandler {
+
+    private[this] val log = ScalaLogger.getLogger(getClass.getName)
+
+    override def onCompleted(): Unit = response.end()
+
+    override def onError(error: Throwable): Unit = error match {
+      case MissingUsernameException(message) =>
+        log.error(error.getMessage)
+        endErrorResponse(response, HttpResponseStatus.BAD_REQUEST, errorType = "MISSING_USERNAME", message)
+
+      case MissingFirstNameException(message) =>
+        log.error(error.getMessage)
+        endErrorResponse(response, HttpResponseStatus.BAD_REQUEST, errorType = "MISSING_FIRST_NAME", message)
+
+      case MissingLastNameException(message) =>
+        log.error(error.getMessage)
+        endErrorResponse(response, HttpResponseStatus.BAD_REQUEST, errorType = "MISSING_LAST_NAME", message)
+
+      case UsernameAlreadyTaken(username) =>
+        log.error(error.getMessage)
+        endErrorResponse(response, HttpResponseStatus.BAD_REQUEST, errorType = "USERNAME_ALREADY_TAKEN",
+          description = "username: " + username + "is already taken")
+    }
+  }
+
+  final class GetUserSubscriber(private[this] val response: HttpServerResponse)
+    extends Subscriber[User] with ErrorHandler {
 
     private[this] val log = ScalaLogger.getLogger(getClass.getName)
 
@@ -44,22 +65,15 @@ package object subscriber {
       response.end(json)
     }
 
-    override def onCompleted(): Unit = ()
-
     override def onError(error: Throwable): Unit = error match {
       case UserNotFoundException(username) =>
-        val statusJson: JsonObject = HttpResponseStatus.NOT_FOUND
-        val extras = new JsonObject().put("username", username)
-        response.setStatusCode(HttpResponseStatus.NOT_FOUND.code())
-        response.write(new JsonObject().put("status", statusJson).put("extras", extras).toString)
+        endErrorResponse(response, HttpResponseStatus.NOT_FOUND, errorType = "USER_NOT_FOUND",
+          description = "User with username: " + username + "not found")
     }
 
   }
 
   object Implicits {
-
-    implicit def httpResponseStatusToJsonObject(status: HttpResponseStatus): JsonObject =
-      new JsonObject().put("code", status.code()).put("reasonPhrase", status.reasonPhrase())
 
     implicit def userToJsonObject(user: User): JsonObject = {
       new JsonObject()
@@ -72,7 +86,6 @@ package object subscriber {
     }
 
     implicit def jsonObjectToString(json: JsonObject): String = json.encode()
-
   }
 
 }

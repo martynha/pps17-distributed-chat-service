@@ -12,6 +12,8 @@ include 'dcs-data-access-commons'
 include 'dcs-service-commons'
 include 'dcs-interactor-commons'
 
+include 'dcs-exceptions'
+
 include 'dcs-authentication-service'
 include 'dcs-room-service'
 include 'dcs-user-service'

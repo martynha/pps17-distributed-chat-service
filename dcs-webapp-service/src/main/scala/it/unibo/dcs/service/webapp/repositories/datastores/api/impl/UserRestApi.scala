@@ -6,7 +6,7 @@ import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
 import it.unibo.dcs.service.webapp.interaction.Requests.RegisterUserRequest
 import it.unibo.dcs.service.webapp.model.User
 import it.unibo.dcs.service.webapp.repositories.datastores.api.UserApi
-import it.unibo.dcs.service.webapp.repositories.datastores.api.exceptions.{GetUserResponseException, UserCreationResponseException}
+import it.unibo.dcs.service.webapp.repositories.datastores.api.exceptions.{GetUserResponseException, RegistrationValidityResponseException, UserCreationResponseException}
 import it.unibo.dcs.service.webapp.repositories.datastores.api.impl.UserRestApi._
 import rx.lang.scala.Observable
 
@@ -25,11 +25,18 @@ class UserRestApi(private[this] val discovery: HttpEndpointDiscovery)
     request((userWebClient: WebClient) =>
       Observable.from(userWebClient.get(getUserURI(username)).sendFuture()))
       .map(response => response.bodyAsJsonObject().getOrElse(throw GetUserResponseException()))
+
+  override def checkUserRegistration(checkRegistrationRequest: RegisterUserRequest): Observable[Unit] =
+    request((userWebClient: WebClient) =>
+      Observable.from(userWebClient.post(validateRegistration).sendJsonObjectFuture(checkRegistrationRequest)))
+      .map(response => response.bodyAsJsonObject().getOrElse(throw RegistrationValidityResponseException()))
 }
 
 private[impl] object UserRestApi {
 
   val createUserURI = "/createUser"
+
+  val validateRegistration = "/validateRegistration"
 
   def getUserURI(username: String) = s"/getUser/$username"
 

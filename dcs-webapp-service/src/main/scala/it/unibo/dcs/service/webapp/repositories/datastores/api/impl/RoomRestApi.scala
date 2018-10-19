@@ -7,7 +7,7 @@ import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
 import it.unibo.dcs.service.webapp.interaction.Requests.{CreateRoomRequest, DeleteRoomRequest}
 import it.unibo.dcs.service.webapp.model.Room
 import it.unibo.dcs.service.webapp.repositories.datastores.api.RoomApi
-import it.unibo.dcs.service.webapp.repositories.datastores.api.exceptions.{RegistrationResponseException, RoomCreationException, RoomDeletionException}
+import it.unibo.dcs.service.webapp.repositories.datastores.api.exceptions.{RegistrationResponseException, RoomCreationResponseException, RoomDeletionResponseException}
 import rx.lang.scala.Observable
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -19,14 +19,14 @@ class RoomRestApi(private[this] val discovery: HttpEndpointDiscovery)
     for {
       response <- request((roomWebClient: WebClient) =>
         Observable.from(roomWebClient.post(RoomRestApi.createRoomURI).sendJsonObjectFuture(createRoomRequest)))
-    } yield response.bodyAsJsonObject().getOrElse(throw RoomCreationException())
+    } yield response.bodyAsJsonObject().getOrElse(throw RoomCreationResponseException())
   }
 
   override def deleteRoom(deletionRequest: DeleteRoomRequest): Observable[Unit] = {
     for {
       response <- request((roomWebClient: WebClient) =>
         Observable.from(roomWebClient.post(RoomRestApi.deleteRoomURI).sendJsonObjectFuture(deletionRequest)))
-    } yield response.bodyAsJsonObject().getOrElse(throw RoomDeletionException())
+    } yield response.bodyAsJsonObject().getOrElse(throw RoomDeletionResponseException())
   }
 
   override def registerUser(userRegistrationRequest: Requests.RegisterUserRequest): Observable[Unit] = {
