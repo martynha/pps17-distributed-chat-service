@@ -11,7 +11,13 @@ import rx.lang.scala.Observable
 
 /** It represents the login functionality.
   * It calls the authentication service to check the credentials and retrieve the token,
-  * then it contacts the User Service to retrieve the User information. */
+  * then it contacts the User Service to retrieve the User information.
+  *
+  * @param threadExecutor      thread executor that will perform the subscription
+  * @param postExecutionThread thread that will be notified of the subscription result
+  * @param authRepository      authentication repository reference
+  * @param userRepository      user repository reference
+  * @usecase user login */
 final class LoginUserUseCase(private[this] val threadExecutor: ThreadExecutor,
                              private[this] val postExecutionThread: PostExecutionThread,
                              private[this] val authRepository: AuthenticationRepository,
@@ -27,9 +33,15 @@ final class LoginUserUseCase(private[this] val threadExecutor: ThreadExecutor,
 
 }
 
-/* Companion object */
+/** Companion object */
 object LoginUserUseCase {
-  /* Factory method */
+
+  /** Factory method to create the use case
+    *
+    * @param authRepository authentication repository reference
+    * @param userRepository user repository reference
+    * @param ctx            Vertx context
+    * @return the use case object */
   def create(authRepository: AuthenticationRepository,
              userRepository: UserRepository)(implicit ctx: Context): LoginUserUseCase = {
     val threadExecutor: ThreadExecutor = ThreadExecutorExecutionContext(ctx.owner())

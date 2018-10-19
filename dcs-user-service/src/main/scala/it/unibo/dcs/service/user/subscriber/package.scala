@@ -1,21 +1,24 @@
 package it.unibo.dcs.service.user
 
 import io.netty.handler.codec.http.HttpResponseStatus
+import io.vertx.lang.scala.ScalaLogger
 import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.core.http.HttpServerResponse
 import it.unibo.dcs.commons.dataaccess.Implicits.{booleanToString, dateToString}
 import it.unibo.dcs.service.user.model.User
 import it.unibo.dcs.service.user.model.exception.UserNotFoundException
 import rx.lang.scala.Subscriber
-
 import it.unibo.dcs.service.user.subscriber.Implicits._
 
 package object subscriber {
 
   final class CreateUserSubscriber(private[this] val response: HttpServerResponse) extends Subscriber[User] {
 
+    private[this] val log = ScalaLogger.getLogger(getClass.getName)
+
     override def onNext(user: User): Unit = {
       val json: JsonObject = user
+      log.info(s"Answering with user: $json")
       response.end(json)
     }
 
@@ -32,8 +35,12 @@ package object subscriber {
   }
 
   final class GetUserSubscriber(private[this] val response: HttpServerResponse) extends Subscriber[User] {
+
+    private[this] val log = ScalaLogger.getLogger(getClass.getName)
+
     override def onNext(user: User): Unit = {
       val json: JsonObject = user
+      log.info(s"Answering with user: $json")
       response.end(json)
     }
 

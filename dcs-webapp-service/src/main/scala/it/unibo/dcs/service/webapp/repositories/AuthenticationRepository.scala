@@ -1,6 +1,6 @@
 package it.unibo.dcs.service.webapp.repositories
 
-import it.unibo.dcs.service.webapp.interaction.Requests.{CreateRoomRequest, LoginUserRequest, LogoutUserRequest, RegisterUserRequest}
+import it.unibo.dcs.service.webapp.interaction.Requests._
 import it.unibo.dcs.service.webapp.repositories.datastores.AuthenticationDataStore
 import it.unibo.dcs.service.webapp.repositories.impl.AuthenticationRepositoryImpl
 import rx.lang.scala.Observable
@@ -27,11 +27,20 @@ trait AuthenticationRepository {
     * Data needed to create a new room
     * @return an empty observable object */
   def createRoom(request: CreateRoomRequest): Observable[Unit]
+
+  /** @param request
+    * Request containing the jwt token
+    * @return an empty observable object */
+  def checkToken(request: CheckTokenRequest): Observable[Unit]
 }
 
-/* Companion object */
+/** Companion object */
 object AuthenticationRepository {
-  /* Factory method */
+
+  /** Factory method to create the authentication repository
+    *
+    * @param authenticationDataStore authentication data store reference
+    * @return the AuthenticationRepository instance */
   def apply(authenticationDataStore: AuthenticationDataStore): AuthenticationRepository =
     new AuthenticationRepositoryImpl(authenticationDataStore)
 }

@@ -11,7 +11,13 @@ import rx.lang.scala.Observable
 
 /** It represents the room creation functionality.
   * It calls the authentication service to check the token validity and then
-  * it contacts the room service to store the new room. */
+  * it contacts the room service to store the new room.
+  *
+  * @param threadExecutor      thread executor that will perform the subscription
+  * @param postExecutionThread thread that will be notified of the subscription result
+  * @param authRepository      authentication repository reference
+  * @param roomRepository      room repository reference
+  * @usecase creation of a new room */
 final class CreateRoomUseCase(private[this] val threadExecutor: ThreadExecutor,
                               private[this] val postExecutionThread: PostExecutionThread,
                               private[this] val authRepository: AuthenticationRepository,
@@ -25,9 +31,17 @@ final class CreateRoomUseCase(private[this] val threadExecutor: ThreadExecutor,
     } yield RoomCreationResult(room)
 }
 
+/** Companion object */
 object CreateRoomUseCase {
-  def create(authRepository: AuthenticationRepository, roomRepository: RoomRepository)
-            (implicit ctx: Context): CreateRoomUseCase = {
+
+  /** Factory method to create the use case
+    *
+    * @param authRepository authentication repository reference
+    * @param roomRepository room repository reference
+    * @param ctx            Vertx context
+    * @return the use case object */
+  def apply(authRepository: AuthenticationRepository, roomRepository: RoomRepository)
+           (implicit ctx: Context): CreateRoomUseCase = {
     val threadExecutor: ThreadExecutor = ThreadExecutorExecutionContext(ctx.owner())
     val postExecutionThread: PostExecutionThread = PostExecutionThread(RxHelper.scheduler(ctx))
     new CreateRoomUseCase(threadExecutor, postExecutionThread, authRepository, roomRepository)

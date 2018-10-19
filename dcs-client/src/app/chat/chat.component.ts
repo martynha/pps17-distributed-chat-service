@@ -2,8 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { remove } from 'lodash';
 
 import { ChatService } from '../chat.service';
-import { DeleteRoomRequest, CreateRoomRequest } from '../requests';
+import {
+  DeleteRoomRequest,
+  CreateRoomRequest,
+  LogoutRequest
+} from '../requests';
 import { Room, User } from '../model';
+import { Router } from '@angular/router';
+import { Subscriber } from 'rxjs/Subscriber';
 
 @Component({
   selector: 'app-chat',
@@ -11,20 +17,24 @@ import { Room, User } from '../model';
   styleUrls: ['./chat.component.css']
 })
 export class ChatComponent implements OnInit {
-
   rooms: Room[];
 
   create = false;
 
-  constructor(private service: ChatService) {}
+  constructor(private service: ChatService, private router: Router) {}
 
   ngOnInit() {
-    // to debug
-    this.rooms = [];
-    this.rooms.push({
-      name: 'Room 1',
-      participations: []
-    });
+    console.log(this.service.getUser());
+    if (!this.service.getUser()) {
+      this.router.navigateByUrl('/login');
+    } else {
+      // to debug
+      this.rooms = [];
+      this.rooms.push({
+        name: 'Room 1',
+        participations: []
+      });
+    }
   }
 
   getUser(): User {
@@ -52,8 +62,16 @@ export class ChatComponent implements OnInit {
     });
   }
 
+  logout() {
+    this.service
+      .logout(new LogoutRequest(this.service.getUser().token))
+      .subscribe(_ => {}, console.error, () => {
+        this.service.setUser(null);
+        this.router.navigateByUrl('/login');
+      });
+  }
+
   toggleCreate() {
     this.create = !this.create;
   }
-
 }

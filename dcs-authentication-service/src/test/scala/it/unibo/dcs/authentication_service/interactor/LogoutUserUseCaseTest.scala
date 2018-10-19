@@ -8,7 +8,7 @@ import rx.lang.scala.{Observable, Subscriber}
 
 class LogoutUserUseCaseTest extends FlatSpec with MockFactory {
 
-  val token = "token"
+  val token = "header.eyJzdWIiOiAiYWxlIn0=.signature"
   val request = LogoutUserRequest(token)
   val expectedResult: Unit = Unit
 

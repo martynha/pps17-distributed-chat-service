@@ -31,6 +31,6 @@ private[impl] object UserRestApi {
 
   val createUserURI = "/createUser"
 
-  def getUserURI(username: String) = s"getUser/$username"
+  def getUserURI(username: String) = s"/getUser/$username"
 
 }

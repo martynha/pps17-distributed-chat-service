@@ -16,8 +16,8 @@ object VertxWebHelper {
   def respondWithCode(statusCode: Int)(implicit context: RoutingContext): Unit =
     context.response.setStatusCode(statusCode).end
 
-  def respond(statusCode: Int, errorMessage: String)(implicit context: RoutingContext): Unit = {
-    val responseBody = Json.obj(("status", statusCode), ("message", errorMessage))
+  def respond(statusCode: Int, message: String)(implicit context: RoutingContext): Unit = {
+    val responseBody = Json.obj(("status", statusCode), ("message", message))
     context.response.setStatusCode(statusCode).end(responseBody.encodePrettily())
   }
 

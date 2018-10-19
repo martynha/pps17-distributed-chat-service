@@ -16,7 +16,7 @@ object Launcher extends App {
   private val logger = ScalaLogger.getLogger(getClass.getName)
 
   VertxHelper.toObservable[Vertx](Vertx.clusteredVertx(VertxOptions(), _))
-    .subscribe(vertx => vertx deployVerticle(new WebAppVerticle, deploymentOptions(args(0).toInt)),
+    .subscribe(vertx => vertx deployVerticle(new WebAppVerticle, deploymentOptions),
       cause => logger.error("", cause))
 
 }

@@ -1,7 +1,8 @@
 package verticles
 
+import io.vertx.core.{AsyncResult, Handler}
 import io.vertx.ext.unit.report.ReportOptions
-import io.vertx.ext.unit.{TestOptions, TestSuite}
+import io.vertx.ext.unit.{TestContext, TestOptions, TestSuite}
 import io.vertx.lang.scala.ScalaLogger
 import io.vertx.lang.scala.ScalaVerticle._
 import io.vertx.scala.core.{Vertx, VertxOptions}
@@ -18,11 +19,21 @@ object WebappServiceSuite extends App {
 
   TestSuite.create("WebappService Test Suite")
     .test("WebApp Service is successfully deployed", context => {
-
       /* Verticle clustered deployment*/
       VertxHelper.toObservable[Vertx](Vertx.clusteredVertx(VertxOptions(), _))
-        .subscribe(vertx => vertx.deployVerticle(nameForVerticle[WebAppVerticle], deploymentOptions(args(0).toInt),
-          context.asyncAssertSuccess()), cause => logger.error("", cause))
-    }).after(_ => System.exit(0))
+        .subscribe(vertx => {
+          vertx.deployVerticle(nameForVerticle[WebAppVerticle], deploymentOptions,
+            verticleClosingHandler(vertx, context))
+        }, cause => logger.error("", cause))
+    })
     .run(new TestOptions().addReporter(new ReportOptions().setTo("console")))
+
+
+  private def verticleClosingHandler(vertx: Vertx, context: TestContext): Handler[AsyncResult[String]] = ar => {
+    if (ar.succeeded()) {
+      vertx.close()
+    } else {
+      context.fail(ar.cause())
+    }
+  }
 }

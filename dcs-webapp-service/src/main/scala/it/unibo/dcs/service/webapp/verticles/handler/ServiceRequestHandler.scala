@@ -17,18 +17,41 @@ import it.unibo.dcs.service.webapp.verticles.handler.impl.ServiceRequestHandlerI
   * It handles all the incoming request to the service APIs. */
 trait ServiceRequestHandler {
 
+  /** Login request handler
+    *
+    * @param context Vertx routing context
+    * @param ctx     Vertx context passed implicitly */
   def handleLogin(context: RoutingContext)(implicit ctx: Context): Unit
 
+  /** User registration request handler
+    *
+    * @param context Vertx routing context
+    * @param ctx     Vertx context passed implicitly */
   def handleRegistration(context: RoutingContext)(implicit ctx: Context): Unit
 
+  /** User logout request handler
+    *
+    * @param context Vertx routing context
+    * @param ctx     Vertx context passed implicitly */
   def handleLogout(context: RoutingContext)(implicit ctx: Context): Unit
 
+  def handleRoomDeletion(context: RoutingContext)(implicit ctx: Context): Unit
+
+  /** Room creation request handler
+    *
+    * @param context Vertx routing context
+    * @param ctx     Vertx context passed implicitly */
   def handleRoomCreation(context: RoutingContext)(implicit ctx: Context): Unit
 }
 
-/* Companion object */
+/** Companion object */
 object ServiceRequestHandler {
-  /* Factory method */
+
+  /** Factory method to create the request handler
+    *
+    * @param vertx    Vertx instance
+    * @param eventBus Vertx Event Bus
+    * @return the ServiceRequestHandler object */
   def apply(vertx: Vertx, eventBus: EventBus): ServiceRequestHandler = {
     val userApi = userRestApi(vertx, eventBus)
     val authApi = authRestApi(vertx, eventBus)

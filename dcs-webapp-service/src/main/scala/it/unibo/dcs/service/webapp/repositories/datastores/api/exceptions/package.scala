@@ -11,6 +11,8 @@ package object exceptions {
 
   final case class UserCreationResponseException() extends RuntimeException
 
+  final case class RoomDeletionException() extends RuntimeException
+
   final case class RoomCreationException() extends RuntimeException
 
 }

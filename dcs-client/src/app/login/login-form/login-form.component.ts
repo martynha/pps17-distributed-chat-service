@@ -1,12 +1,12 @@
-import { Component, OnInit } from "@angular/core";
-import { ChatService } from "../../chat.service";
-import { LoginRequest } from "../../requests";
-import { Router } from "@angular/router";
+import { Component, OnInit } from '@angular/core';
+import { ChatService } from '../../chat.service';
+import { LoginRequest } from '../../requests';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: "app-login-form",
-  templateUrl: "./login-form.component.html",
-  styleUrls: ["./login-form.component.css"]
+  selector: 'app-login-form',
+  templateUrl: './login-form.component.html',
+  styleUrls: ['./login-form.component.css']
 })
 export class LoginFormComponent {
   request: LoginRequest = new LoginRequest();
@@ -15,11 +15,8 @@ export class LoginFormComponent {
 
   login() {
     this.service.login(this.request).subscribe(
-      user => {
-        this.service.setUser(user);
-        this.router.navigateByUrl("/");
-      },
-      error => console.error(error)
-    );
+      user => this.service.setUser(user),
+      err => console.error(err),
+      () => this.router.navigateByUrl('/'));
   }
 }

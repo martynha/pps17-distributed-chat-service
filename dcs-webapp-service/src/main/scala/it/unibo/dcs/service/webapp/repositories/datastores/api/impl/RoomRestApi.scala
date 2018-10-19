@@ -2,31 +2,47 @@ package it.unibo.dcs.service.webapp.repositories.datastores.api.impl
 
 import io.vertx.scala.ext.web.client.WebClient
 import it.unibo.dcs.commons.service.{AbstractApi, HttpEndpointDiscovery}
-import it.unibo.dcs.service.webapp.interaction.Requests.CreateRoomRequest
+import it.unibo.dcs.service.webapp.interaction.Requests
 import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
+import it.unibo.dcs.service.webapp.interaction.Requests.{CreateRoomRequest, DeleteRoomRequest}
 import it.unibo.dcs.service.webapp.model.Room
 import it.unibo.dcs.service.webapp.repositories.datastores.api.RoomApi
-import it.unibo.dcs.service.webapp.repositories.datastores.api.exceptions.RoomCreationException
-import it.unibo.dcs.service.webapp.repositories.datastores.api.impl.RoomRestApi._
+import it.unibo.dcs.service.webapp.repositories.datastores.api.exceptions.{RegistrationResponseException, RoomCreationException, RoomDeletionException}
 import rx.lang.scala.Observable
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-
 class RoomRestApi(private[this] val discovery: HttpEndpointDiscovery)
-  extends AbstractApi(discovery, "room-service") with RoomApi {
-
+  extends AbstractApi(discovery, "RoomService") with RoomApi {
 
   override def createRoom(createRoomRequest: CreateRoomRequest): Observable[Room] = {
     for {
       response <- request((roomWebClient: WebClient) =>
-        Observable.from(roomWebClient.post(createRoomURI).sendJsonObjectFuture(createRoomRequest)))
+        Observable.from(roomWebClient.post(RoomRestApi.createRoomURI).sendJsonObjectFuture(createRoomRequest)))
     } yield response.bodyAsJsonObject().getOrElse(throw RoomCreationException())
+  }
+
+  override def deleteRoom(deletionRequest: DeleteRoomRequest): Observable[Unit] = {
+    for {
+      response <- request((roomWebClient: WebClient) =>
+        Observable.from(roomWebClient.post(RoomRestApi.deleteRoomURI).sendJsonObjectFuture(deletionRequest)))
+    } yield response.bodyAsJsonObject().getOrElse(throw RoomDeletionException())
+  }
+
+  override def registerUser(userRegistrationRequest: Requests.RegisterUserRequest): Observable[Unit] = {
+    for {
+      response <- request((roomWebClient: WebClient) =>
+        Observable.from(roomWebClient.post(RoomRestApi.registerUser).sendJsonObjectFuture(userRegistrationRequest)))
+    } yield response.bodyAsJsonObject().getOrElse(throw RegistrationResponseException())
   }
 }
 
 private[impl] object RoomRestApi {
 
   val createRoomURI = "/createRoom"
+
+  val deleteRoomURI = "/deleteRoom"
+
+  val registerUser = "/registerUser"
 
 }

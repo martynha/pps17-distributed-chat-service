@@ -6,7 +6,7 @@ import it.unibo.dcs.service.webapp.model.{Room, User}
 
 import scala.language.implicitConversions
 
-/** It wraps all results produces by the use cases executions. */
+/** It wraps all results produced by the use cases executions. */
 object Results {
 
   final case class LoginResult(user: User, token: String)
@@ -15,7 +15,7 @@ object Results {
 
   final case class RoomCreationResult(room: Room)
 
-  /** It enables implicit conversions in order to clean code that deal with results. */
+  /** It enables implicit conversions in order to clean code that deals with results. */
   object Implicits {
 
     private val gsonInstance = new Gson()

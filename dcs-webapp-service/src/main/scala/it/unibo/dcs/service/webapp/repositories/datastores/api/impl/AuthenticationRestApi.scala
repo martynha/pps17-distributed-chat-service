@@ -1,14 +1,13 @@
 package it.unibo.dcs.service.webapp.repositories.datastores.api.impl
 
+import io.vertx.lang.scala.json.Json
 import it.unibo.dcs.commons.service.{AbstractApi, HttpEndpointDiscovery}
 import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
-import it.unibo.dcs.service.webapp.interaction.Requests.{CreateRoomRequest, LoginUserRequest, LogoutUserRequest, RegisterUserRequest}
+import it.unibo.dcs.service.webapp.interaction.Requests._
 import it.unibo.dcs.service.webapp.repositories.datastores.api.AuthenticationApi
-import it.unibo.dcs.service.webapp.repositories.datastores.api.exceptions.{LoginResponseException, RegistrationResponseException, RoomCreationException}
+import it.unibo.dcs.service.webapp.repositories.datastores.api.exceptions.{LoginResponseException, RegistrationResponseException}
 import it.unibo.dcs.service.webapp.repositories.datastores.api.impl.AuthenticationRestApi._
 import rx.lang.scala.Observable
-
-import it.unibo.dcs.service.webapp.repositories.datastores.api.routes.protectedRoomURI
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -42,14 +41,15 @@ class AuthenticationRestApi(private[this] val discovery: HttpEndpointDiscovery)
       .map(_.body())
   }
 
-
   override def createRoom(roomCreationRequest: CreateRoomRequest): Observable[Unit] =
-    request(roomWebClient =>
-      Observable.from(roomWebClient.post(protectedRoomURI)
-        .putHeader(authenticationKeyLabel, tokenPrefix + roomCreationRequest.token)
-        .sendJsonObjectFuture(roomCreationRequest)))
-      .map(response => response.bodyAsString().getOrElse(throw RoomCreationException()))
+    checkToken(CheckTokenRequest(roomCreationRequest.token))
 
+  override def checkToken(checkRoomRequest: CheckTokenRequest): Observable[Unit] =
+    request(tokenWebClient =>
+      Observable.from(tokenWebClient.get(checkTokenURI)
+        .putHeader(authenticationKeyLabel, tokenPrefix + checkRoomRequest.token)
+        .sendJsonObjectFuture(Json.obj())))
+      .map(_.body())
 }
 
 private[impl] object AuthenticationRestApi {
@@ -57,5 +57,6 @@ private[impl] object AuthenticationRestApi {
   val loginUserURI = "/login"
   val registerUserURI = "/register"
   val logoutUserURI = "/protected/logout"
+  val checkTokenURI = "/protected/tokenValidity"
 
 }

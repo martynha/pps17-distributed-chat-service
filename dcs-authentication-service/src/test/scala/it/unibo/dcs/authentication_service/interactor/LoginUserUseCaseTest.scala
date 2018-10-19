@@ -18,7 +18,8 @@ class LoginUserUseCaseTest extends FlatSpec with MockFactory {
 
   it should "login the user when the use case is executed" in {
     (jwtAuth generateToken (_: JsonObject, _: JWTOptions)) expects (*, *) returns expectedResult
-    (authRepository loginUser(_, _)) expects (request.username, request.password) returns (Observable just expectedResult)
+    (authRepository checkUserCredentials (_, _)) expects (request.username, request.password) returns
+      (Observable just expectedResult)
 
     loginUserUseCase(request).subscribe(subscriber)
 

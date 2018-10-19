@@ -28,6 +28,7 @@ export class ChatService {
     // eventBus.connect(ChatService.EVENTS);
   }
 
+
   login(request: LoginRequest): Observable<User> {
     return this.client.post<User>(ChatService.LOGIN, request);
   }

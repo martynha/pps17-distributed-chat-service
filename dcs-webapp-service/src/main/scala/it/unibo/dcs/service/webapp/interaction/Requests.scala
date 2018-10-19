@@ -12,16 +12,34 @@ object Requests {
 
   final case class LoginUserRequest(username: String, password: String)
 
-  final case class RegisterUserRequest(username: String,
-                                       firstName: String, lastName: String, password: String, passwordConfirm: String)
+  final case class RegisterUserRequest(username: String, firstName: String, lastName: String, password: String, passwordConfirm: String)
 
   final case class LogoutUserRequest(username: String, token: String)
 
   final case class CreateRoomRequest(name: String, username: String, token: String)
 
+  final case class DeleteRoomRequest(roomName: String, username: String, token: String)
+
+  final case class CheckTokenRequest(token: String)
 
   /** It enables implicit conversions in order to clean code that deal with requests. */
   object Implicits {
+
+    implicit def deleteRoomRequestToJson(request: DeleteRoomRequest): JsonObject = {
+      Json.obj(("name", request.roomName), ("username", request.username), ("token", request.token))
+    }
+
+    implicit def jsonToDeleteRoomRequest(json: JsonObject): DeleteRoomRequest = {
+      DeleteRoomRequest(json.getString("name"), json.getString("username"), json.getString("token"))
+    }
+
+    implicit def checkTokenRequestToJson(request: CheckTokenRequest): JsonObject = {
+      Json.obj(("token", request.token))
+    }
+
+    implicit def jsonToCheckTokenRequest(json: JsonObject): CheckTokenRequest = {
+      CheckTokenRequest(json.getString("token"))
+    }
 
     implicit def createRoomRequestToJsonObject(request: CreateRoomRequest): JsonObject = {
       Json.obj(("name", request.name), ("username", request.username))

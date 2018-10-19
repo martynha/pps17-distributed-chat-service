@@ -9,15 +9,16 @@ import { RegisterRequest } from '../../requests';
   styleUrls: ['./register-form.component.css']
 })
 export class RegisterFormComponent {
-
   request = new RegisterRequest();
 
-  constructor(private service: ChatService, private router: Router) { }
+  constructor(private service: ChatService, private router: Router) {}
 
   register() {
-    this.service.register(this.request)
-      .subscribe(user => this.router.navigateByUrl('/'),
-                 err => console.error(err));
+    this.service
+      .register(this.request)
+      .subscribe(
+        user => this.service.setUser(user),
+        err => console.error(err),
+        () => this.router.navigateByUrl('/'));
   }
-
 }

@@ -11,11 +11,18 @@ class AuthenticationRepositoryImpl(private[this] val authDataStore: Authenticati
   override def createUser(username: String, password: String): Observable[Unit] =
     authDataStore.createUser(username, password)
 
-  override def loginUser(username: String, password: String): Observable[Unit] =
-    authDataStore.checkUserExistence(username, password)
+  override def checkUserExistence(username: String): Observable[Unit] =
+    authDataStore.checkUserExistence(username)
+
+  override def checkUserCredentials(username: String, password: String): Observable[Unit] =
+    authDataStore.checkUserCredentials(username, password)
 
   override def invalidToken(token: String, tokenExpirationDate: Date): Observable[Unit] =
     authDataStore.invalidToken(token, tokenExpirationDate)
 
-  override def isTokenInvalid(token: String): Observable[Boolean] = authDataStore.isTokenInvalid(token)
+  override def isTokenValid(token: String): Observable[Boolean] = authDataStore.isTokenValid(token)
+}
+
+object AuthenticationRepositoryImpl{
+  def apply(authDataStore: AuthenticationDataStore) = new AuthenticationRepositoryImpl(authDataStore)
 }
