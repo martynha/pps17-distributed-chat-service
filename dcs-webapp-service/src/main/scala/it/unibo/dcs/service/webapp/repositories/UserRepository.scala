@@ -34,13 +34,3 @@ object UserRepository {
     * @return the UserRepository instance */
   def apply(userDataStore: UserDataStore): UserRepository = new UserRepositoryImpl(userDataStore)
 }
-
-/** Companion object */
-object UserRepository {
-
-  /** Factory method to create the user repository
-    *
-    * @param userDataStore user data store reference
-    * @return the UserRepository instance */
-  def apply(userDataStore: UserDataStore): UserRepository = new UserRepositoryImpl(userDataStore)
-}

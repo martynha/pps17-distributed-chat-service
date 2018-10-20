@@ -1,7 +1,7 @@
 package it.unibo.dcs.service.webapp.interaction
 
 import io.vertx.lang.scala.json.{Json, JsonObject}
-import it.unibo.dcs.commons.dataaccess.Implicits.stringToDate
+import it.unibo.dcs.commons.dataaccess.Implicits.{dateToString, stringToDate, booleanToString, stringToBoolean }
 import it.unibo.dcs.service.webapp.model.{Room, User}
 
 import scala.language.implicitConversions
@@ -79,7 +79,7 @@ object Requests {
 
     implicit def jsonObjectToUser(json: JsonObject): User = {
       User(json.getString("username"), json.getString("firstName"),
-        json.getString("lastName"), json.getString("bio"), json.getBoolean("visible"),
+        json.getString("lastName"), json.getString("bio"), booleanToString(json.getBoolean("visible")),
         json.getString("lastSeen"))
     }
 
