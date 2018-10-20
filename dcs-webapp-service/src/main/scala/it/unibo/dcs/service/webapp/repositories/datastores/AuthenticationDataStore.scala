@@ -40,6 +40,8 @@ trait AuthenticationDataStore {
     * @param request needed info to check the token validity
     * @return an empty observable stream */
   def checkToken(request: CheckTokenRequest): Observable[Unit]
+
+  def checkLogout(request: LogoutUserRequest): Observable[Unit]
 }
 
 /** Companion object */

@@ -5,16 +5,17 @@ import io.vertx.core.http.HttpMethod._
 import io.vertx.core.{AbstractVerticle, Context}
 import io.vertx.lang.scala.json.Json
 import io.vertx.scala.ext.auth.jwt.{JWTAuth, JWTAuthOptions}
-import io.vertx.scala.ext.web.handler.CorsHandler
+import io.vertx.scala.ext.web.handler.{BodyHandler, CorsHandler, JWTAuthHandler}
 import io.vertx.scala.ext.web.{Router, RoutingContext}
-import io.vertx.scala.ext.web.handler.{BodyHandler, JWTAuthHandler}
-import it.unibo.dcs.authentication_service.interactor.{CheckTokenUseCase, LoginUserUseCase, LogoutUserUseCase, RegisterUserUseCase}
+import it.unibo.dcs.authentication_service.interactor._
 import it.unibo.dcs.authentication_service.repository.AuthenticationRepository
+import it.unibo.dcs.authentication_service.validator.LogoutUserValidator
 import it.unibo.dcs.commons.RxHelper
+import it.unibo.dcs.commons.VertxWebHelper._
 import it.unibo.dcs.commons.interactor.ThreadExecutorExecutionContext
 import it.unibo.dcs.commons.interactor.executor.PostExecutionThread
 import it.unibo.dcs.commons.service.{HttpEndpointPublisher, ServiceVerticle}
-import it.unibo.dcs.commons.VertxWebHelper._
+
 import scala.io.Source
 import scala.util.{Failure, Success}
 
@@ -92,9 +93,9 @@ final class AuthenticationVerticle(authenticationRepository: AuthenticationRepos
                                 (implicit context: RoutingContext): Unit = {
     val token = getTokenFromHeader
     token.fold[Unit](() => respondWithCode(401))(tokenValue => {
-      jwtAuth.authenticateFuture(Json.obj(("jwt", tokenValue))).onComplete{
+      jwtAuth.authenticateFuture(Json.obj(("jwt", tokenValue))).onComplete {
         case Success(_) => context.next()
-        case Failure(error) => respondWithCode(401)
+        case Failure(_) => respondWithCode(401)
       }
     })
   }
@@ -103,6 +104,7 @@ final class AuthenticationVerticle(authenticationRepository: AuthenticationRepos
     val requestHandler = getRequestHandler(jwtAuth)
     router.post("/register").handler(requestHandler.handleRegistration(_))
     router.post("/login").handler(requestHandler.handleLogin(_))
+    router.post("/validateLogout").handler(requestHandler.handleCheckLogout(_))
     router.post("/protected/logout").handler(requestHandler.handleLogout(_))
     router.get("/protected/tokenValidity").handler(requestHandler.handleTokenCheck(_))
   }
@@ -114,7 +116,9 @@ final class AuthenticationVerticle(authenticationRepository: AuthenticationRepos
     val logoutUseCase = LogoutUserUseCase(threadExecutor, postExecutionThread, authenticationRepository)
     val registerUseCase = RegisterUserUseCase(threadExecutor, postExecutionThread, authenticationRepository, jwtAuth)
     val checkTokenUseCase = CheckTokenUseCase(threadExecutor, postExecutionThread, authenticationRepository)
-    ServiceRequestHandlerImpl(loginUseCase, logoutUseCase, registerUseCase, checkTokenUseCase)
+    val logoutValidator = LogoutUserValidator(authenticationRepository)
+    val logoutUserValidation = LogoutUserValidation(threadExecutor, postExecutionThread, logoutValidator)
+    ServiceRequestHandlerImpl(loginUseCase, logoutUseCase, registerUseCase, checkTokenUseCase, logoutUserValidation)
   }
 }
 

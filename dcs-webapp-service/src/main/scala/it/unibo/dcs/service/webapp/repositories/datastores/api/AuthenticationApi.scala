@@ -40,6 +40,8 @@ trait AuthenticationApi {
     * @param request request information containing the token
     * @return an empty observable */
   def checkToken(request: CheckTokenRequest): Observable[Unit]
+
+  def checkLogout(logoutUserRequest: LogoutUserRequest): Observable[Unit]
 }
 
 /** Companion object */

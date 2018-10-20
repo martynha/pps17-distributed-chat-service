@@ -34,6 +34,7 @@ dependencies {
     compile project(':dcs-service-commons')
     compile project(':dcs-data-access-commons')
     compile project(':dcs-interactor-commons')
+    compile project(':dcs-exceptions')
 
     testCompile "io.vertx:vertx-unit:3.5.4"
 }

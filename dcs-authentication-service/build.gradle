@@ -8,6 +8,8 @@ dependencies {
     compile project(':dcs-service-commons')
     compile project(':dcs-data-access-commons')
     compile project(':dcs-interactor-commons')
+    compile project(':dcs-exceptions')
+
 
     compile group: 'io.vertx', name: 'vertx-auth-jwt-scala_2.12', version: vertxVersion
     compile group: 'commons-codec', name: 'commons-codec', version: commonsCodecVersion

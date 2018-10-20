@@ -21,4 +21,6 @@ class AuthenticationDataStoreNetwork(private val authenticationApi: Authenticati
 
   override def checkToken(request: Requests.CheckTokenRequest): Observable[Unit] =
     authenticationApi.checkToken(request)
+
+  override def checkLogout(request: LogoutUserRequest): Observable[Unit] = authenticationApi.checkLogout(request)
 }

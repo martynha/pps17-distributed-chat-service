@@ -16,4 +16,5 @@ dependencies {
     compile project(':dcs-service-commons')
     compile project(':dcs-interactor-commons')
     compile project(':dcs-data-access-commons')
+    compile project(':dcs-exceptions')
 }

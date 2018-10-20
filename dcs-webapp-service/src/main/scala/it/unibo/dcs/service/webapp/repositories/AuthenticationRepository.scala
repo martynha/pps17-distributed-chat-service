@@ -32,6 +32,8 @@ trait AuthenticationRepository {
     * Request containing the jwt token
     * @return an empty observable object */
   def checkToken(request: CheckTokenRequest): Observable[Unit]
+
+  def checkLogout(request: LogoutUserRequest): Observable[Unit]
 }
 
 /** Companion object */

@@ -1,9 +1,13 @@
 package it.unibo.dcs.commons
 
+import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.http.HttpHeaders
-import io.vertx.core.json.JsonObject
-import io.vertx.lang.scala.json.Json
+import io.vertx.lang.scala.json.{Json, JsonObject}
+import io.vertx.scala.core.http.HttpServerResponse
 import io.vertx.scala.ext.web.RoutingContext
+import it.unibo.dcs.commons.VertxWebHelper.Implicits._
+
+import scala.language.implicitConversions
 
 object VertxWebHelper {
 
@@ -38,4 +42,23 @@ object VertxWebHelper {
   def getTokenFromHeader(implicit context: RoutingContext): Option[String] = {
     context.request().headers().get(HttpHeaders.AUTHORIZATION.toString).map(token => token.split(" ").last)
   }
+
+  def endErrorResponse(response: HttpServerResponse,
+                       httpResponseStatus: HttpResponseStatus,
+                       errorType: String, description: String): Unit = {
+    val statusJson: JsonObject = httpResponseStatus
+    val typeField = ("type", errorType)
+    val descriptionField = ("description", description)
+    response.setStatusCode(httpResponseStatus.code())
+    response.end(Json.obj(("status", statusJson), typeField, descriptionField))
+  }
+
+  object Implicits {
+
+    implicit def jsonObjectToString(json: JsonObject): String = json.encode()
+
+    implicit def httpResponseStatusToJsonObject(status: HttpResponseStatus): JsonObject =
+      new JsonObject().put("code", status.code()).put("reasonPhrase", status.reasonPhrase())
+  }
+
 }
