@@ -2,7 +2,7 @@ package it.unibo.dcs.service.user.data.impl
 
 import io.vertx.lang.scala.json.{JsonArray, JsonObject}
 import io.vertx.scala.ext.sql.SQLConnection
-import it.unibo.dcs.commons.dataaccess.Implicits.{dateToString, _}
+import it.unibo.dcs.commons.dataaccess.Implicits._
 import it.unibo.dcs.commons.dataaccess.{DataStoreDatabase, ResultSetHelper}
 import it.unibo.dcs.service.user.data.UserDataStore
 import it.unibo.dcs.service.user.data.impl.UserDataStoreDatabase.Implicits._

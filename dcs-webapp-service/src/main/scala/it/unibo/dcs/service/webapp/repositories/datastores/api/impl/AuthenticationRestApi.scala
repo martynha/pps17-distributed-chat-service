@@ -18,22 +18,21 @@ class AuthenticationRestApi(private[this] val discovery: HttpEndpointDiscovery)
   private val authenticationKeyLabel = "Authorization"
   private val tokenPrefix = "Bearer "
 
-
   override def loginUser(loginUserRequest: LoginUserRequest): Observable[String] = {
     request(authWebClient =>
       Observable.from(authWebClient.post(loginUserURI).sendJsonObjectFuture(loginUserRequest)))
-      .map(response => response.bodyAsString()
-        .getOrElse(throw LoginResponseException("Authentication service returned an empty body")))
+      .map(response => response.bodyAsJsonObject()
+        .getOrElse(throw LoginResponseException("Authentication service returned an empty body"))
+        .getString("token"))
   }
-
 
   override def registerUser(registerRequest: RegisterUserRequest): Observable[String] = {
     request(authWebClient =>
       Observable.from(authWebClient.post(registerUserURI).sendJsonObjectFuture(registerRequest)))
-      .map(response => response.bodyAsString()
-        .getOrElse(throw RegistrationResponseException("Authentication service returned an empty body")))
+      .map(response => response.bodyAsJsonObject()
+        .getOrElse(throw RegistrationResponseException("Authentication service returned an empty body"))
+        .getString("token"))
   }
-
 
   override def logoutUser(logoutRequest: LogoutUserRequest): Observable[Unit] = {
     request(authWebClient =>

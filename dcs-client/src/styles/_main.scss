@@ -1,0 +1,36 @@
+$left: 250px;
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-family: "Fontil Sans";
+}
+
+.main-container {
+  position: absolute;
+  top: 64px;
+  left: $left;
+  right: 0;
+  bottom: 0;
+}
+
+.main-content {
+  padding: 20px;
+  margin: 0 0 44px 0;
+}
+
+.mb-20 {
+  margin-bottom: 20px;
+}
+
+.w-100 {
+  // display: block;
+  width: 100%;
+}
+
+.send {
+  position: fixed;
+  bottom: 0;
+  width: calc(100% - #{$left});
+}

@@ -5,7 +5,7 @@ import io.vertx.lang.scala.ScalaLogger
 import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.core.http.HttpServerResponse
 import it.unibo.dcs.commons.VertxWebHelper.endErrorResponse
-import it.unibo.dcs.commons.dataaccess.Implicits.{booleanToString, dateToString}
+import it.unibo.dcs.commons.dataaccess.Implicits.dateToString
 import it.unibo.dcs.commons.validation.ErrorTypes._
 import it.unibo.dcs.exceptions.{MissingFirstNameException, MissingLastNameException, MissingUsernameException, UsernameAlreadyTaken}
 import it.unibo.dcs.service.user.model.User
@@ -28,7 +28,8 @@ package object subscriber {
     }
   }
 
-  final class ValidateUserCreationSubscriber(private[this] val response: HttpServerResponse) extends Subscriber[Unit] {
+  final class ValidateUserCreationSubscriber(private[this] val response: HttpServerResponse)
+    extends Subscriber[Unit] {
 
     private[this] val log = ScalaLogger.getLogger(getClass.getName)
 
@@ -80,7 +81,7 @@ package object subscriber {
         .put("firstName", user.firstName)
         .put("lastName", user.lastName)
         .put("bio", user.bio)
-        .put("visible", booleanToString(user.visible))
+        .put("visible", user.visible)
         .put("lastSeen", dateToString(user.lastSeen))
     }
 

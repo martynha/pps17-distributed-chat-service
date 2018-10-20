@@ -19,6 +19,7 @@ import it.unibo.dcs.commons.service.codecs.RecordMessageCodec
 import scala.util.{Failure, Success}
 
 object Launcher extends App {
+
   Vertx.clusteredVertx(VertxOptions(), ar => {
     if (ar.succeeded) {
       val vertx = ar.result()
@@ -35,7 +36,6 @@ object Launcher extends App {
   private def deployVerticle(vertx: Vertx, sqlConnection: SQLConnection): Unit = {
     val authDataStore = new AuthenticationDataStoreDatabase(sqlConnection)
     val authRepository = new AuthenticationRepositoryImpl(authDataStore)
-
 
     vertx.eventBus.asJava.asInstanceOf[JEventBus].registerDefaultCodec(classOf[Record], new RecordMessageCodec())
 

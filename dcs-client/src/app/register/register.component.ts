@@ -1,21 +1,31 @@
 import { Component, OnInit } from '@angular/core';
-import { ChatService } from '../chat.service';
 import { Router } from '@angular/router';
+import { RegisterRequest } from '../requests';
+import { AuthService } from '../service/auth.service';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.css']
+  styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit {
 
-  constructor(private service: ChatService, private router: Router) {
-  }
+  request = new RegisterRequest();
 
-  ngOnInit(): void {
-    if (this.service.getUser()) {
-      this.router.navigateByUrl('/');
-    }
+  constructor(private router: Router, private auth: AuthService) {}
+
+  ngOnInit() {}
+
+  register() {
+    this.auth.register(this.request).subscribe(
+      user => {},
+      err => {
+        console.error(err);
+        this.request.password = '';
+        this.request.passwordConfirm = '';
+      },
+      () => this.router.navigateByUrl('/')
+    );
   }
 
 }

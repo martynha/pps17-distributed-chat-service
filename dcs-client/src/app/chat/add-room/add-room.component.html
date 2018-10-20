@@ -1,0 +1,13 @@
+<footer class="send">
+  <mat-toolbar>
+    <form class="w-100" fxLayout="row" (submit)="$event.preventDefault();">
+      <div fxFlex>
+        <div fxFlexFill>
+          <mat-form-field class="w-100">
+            <input matInput type="text" placeholder="Type room name" name="name" id="name" [(ngModel)]="name" (keyup.enter)="addRoom();">
+          </mat-form-field>
+        </div>
+      </div>
+    </form>
+  </mat-toolbar>
+</footer>

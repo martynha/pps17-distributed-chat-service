@@ -1,9 +1,36 @@
-<div class="login">
-  <div class="login_wrapper">
-    <div class="form login_form">
-      <section class="login_content">
-        <app-login-form></app-login-form>
-      </section>
-    </div>
+<div class="login-page">
+  <div class="content">
+    <!-- <h1 class="app-name">Sb Admin Material</h1> -->
+    <form class="login-form" fxLayout="column" (submit)="$event.preventDefault();">
+      <div class="text-center" fxFlex>
+        <h1 class="app-name">Welcome back!</h1>
+      </div>
+      <div fxFlex>
+        <div fxFlexFill>
+          <mat-form-field class="w-100">
+            <input matInput type="text" placeholder="Username" id="username" name="username" [(ngModel)]="request.username">
+          </mat-form-field>
+        </div>
+      </div>
+      <div fxFlex>
+        <div fxFlexFill>
+          <mat-form-field class="w-100">
+            <input matInput type="password" placeholder="Password" id="password" name="password" [(ngModel)]="request.password">
+          </mat-form-field>
+        </div>
+      </div>
+      <div fxFlex>
+        <div fxFlexFill>
+          <button mat-raised-button color="primary" class="w-100" (click)="login()">Login</button>
+        </div>
+      </div>
+
+      <div fxFlex fxFlexAlign="center" style="margin-top: 20px;">
+        <div fxFlex>
+          New to site?
+          <a routerLink="/register">Register now</a>!
+        </div>
+      </div>
+    </form>
   </div>
 </div>

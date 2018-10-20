@@ -1,0 +1,15 @@
+<div id="sidebar">
+  <mat-nav-list>
+    <div mat-list-item>
+    <form style="margin-left: 20px;">
+      <mat-form-field>
+        <input matInput [placeholder]="'Search a room' | translate">
+      </mat-form-field>
+    </form>
+    </div>
+    <a mat-list-item *ngFor="let room of rooms" [routerLinkActive]="'active'" (click)="selectRoom(room);">
+      <mat-icon class="sidenav-icon">dashboard</mat-icon>
+      {{ room.name }}
+    </a>
+  </mat-nav-list>
+</div>

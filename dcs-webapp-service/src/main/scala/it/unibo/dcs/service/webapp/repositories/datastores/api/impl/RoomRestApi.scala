@@ -13,7 +13,7 @@ import rx.lang.scala.Observable
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class RoomRestApi(private[this] val discovery: HttpEndpointDiscovery)
-  extends AbstractApi(discovery, "RoomService") with RoomApi {
+  extends AbstractApi(discovery, "room-service") with RoomApi {
 
   override def createRoom(createRoomRequest: CreateRoomRequest): Observable[Room] = {
     for {

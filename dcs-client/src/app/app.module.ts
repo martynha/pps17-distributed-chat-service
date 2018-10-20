@@ -1,45 +1,64 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { AppComponent } from './app.component';
-import { LoginComponent } from './login/login.component';
-import { ChatComponent } from './chat/chat.component';
-import { RegisterComponent } from './register/register.component';
+import { NgModule } from '@angular/core';
 
-import { RegisterFormComponent } from './register/register-form/register-form.component';
-import { LoginFormComponent } from './login/login-form/login-form.component';
-import { RoomEntryComponent } from './room-entry/room-entry.component';
+import { HttpClientModule, HttpClient, HTTP_INTERCEPTORS } from '@angular/common/http';
 
-import { EventBusService } from './event-bus.service';
-import { ChatService } from './chat.service';
-import { AddRoomComponent } from './add-room/add-room.component';
+import { LayoutModule } from '@angular/cdk/layout';
+import { OverlayModule } from '@angular/cdk/overlay';
 
-import { ServerInterceptor } from './server-interceptor';
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+
 import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+import { MaterialModule } from './material.module';
+import { EventBusService } from './service/event-bus.service';
+import { ChatService } from './service/chat.service';
+import { LoginComponent } from './login/login.component';
+import { RegisterComponent } from './register/register.component';
+import { FormsModule } from '@angular/forms';
+import { ServerInterceptor } from './server-interceptor';
+
+export const createTranslateLoader = (http) => {
+  // for development
+  /*return new TranslateHttpLoader(
+      http,
+      '/start-javascript/sb-admin-material/master/dist/assets/i18n/',
+      '.json'
+  );*/
+  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+};
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    ChatComponent,
-    RegisterComponent,
-    RegisterFormComponent,
-    LoginFormComponent,
-    RoomEntryComponent,
-    AddRoomComponent
+    RegisterComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    FormsModule,
+    LayoutModule,
+    OverlayModule,
+    AppRoutingModule,
+    MaterialModule,
     HttpClientModule,
-    AppRoutingModule
+    FormsModule,
+    TranslateModule.forRoot({
+        loader: {
+            provide: TranslateLoader,
+            useFactory: createTranslateLoader,
+            deps: [HttpClient]
+        }
+    })
   ],
-  providers: [EventBusService, ChatService,
-    { provide: HTTP_INTERCEPTORS, useClass: ServerInterceptor, multi: true }],
+  providers: [
+    EventBusService,
+    ChatService,
+    { provide: HTTP_INTERCEPTORS, useClass: ServerInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

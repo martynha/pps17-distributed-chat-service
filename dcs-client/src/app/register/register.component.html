@@ -1,9 +1,57 @@
-<div class="login">
-  <div class="login_wrapper">
-    <div class="form login_form">
-      <section class="login_content">
-        <app-register-form></app-register-form>
-      </section>
-    </div>
+<div class="login-page">
+  <div class="content">
+    <!-- <h1 class="app-name">Sb Admin Material</h1> -->
+    <form class="login-form" fxLayout="column" (submit)="$event.preventDefault();">
+      <div class="text-center" fxFlex>
+        <h2 class="app-name">Welcome back!</h2>
+      </div>
+      <div fxFlex>
+        <div fxFlexFill>
+          <mat-form-field class="w-100">
+            <input matInput type="text" placeholder="Username" id="username" name="username" [(ngModel)]="request.username">
+          </mat-form-field>
+        </div>
+      </div>
+      <div fxFlex>
+        <div fxFlexFill>
+          <mat-form-field class="w-100">
+            <input matInput type="text" placeholder="First name" id="firstName" name="firstName" [(ngModel)]="request.firstName">
+          </mat-form-field>
+        </div>
+      </div>
+      <div fxFlex>
+        <div fxFlexFill>
+          <mat-form-field class="w-100">
+            <input matInput type="text" placeholder="Last name" id="lastName" name="lastName" [(ngModel)]="request.lastName">
+          </mat-form-field>
+        </div>
+      </div>
+      <div fxFlex>
+        <div fxFlexFill>
+          <mat-form-field class="w-100">
+            <input matInput type="password" placeholder="Password" id="password" name="password" [(ngModel)]="request.password">
+          </mat-form-field>
+        </div>
+      </div>
+      <div fxFlex>
+        <div fxFlexFill>
+          <mat-form-field class="w-100">
+            <input matInput type="password" placeholder="Confirm password" id="passwordConfirm" name="passwordConfirm" [(ngModel)]="request.passwordConfirm">
+          </mat-form-field>
+        </div>
+      </div>
+      <div fxFlex>
+        <div fxFlexFill>
+          <button mat-raised-button color="primary" class="w-100" (click)="register()">Register</button>
+        </div>
+      </div>
+
+      <div fxFlex fxFlexAlign="center" style="margin-top: 20px;">
+        <div fxFlex>
+          Already have an account?
+          <a routerLink="/login">Login now</a>!
+        </div>
+      </div>
+    </form>
   </div>
 </div>
