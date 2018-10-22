@@ -1,13 +1,9 @@
 package it.unibo.dcs.commons
 
-import java.nio.charset.StandardCharsets
-
-import io.vertx.core.json.JsonObject
 import io.vertx.core.{AsyncResult, Future, Handler, Context => JContext, Vertx => JVertx}
 import io.vertx.scala.core.{Context, Vertx}
 import it.unibo.dcs.commons.RxHelper.Implicits.RxObservable
 import it.unibo.dcs.commons.VertxHelper.Implicits._
-import org.apache.commons.io.IOUtils
 import rx.lang.scala.Observable
 
 import scala.util.{Failure, Success, Try}
@@ -32,9 +28,9 @@ object VertxHelper {
 
     implicit def functionToHandler[T](handler: Function[T, Any]): Handler[T] = (event: T) => handler(event)
 
-    implicit def toSucceededFuture[T] (result: T): AsyncResult[T] = Future.succeededFuture(result)
+    implicit def toSucceededFuture[T](result: T): AsyncResult[T] = Future.succeededFuture(result)
 
-    implicit def toFailedFuture[T] (causeFailure: Throwable): AsyncResult[T] = Future.failedFuture(causeFailure)
+    implicit def toFailedFuture[T](causeFailure: Throwable): AsyncResult[T] = Future.failedFuture(causeFailure)
 
     implicit class RichAsyncResult[T](ar: AsyncResult[T]) {
       final def toTry: Try[T] =

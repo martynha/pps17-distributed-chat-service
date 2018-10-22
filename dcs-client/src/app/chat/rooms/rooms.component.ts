@@ -43,4 +43,11 @@ export class RoomsComponent implements OnInit {
     this.chat.selectRoom(room);
     this.router.navigate(['/rooms', room.name]);
   }
+
+  deleteRoom(room) {
+    console.log(room);
+    this.chat.deleteRoom(room.name)
+      .subscribe(() => {}, err => console.error(err)
+    );
+  }
 }

@@ -10,7 +10,7 @@ import rx.lang.scala.Observable
 /** Structure that allows access to user data by different means (e.g. network, file, database, ecc) */
 trait UserDataStore {
 
-  def checkUserRegistration(request: RegisterUserRequest): Observable[Unit]
+  def deleteUser(username: String): Observable[Unit]
 
 
   /** Fetch the user with the given username
@@ -22,6 +22,7 @@ trait UserDataStore {
   /** Create a new user with the info passed in the request
     *
     * @param request the user registration request
+    * @param token   token previously obtained by the Authentication service
     * @return an observable stream of just the user created */
   def createUser(request: RegisterUserRequest): Observable[User]
 

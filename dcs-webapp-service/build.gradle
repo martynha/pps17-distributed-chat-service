@@ -28,6 +28,7 @@ jar {
 wartremover {
     warningWarts.remove("NonUnitStatements")
     warningWarts.remove("Var")
+    warningWarts.remove("Throw")
 }
 
 dependencies {

@@ -15,7 +15,7 @@ import it.unibo.dcs.service.user.interactor.usecases.{CreateUserUseCase, GetUser
 import it.unibo.dcs.service.user.interactor.validations.ValidateUserCreation
 import it.unibo.dcs.service.user.repository.UserRepository
 import it.unibo.dcs.service.user.request.{CreateUserRequest, GetUserRequest}
-import it.unibo.dcs.service.user.subscriber.{CreateUserSubscriber, GetUserSubscriber, ValidateUserCreationSubscriber}
+import it.unibo.dcs.service.user.subscriber.{GetUserSubscriber, ValidateUserCreationSubscriber}
 import it.unibo.dcs.service.user.validator.UserCreationValidator
 
 import scala.language.implicitConversions
@@ -82,18 +82,8 @@ final class UserVerticle(private[this] val userRepository: UserRepository, priva
       .handler(routingContext => {
         val request = routingContext.getBodyAsJson().head
         log.info(s"Received request: $request")
-        val subscriber = new CreateUserSubscriber(routingContext.response())
-        createUserUseCase(request, subscriber)
-      })
-
-    router.post("/validateRegistration")
-      .consumes("application/json")
-      .produces("application/json")
-      .handler(routingContext => {
-        val request = routingContext.getBodyAsJson().head
-        log.info(s"Received request: $request")
-        val subscriber = new ValidateUserCreationSubscriber(routingContext.response())
-        validateUserCreation(request, subscriber)
+        val checkSubscriber = new ValidateUserCreationSubscriber(routingContext.response(), request, createUserUseCase)
+        validateUserCreation(request, checkSubscriber)
       })
 
   }

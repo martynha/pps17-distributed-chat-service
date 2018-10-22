@@ -24,7 +24,7 @@ class UserRepositorySpec extends FlatSpec with MockFactory with OneInstancePerTe
 
   it should "create new user" in {
     //Given
-    (userDataStore createUser _) expects createUserRequest returning(Observable just expectedUser)
+    (userDataStore createUser _) expects createUserRequest returning (Observable just expectedUser)
 
     //When
     userRepository.createUser(createUserRequest).subscribe(subscriber)
@@ -36,7 +36,7 @@ class UserRepositorySpec extends FlatSpec with MockFactory with OneInstancePerTe
 
   it should "get user by username" in {
     //Given
-    (userDataStore getUserByUsername _) expects getUserRequest returning(Observable just expectedUser)
+    (userDataStore getUserByUsername _) expects getUserRequest returning (Observable just expectedUser)
 
     //When
     userRepository.getUserByUsername(getUserRequest).subscribe(subscriber)

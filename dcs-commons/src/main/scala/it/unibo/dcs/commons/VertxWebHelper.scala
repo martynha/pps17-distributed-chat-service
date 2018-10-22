@@ -1,10 +1,12 @@
 package it.unibo.dcs.commons
 
 import io.netty.handler.codec.http.HttpResponseStatus
+import io.vertx.core.buffer.Buffer
 import io.vertx.core.http.HttpHeaders
 import io.vertx.lang.scala.json.{Json, JsonObject}
 import io.vertx.scala.core.http.HttpServerResponse
 import io.vertx.scala.ext.web.RoutingContext
+import io.vertx.scala.ext.web.client.HttpResponse
 import it.unibo.dcs.commons.VertxWebHelper.Implicits._
 
 import scala.language.implicitConversions
@@ -23,13 +25,6 @@ object VertxWebHelper {
   def respond(statusCode: Int, message: String)(implicit context: RoutingContext): Unit = {
     val responseBody = Json.obj(("status", statusCode), ("message", message))
     context.response.setStatusCode(statusCode).end(responseBody.encodePrettily())
-  }
-
-  def respondOkToPostWithJson(body: JsonObject)(implicit context: RoutingContext): Unit = {
-    context.response
-      .putHeader("content-type", "application/json")
-      .setStatusCode(201)
-      .end(body.encodePrettily())
   }
 
   def isCodeSuccessful(statusCode: Int): Boolean = statusCode / 100 == 2
@@ -51,6 +46,10 @@ object VertxWebHelper {
     val descriptionField = ("description", description)
     response.setStatusCode(httpResponseStatus.code())
     response.end(Json.obj(("status", statusJson), typeField, descriptionField))
+  }
+
+  def responseStatus(response: HttpResponse[Buffer]): HttpResponseStatus = {
+    HttpResponseStatus.valueOf(response.statusCode())
   }
 
   object Implicits {

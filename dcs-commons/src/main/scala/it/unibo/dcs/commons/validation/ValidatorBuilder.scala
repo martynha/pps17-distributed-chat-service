@@ -31,14 +31,6 @@ final class ValidatorBuilder[T] private[validation]() {
 
   private[this] def rules = _rules.getOrElse(throw EXCEPTION)
 
-
-  object Conditions {
-
-    def stringNotEmpty(field: String): Boolean = {
-      field != null && !field.isEmpty
-    }
-  }
-
 }
 
 object ValidatorBuilder {

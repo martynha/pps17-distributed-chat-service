@@ -16,7 +16,7 @@ export class ChatService {
 
   private static EVENTS = ChatService.PREFIX + '/events';
 
-  private static ROOMS = ChatService.PREFIX + '/room';
+  private static ROOMS = ChatService.PREFIX + '/rooms';
 
   private static ROOM_CREATED = 'rooms.created';
 
@@ -45,13 +45,9 @@ export class ChatService {
 
   deleteRoom(name: string): Observable<Room> {
     const user = this.auth.user;
-    return this.http.post<Room>(
-      `${ChatService.ROOMS}/${name}`,
-      new DeleteRoomRequest(
-        name,
-        user.username,
-        user.token
-      ));
+    const requestBody = new DeleteRoomRequest(name, user.username, user.token);
+    return this.http.request<Room>('delete', `${ChatService.ROOMS}`,
+      { body: requestBody })
   }
 
   onRoomCreated(): Observable<Room> {

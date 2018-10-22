@@ -25,5 +25,5 @@ final class ThreadExecutorExecutionContext(vertx: Vertx) extends ThreadExecutor 
 object ThreadExecutorExecutionContext {
 
   def apply(vertx: Vertx): ThreadExecutorExecutionContext = new ThreadExecutorExecutionContext(vertx)
-  
+
 }

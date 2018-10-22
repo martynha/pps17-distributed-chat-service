@@ -3,7 +3,7 @@ package usecases
 import java.util.Date
 
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
-import it.unibo.dcs.service.webapp.interaction.Requests.CreateRoomRequest
+import it.unibo.dcs.service.webapp.interaction.Requests.{CheckTokenRequest, CreateRoomRequest}
 import it.unibo.dcs.service.webapp.interaction.Results.RoomCreationResult
 import it.unibo.dcs.service.webapp.model.{Room, User}
 import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, RoomRepository}
@@ -18,7 +18,10 @@ class CreateRoomUseCaseSpec extends FlatSpec with MockFactory with OneInstancePe
   private val user = User("niklegend", "Nicola", "Piscaglia", "bio", visible = true, new Date)
   private val room = Room("Room 1")
   private val token = "token"
+
   private val createRoomRequest = CreateRoomRequest("Room 1", user.username, token)
+  private val checkTokenRequest = CheckTokenRequest(token)
+
   private val roomCreationResult = RoomCreationResult(room)
 
   private val threadExecutor: ThreadExecutor = mock[ThreadExecutor]
@@ -35,7 +38,7 @@ class CreateRoomUseCaseSpec extends FlatSpec with MockFactory with OneInstancePe
     // Given
     (roomRepository createRoom _) expects createRoomRequest returns (Observable just room)
     // userRepository is called with `registerRequest` as parameter returns an observable that contains only `user`
-    (authRepository createRoom _) expects createRoomRequest returns (Observable just token)
+    (authRepository checkToken _) expects checkTokenRequest returns (Observable just token)
 
     // When
     // createUserUseCase is executed with argument `request`

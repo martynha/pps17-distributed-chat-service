@@ -1,6 +1,6 @@
 package it.unibo.dcs.service.room
 
-import it.unibo.dcs.commons.validation.Validator
+import it.unibo.dcs.commons.validation.{Conditions, Validator}
 import it.unibo.dcs.exceptions.{MissingRoomNameException, MissingUsernameException}
 import it.unibo.dcs.service.room.request.{CreateRoomRequest, CreateUserRequest, DeleteRoomRequest}
 import it.unibo.dcs.service.room.validator.Messages._
@@ -8,39 +8,34 @@ import it.unibo.dcs.service.room.validator.Messages._
 package object validator {
 
   object CreateUserValidator {
-    def apply: Validator[CreateUserRequest] = Validator[CreateUserRequest] {
+    def apply(): Validator[CreateUserRequest] = Validator[CreateUserRequest] {
       builder =>
         builder.addRule(builder.observableRule(request =>
-          builder.Conditions.stringNotEmpty(request.username),
-          MissingUsernameException(missingUsernameInRegistration)))
+          Conditions.stringNotEmpty(request.username), MissingUsernameException(missingUsernameInRegistration)))
     }
   }
 
   object CreateRoomValidator {
-    def apply: Validator[CreateRoomRequest] = Validator[CreateRoomRequest] {
+    def apply(): Validator[CreateRoomRequest] = Validator[CreateRoomRequest] {
       builder =>
         builder
           .addRule(builder.observableRule(request =>
-            builder.Conditions.stringNotEmpty(request.name),
-            MissingRoomNameException(missingRoomNameInCreation)))
+            Conditions.stringNotEmpty(request.name), MissingRoomNameException(missingRoomNameInCreation)))
 
           .addRule(builder.observableRule(request =>
-            builder.Conditions.stringNotEmpty(request.username),
-            MissingUsernameException(missingCreatorInCreation)))
+            Conditions.stringNotEmpty(request.username), MissingUsernameException(missingCreatorInCreation)))
     }
   }
 
   object DeleteRoomValidator {
-    def apply: Validator[DeleteRoomRequest] = Validator[DeleteRoomRequest] {
+    def apply(): Validator[DeleteRoomRequest] = Validator[DeleteRoomRequest] {
       builder =>
         builder
           .addRule(builder.observableRule(request =>
-            builder.Conditions.stringNotEmpty(request.name),
-            MissingRoomNameException(missingRoomNameInDeletion)))
+            Conditions.stringNotEmpty(request.name), MissingRoomNameException(missingRoomNameInDeletion)))
 
           .addRule(builder.observableRule(request =>
-            builder.Conditions.stringNotEmpty(request.username),
-            MissingUsernameException(missingCreatorInDeletion)))
+            Conditions.stringNotEmpty(request.username), MissingUsernameException(missingCreatorInDeletion)))
     }
   }
 

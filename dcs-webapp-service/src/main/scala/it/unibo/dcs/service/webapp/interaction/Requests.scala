@@ -1,5 +1,6 @@
 package it.unibo.dcs.service.webapp.interaction
 
+import com.google.gson.Gson
 import io.vertx.lang.scala.json.{Json, JsonObject}
 import it.unibo.dcs.commons.dataaccess.Implicits.stringToDate
 import it.unibo.dcs.service.webapp.model.{Room, User}
@@ -11,13 +12,15 @@ object Requests {
 
   final case class LoginUserRequest(username: String, password: String)
 
+  final case class DeleteUserRequest(username: String, token: String)
+
   final case class RegisterUserRequest(username: String, firstName: String, lastName: String, password: String, passwordConfirm: String)
 
   final case class LogoutUserRequest(username: String, token: String)
 
   final case class CreateRoomRequest(name: String, username: String, token: String)
 
-  final case class DeleteRoomRequest(roomName: String, username: String, token: String)
+  final case class DeleteRoomRequest(name: String, username: String, token: String)
 
   final case class CheckTokenRequest(token: String)
 
@@ -25,7 +28,7 @@ object Requests {
   object Implicits {
 
     implicit def deleteRoomRequestToJson(request: DeleteRoomRequest): JsonObject = {
-      Json.obj(("name", request.roomName), ("username", request.username), ("token", request.token))
+      Json.obj(("name", request.name), ("username", request.username), ("token", request.token))
     }
 
     implicit def jsonToDeleteRoomRequest(json: JsonObject): DeleteRoomRequest = {
@@ -48,6 +51,10 @@ object Requests {
       Json.obj(("username", request.username), ("firstName", request.firstName),
         ("lastName", request.lastName), ("password", request.password),
         ("passwordConfirm", request.passwordConfirm))
+    }
+
+    implicit def deleteUserRequestToJsonObject(request: DeleteUserRequest): JsonObject = {
+      Json.fromObjectString(new Gson().toJson(request))
     }
 
     implicit def jsonObjectToRegisterUserRequest(json: JsonObject): RegisterUserRequest = {

@@ -1,6 +1,7 @@
 package it.unibo.dcs.service.room.interactor
 
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
+import it.unibo.dcs.service.room.interactor.usecases.DeleteRoomUseCase
 import it.unibo.dcs.service.room.repository.RoomRepository
 import it.unibo.dcs.service.room.request.DeleteRoomRequest
 import org.scalamock.scalatest.MockFactory

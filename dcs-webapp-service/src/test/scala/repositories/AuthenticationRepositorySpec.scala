@@ -2,7 +2,7 @@ package repositories
 
 import java.util.Date
 
-import it.unibo.dcs.service.webapp.interaction.Requests.{CreateRoomRequest, LoginUserRequest, LogoutUserRequest, RegisterUserRequest}
+import it.unibo.dcs.service.webapp.interaction.Requests._
 import it.unibo.dcs.service.webapp.model.{Room, User}
 import it.unibo.dcs.service.webapp.repositories.AuthenticationRepository
 import it.unibo.dcs.service.webapp.repositories.datastores.AuthenticationDataStore
@@ -22,7 +22,7 @@ class AuthenticationRepositorySpec extends FlatSpec with MockFactory with OneIns
     user.lastName, "password", "password")
   private val room = Room("Room 1")
   private val token = "token"
-  private val roomCreationRequest = CreateRoomRequest(room.name, user.username, token)
+  private val roomCreationRequest = CheckTokenRequest(token)
   private val loginUserRequest = LoginUserRequest(user.username, "password")
   private val logoutUserRequest = LogoutUserRequest(user.username, token)
   private val registeredSubscriber: Subscriber[String] = stub[Subscriber[String]]
@@ -32,10 +32,10 @@ class AuthenticationRepositorySpec extends FlatSpec with MockFactory with OneIns
 
   it should "create a new room" in {
     // Given
-    (dataStore createRoom _) expects roomCreationRequest returns (Observable just token) noMoreThanOnce()
+    (dataStore checkToken _) expects roomCreationRequest returns (Observable just token) noMoreThanOnce()
 
     // When
-    repository.createRoom(roomCreationRequest).subscribe(roomCreationSubscriber)
+    repository.checkToken(roomCreationRequest).subscribe(roomCreationSubscriber)
 
     // Then
     // Verify that `subscriber.onCompleted` has been called once

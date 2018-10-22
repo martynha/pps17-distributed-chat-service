@@ -8,6 +8,9 @@ import rx.lang.scala.Observable
 /** Structure that allows access to authentication info by different means (e.g. network, file, database, etc) */
 trait AuthenticationDataStore {
 
+  def deleteUser(request: DeleteUserRequest): Observable[Unit]
+
+
   /**
     * It checks the credential validity and returns the token of the logged user
     *
@@ -29,19 +32,12 @@ trait AuthenticationDataStore {
     * @return an empty observable stream */
   def logoutUser(request: LogoutUserRequest): Observable[Unit]
 
-  /** It creates a new room
-    *
-    * @param request needed info to create a new room
-    * @return an empty observable stream */
-  def createRoom(request: CreateRoomRequest): Observable[Unit]
-
   /** It checks that the provided jwt token is valid
     *
     * @param request needed info to check the token validity
     * @return an empty observable stream */
   def checkToken(request: CheckTokenRequest): Observable[Unit]
 
-  def checkLogout(request: LogoutUserRequest): Observable[Unit]
 }
 
 /** Companion object */

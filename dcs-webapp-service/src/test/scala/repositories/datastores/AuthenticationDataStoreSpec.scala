@@ -2,7 +2,7 @@ package repositories.datastores
 
 import java.util.Date
 
-import it.unibo.dcs.service.webapp.interaction.Requests.{CreateRoomRequest, LoginUserRequest, LogoutUserRequest, RegisterUserRequest}
+import it.unibo.dcs.service.webapp.interaction.Requests._
 import it.unibo.dcs.service.webapp.model.{Room, User}
 import it.unibo.dcs.service.webapp.repositories.datastores.AuthenticationDataStore
 import it.unibo.dcs.service.webapp.repositories.datastores.api.AuthenticationApi
@@ -18,13 +18,12 @@ class AuthenticationDataStoreSpec extends FlatSpec with MockFactory with OneInst
   private val authApi: AuthenticationApi = mock[AuthenticationApi]
   private val dataStore: AuthenticationDataStore = new AuthenticationDataStoreNetwork(authApi)
   private val user = User("niklegend", "nicola", "piscaglia", "bla", visible = true, new Date())
-  private val room = Room("Room 1")
   private val token = "token"
   private val registerRequest = RegisterUserRequest(user.username, user.firstName,
     user.lastName, "password", "password")
   private val loginUserRequest = LoginUserRequest(user.username, "password")
   private val logoutUserRequest = LogoutUserRequest(user.username, token)
-  private val roomCreationRequest = CreateRoomRequest(room.name, user.username, token)
+  private val roomCreationRequest = CheckTokenRequest(token)
   private val registeredSubscriber: Subscriber[String] = stub[Subscriber[String]]
   private val roomCreationSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
   private val loginSubscriber: Subscriber[String] = stub[Subscriber[String]]
@@ -33,10 +32,10 @@ class AuthenticationDataStoreSpec extends FlatSpec with MockFactory with OneInst
 
   it should "check the creation of a new room" in {
     // Given
-    (authApi createRoom _) expects roomCreationRequest returns (Observable just token)
+    (authApi checkToken _) expects roomCreationRequest returns (Observable just token)
 
     // When
-    dataStore.createRoom(roomCreationRequest).subscribe(roomCreationSubscriber)
+    dataStore.checkToken(roomCreationRequest).subscribe(roomCreationSubscriber)
 
     // Then
     // Verify that `subscriber.onCompleted` has been called once

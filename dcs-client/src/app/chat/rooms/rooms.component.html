@@ -10,6 +10,9 @@
     <a mat-list-item *ngFor="let room of rooms" [routerLinkActive]="'active'" (click)="selectRoom(room);">
       <mat-icon class="sidenav-icon">dashboard</mat-icon>
       {{ room.name }}
+      <i class="material-icons close-link" (click)="deleteRoom(room); $event.stopPropagation();">
+        close
+      </i>
     </a>
   </mat-nav-list>
 </div>
