@@ -1,6 +1,7 @@
 package it.unibo.dcs.service.room.interactor
 
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
+import it.unibo.dcs.service.room.model.Room
 import it.unibo.dcs.service.room.repository.RoomRepository
 import it.unibo.dcs.service.room.request.CreateRoomRequest
 import org.scalamock.scalatest.MockFactory
@@ -15,7 +16,7 @@ final class CreateRoomUseCaseSpec extends FlatSpec with MockFactory with OneInst
 
   val request = CreateRoomRequest("Aula Magna", "aulamagna")
 
-  val subscriber = stub[Subscriber[Unit]]
+  val subscriber = stub[Subscriber[Room]]
 
   it should "Create a room when the CreateRoomUseCase is execute" in {
     (roomRepository createRoom _) expects request returns Observable.just()

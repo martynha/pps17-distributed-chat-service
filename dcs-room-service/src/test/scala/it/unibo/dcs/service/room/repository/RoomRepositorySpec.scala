@@ -1,6 +1,7 @@
 package it.unibo.dcs.service.room.repository
 
 import it.unibo.dcs.service.room.data.RoomDataStore
+import it.unibo.dcs.service.room.model.Room
 import it.unibo.dcs.service.room.repository.impl.RoomRepositoryImpl
 import it.unibo.dcs.service.room.request.{CreateRoomRequest, CreateUserRequest, DeleteRoomRequest}
 import org.scalamock.scalatest.MockFactory
@@ -13,6 +14,7 @@ final class RoomRepositorySpec extends FlatSpec with MockFactory with OneInstanc
   val roomRepository = new RoomRepositoryImpl(roomDataStore)
 
   val subscriber = stub[Subscriber[Unit]]
+  val createRoomSubscriber = stub[Subscriber[Room]]
 
   it should "create a new user on the data store" in {
     val request = CreateUserRequest("mvandi")
@@ -33,7 +35,7 @@ final class RoomRepositorySpec extends FlatSpec with MockFactory with OneInstanc
     //Given
     (roomDataStore createRoom _) expects request returns Observable.just()
 
-    roomRepository.createRoom(request).subscribe(subscriber)
+    roomRepository.createRoom(request).subscribe(createRoomSubscriber)
 
     //Then
     (() => subscriber.onCompleted()) verify() once()
