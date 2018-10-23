@@ -1,12 +1,17 @@
 package it.unibo.dcs.service.room
 
+import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.lang.scala.ScalaLogger
 import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.core.http.HttpServerResponse
+import it.unibo.dcs.service.room.interactor.usecases.{CreateRoomUseCase, CreateUserUseCase, DeleteRoomUseCase}
 import it.unibo.dcs.service.room.model.Room
+import it.unibo.dcs.service.room.request.{CreateRoomRequest, CreateUserRequest, DeleteRoomRequest}
 import rx.lang.scala.Subscriber
-
 import it.unibo.dcs.service.room.subscriber.Implicits._
+import it.unibo.dcs.commons.VertxWebHelper.endErrorResponse
+
+import it.unibo.dcs.commons.validation.ErrorTypes._
 
 package object subscriber {
 
