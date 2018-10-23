@@ -21,6 +21,7 @@ export class ChatService {
   private static ROOM_CREATED = 'rooms.created';
 
   private roomCreated = new Subject<Room>();
+  private roomDeleted = new Subject<string>();
   private roomSelected = new Subject<Room>();
 
   constructor(private http: HttpClient, private eventBus: EventBusService, private auth: AuthService) {}
@@ -40,18 +41,26 @@ export class ChatService {
       user.username,
       user.token
     ))
-    .pipe(tap(p => this.selectRoom(p.room)));
+    .pipe(tap(p => {
+      this.selectRoom(p.room);
+      this.roomCreated.next(p.room);
+    }));
   }
 
   deleteRoom(name: string): Observable<Room> {
     const user = this.auth.user;
-    const requestBody = new DeleteRoomRequest(name, user.username, user.token);
-    return this.http.request<Room>('delete', `${ChatService.ROOMS}`,
-      { body: requestBody })
+    const body = new DeleteRoomRequest(name, user.username, user.token);
+    return this.http.request<Room>('delete', ChatService.ROOMS, { body })
+      .pipe(tap(p => {
+        this.roomDeleted.next(p.name);
+      }))
   }
 
   onRoomCreated(): Observable<Room> {
     return this.roomCreated.asObservable();
   }
 
+  onRoomDeleted(): Observable<string> {
+    return this.roomDeleted.asObservable();
+  }
 }

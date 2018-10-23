@@ -4,11 +4,11 @@ import io.vertx.core.json.JsonArray
 import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.ext.sql.SQLConnection
 import it.unibo.dcs.commons.dataaccess.{DataStoreDatabase, ResultSetHelper}
+import it.unibo.dcs.exceptions.RoomNotFoundException
 import it.unibo.dcs.service.room.data.RoomDataStore
 import it.unibo.dcs.service.room.data.impl.RoomDataStoreDatabase.Implicits._
 import it.unibo.dcs.service.room.data.impl.RoomDataStoreDatabase.{deleteRoomQuery, insertRoomQuery, insertUserQuery, selectRoomByName}
 import it.unibo.dcs.service.room.model._
-import it.unibo.dcs.service.room.model.execption.RoomNotFoundException
 import it.unibo.dcs.service.room.request.{CreateRoomRequest, CreateUserRequest, DeleteRoomRequest, GetRoomRequest}
 import rx.lang.scala.Observable
 
@@ -19,7 +19,8 @@ final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDa
   override def deleteRoom(request: DeleteRoomRequest): Observable[String] = execute(deleteRoomQuery, request)
     .map(_ => request.name)
 
-  override def createRoom(request: CreateRoomRequest): Observable[Room] = execute(insertRoomQuery, request).flatMap(_ => getRoomByName(GetRoomRequest(request.name)))
+  override def createRoom(request: CreateRoomRequest): Observable[Room] = execute(insertRoomQuery, request)
+    .flatMap(_ => getRoomByName(GetRoomRequest(request.name)))
 
   override def getRoomByName(request: GetRoomRequest): Observable[Room] =
     query(selectRoomByName, request)

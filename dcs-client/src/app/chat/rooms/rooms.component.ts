@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ChatService } from "../../service/chat.service";
 import { Router } from '@angular/router';
+import { remove } from 'lodash';
 
 @Component({
   selector: 'app-rooms',
@@ -29,6 +30,7 @@ export class RoomsComponent implements OnInit {
 
   ngOnInit() {
     this.chat.onRoomCreated().subscribe(room => this.rooms.unshift(room));
+    this.chat.onRoomDeleted().subscribe(name => remove(this.rooms, room => room.name === name))
   }
 
   addExpandClass(element) {

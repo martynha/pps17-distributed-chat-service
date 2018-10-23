@@ -39,7 +39,7 @@ final class RoomRepositorySpec extends FlatSpec with MockFactory with OneInstanc
     //Given
     (roomDataStore createRoom _) expects request returns Observable.just()
 
-    roomRepository.createRoom(request).subscribe(createRoomSubscriber)
+    roomRepository.createRoom(request).subscribe(subscriber)
 
     //Then
     (() => subscriber.onCompleted()) verify() once()
