@@ -8,6 +8,8 @@ import rx.lang.scala.Observable
 
 final class UserRepositoryImpl(private[this] val userDataStore: UserDataStore) extends UserRepository {
 
+  override def checkIfUserExists(request: GetUserRequest): Observable[Unit] = userDataStore.checkIfUserExists(request)
+
   override def createUser(request: CreateUserRequest): Observable[User] = userDataStore.createUser(request)
 
   override def getUserByUsername(request: GetUserRequest): Observable[User] = userDataStore.getUserByUsername(request)

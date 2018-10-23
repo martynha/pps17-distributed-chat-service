@@ -12,5 +12,6 @@ class UserRepositoryImpl(userDataStore: UserDataStore) extends UserRepository {
 
   override def registerUser(request: RegisterUserRequest): Observable[User] = userDataStore.createUser(request)
 
-  override def deleteUser(username: String): Observable[Unit] = userDataStore.deleteUser(username)
+  override def deleteUser(username: String): Observable[String] = userDataStore.deleteUser(username)
+
 }

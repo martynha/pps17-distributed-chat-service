@@ -4,6 +4,12 @@ import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.lang.scala.ScalaLogger
 import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.core.http.HttpServerResponse
+import io.vertx.lang.scala.json.Json
+import io.vertx.scala.core.http.HttpServerResponse
+import it.unibo.dcs.commons.VertxWebHelper.Implicits.{jsonObjectToString, RichHttpServerResponse}
+import it.unibo.dcs.exceptions.ErrorSubscriber
+import io.vertx.scala.core.http.HttpServerResponse
+import it.unibo.dcs.commons.VertxWebHelper._
 import it.unibo.dcs.service.room.interactor.usecases.{CreateRoomUseCase, CreateUserUseCase, DeleteRoomUseCase}
 import it.unibo.dcs.service.room.model.Room
 import it.unibo.dcs.service.room.request.{CreateRoomRequest, CreateUserRequest, DeleteRoomRequest}
@@ -15,7 +21,7 @@ import it.unibo.dcs.commons.validation.ErrorTypes._
 
 package object subscriber {
 
-  final class CreateRoomSubscriber (response: HttpServerResponse) extends Subscriber[Room] {
+  final class CreateRoomSubscriber (protected override val response: HttpServerResponse) extends Subscriber[Room] with ErrorSubscriber {
 
     private[this] val log = ScalaLogger.getLogger(getClass.getName)
 
@@ -27,50 +33,45 @@ package object subscriber {
 
   }
 
-  final class CreateUserSubscriber(response: HttpServerResponse) extends Subscriber[Unit] {
+  final class CreateUserSubscriber(protected override val response: HttpServerResponse) extends Subscriber[Unit]
+    with ErrorSubscriber {
 
     override def onCompleted(): Unit = response.end()
 
-    override def onError(error: Throwable): Unit =
-      endErrorResponse(response, HttpResponseStatus.INTERNAL_SERVER_ERROR, createUserError, error.getMessage)
   }
 
-  class DeleteRoomSubscriber(response: HttpServerResponse) extends Subscriber[Unit] {
-
-    override def onCompleted(): Unit = response.end()
-
-    override def onError(error: Throwable): Unit =
-      endErrorResponse(response, HttpResponseStatus.INTERNAL_SERVER_ERROR, deleteRoomError, error.getMessage)
-  }
-
-  final class CreateRoomValiditySubscriber(response: HttpServerResponse,
+  final class CreateRoomValiditySubscriber(protected override val response: HttpServerResponse,
                                            request: CreateRoomRequest,
-                                           createRoomUseCase: CreateRoomUseCase) extends Subscriber[Unit] {
+                                           createRoomUseCase: CreateRoomUseCase) extends Subscriber[Unit]
+  with ErrorSubscriber {
 
     override def onCompleted(): Unit = createRoomUseCase(request, new CreateRoomSubscriber(response))
 
-    override def onError(error: Throwable): Unit =
-      endErrorResponse(response, HttpResponseStatus.BAD_REQUEST, createRoomError, error.getMessage)
   }
 
-  final class CreateUserValiditySubscriber(response: HttpServerResponse,
+  class DeleteRoomSubscriber(protected override val response: HttpServerResponse) extends Subscriber[String]
+    with ErrorSubscriber {
+
+    override def onNext(name: String): Unit = response.end(Json.obj(("name", name)))
+
+  }
+
+  final class CreateUserValiditySubscriber(protected override val response: HttpServerResponse,
                                            request: CreateUserRequest,
-                                           createUserUseCase: CreateUserUseCase) extends Subscriber[Unit] {
+                                           createUserUseCase: CreateUserUseCase) extends Subscriber[Unit]
+  with ErrorSubscriber {
 
     override def onCompleted(): Unit = createUserUseCase(request, new CreateUserSubscriber(response))
 
-    override def onError(error: Throwable): Unit =
-      endErrorResponse(response, HttpResponseStatus.BAD_REQUEST, createUserError, error.getMessage)
   }
 
-  class DeleteRoomValiditySubscriber(response: HttpServerResponse,
+  class DeleteRoomValiditySubscriber(protected override val response: HttpServerResponse,
                                      request: DeleteRoomRequest,
-                                     deleteRoomUseCase: DeleteRoomUseCase) extends Subscriber[Unit] {
+                                     deleteRoomUseCase: DeleteRoomUseCase) extends Subscriber[Unit]
+    with ErrorSubscriber {
 
     override def onCompleted(): Unit = deleteRoomUseCase(request, new DeleteRoomSubscriber(response))
 
-    override def onError(error: Throwable): Unit =
-      endErrorResponse(response, HttpResponseStatus.BAD_REQUEST, deleteRoomError, error.getMessage)
   }
 
   object Implicits {

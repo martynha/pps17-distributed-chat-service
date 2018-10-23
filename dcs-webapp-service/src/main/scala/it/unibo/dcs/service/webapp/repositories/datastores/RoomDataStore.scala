@@ -12,7 +12,7 @@ trait RoomDataStore {
 
   def registerUser(request: Requests.RegisterUserRequest): Observable[Unit]
 
-  def deleteRoom(request: DeleteRoomRequest): Observable[Unit]
+  def deleteRoom(request: DeleteRoomRequest): Observable[String]
 
   /** Store a new room given its information (e.g. room name)
     *

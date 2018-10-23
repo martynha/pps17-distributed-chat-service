@@ -2,7 +2,6 @@ package it.unibo.dcs.service.authentication.server
 
 import java.net.InetAddress
 
-import io.vertx.core.eventbus.{EventBus => JEventBus}
 import io.vertx.lang.scala.VertxExecutionContext
 import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.core.{DeploymentOptions, Vertx, VertxOptions}
@@ -37,7 +36,7 @@ object Launcher extends App {
     val authDataStore = new AuthenticationDataStoreDatabase(sqlConnection)
     val authRepository = new AuthenticationRepositoryImpl(authDataStore)
 
-    vertx.eventBus.asJava.asInstanceOf[JEventBus].registerDefaultCodec(classOf[Record], new RecordMessageCodec())
+    vertx.eventBus.registerDefaultCodec[Record](new RecordMessageCodec())
 
     val discovery = ServiceDiscovery.create(vertx)
     val publisher = new HttpEndpointPublisherImpl(discovery, vertx.eventBus)

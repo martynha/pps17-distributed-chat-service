@@ -1,11 +1,14 @@
 package it.unibo.dcs.service.webapp.usecases
 
+import io.vertx.lang.scala.ScalaLogger
 import io.vertx.scala.core.Context
 import it.unibo.dcs.commons.RxHelper
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
 import it.unibo.dcs.commons.interactor.{ThreadExecutorExecutionContext, UseCase}
-import it.unibo.dcs.service.webapp.interaction.Requests.RegisterUserRequest
+import it.unibo.dcs.exceptions.{RoomServiceErrorException, UserServiceErrorException}
+import it.unibo.dcs.service.webapp.interaction.Requests.{DeleteUserRequest, RegisterUserRequest}
 import it.unibo.dcs.service.webapp.interaction.Results.RegisterResult
+import it.unibo.dcs.service.webapp.model.User
 import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, RoomRepository, UserRepository}
 import rx.lang.scala.Observable
 
@@ -27,15 +30,40 @@ final class RegisterUserUseCase(private[this] val threadExecutor: ThreadExecutor
                                 private[this] val roomRepository: RoomRepository)
   extends UseCase[RegisterResult, RegisterUserRequest](threadExecutor, postExecutionThread) {
 
-  override protected[this] def createObservable(registerRequest: RegisterUserRequest): Observable[RegisterResult] = {
+  private lazy val log = ScalaLogger.getLogger(getClass.getName)
+
+  override protected[this] def createObservable(request: RegisterUserRequest): Observable[RegisterResult] =
     for {
-      token <- authRepository.registerUser(registerRequest)
-      user <- userRepository.registerUser(registerRequest)
+      token <- authRepository.registerUser(request)
+      user <- userRepository.registerUser(request).onErrorResumeNext {
+        case UserServiceErrorException(error) =>
+          log.info("Rolling back auth repository...")
+          rollbackAuthRepository(request.username, token, error)
+      }
+      _ <- roomRepository.registerUser(request).onErrorResumeNext {
+        case RoomServiceErrorException(error) =>
+          log.info("Rolling back room repository...")
+          rollbackAuthRepository(request.username, token, error)
+          rollbackUserRepository(request.username, error)
+      }
     } yield {
-      roomRepository.registerUser(registerRequest).subscribe()
-      RegisterResult(user, token)
+      val result = RegisterResult(user, token)
+      println(result)
+      result
     }
+
+  /* Rollback changes previously performed in Authentication service */
+  private def rollbackAuthRepository(username: String, token: String, error: Throwable): Observable[User] = {
+    authRepository.deleteUser(DeleteUserRequest(username, token))
+      .map(_ => throw error)
   }
+
+  /* Rollback changes previously performed in User service */
+  private def rollbackUserRepository(username: String, error: Throwable): Observable[User] = {
+    userRepository.deleteUser(username)
+      .map(_ => throw error)
+  }
+
 }
 
 /** Companion object */
@@ -55,4 +83,5 @@ object RegisterUserUseCase {
     val postExecutionThread: PostExecutionThread = PostExecutionThread(RxHelper.scheduler(ctx))
     new RegisterUserUseCase(threadExecutor, postExecutionThread, authRepository, userRepository, roomRepository)
   }
+
 }

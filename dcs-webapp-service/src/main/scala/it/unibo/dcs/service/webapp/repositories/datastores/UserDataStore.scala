@@ -10,7 +10,7 @@ import rx.lang.scala.Observable
 /** Structure that allows access to user data by different means (e.g. network, file, database, ecc) */
 trait UserDataStore {
 
-  def deleteUser(username: String): Observable[Unit]
+  def deleteUser(username: String): Observable[String]
 
 
   /** Fetch the user with the given username

@@ -2,7 +2,6 @@ package it.unibo.dcs.service.user
 
 import java.net.InetAddress
 
-import io.vertx.core.eventbus.{EventBus => JEventBus}
 import io.vertx.lang.scala.ScalaLogger
 import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.core.{DeploymentOptions, Vertx, VertxOptions}
@@ -33,7 +32,7 @@ object Launcher extends App {
       case (vertx, connection) =>
         val discovery = ServiceDiscovery.create(vertx)
         val eventBus = vertx.eventBus
-        eventBus.asJava.asInstanceOf[JEventBus].registerDefaultCodec(classOf[Record], new RecordMessageCodec())
+        vertx.eventBus.registerDefaultCodec[Record](new RecordMessageCodec())
         val publisher = new HttpEndpointPublisherImpl(discovery, eventBus)
         val userDataStore: UserDataStore = new UserDataStoreDatabase(connection)
         val userRepository = new UserRepositoryImpl(userDataStore)

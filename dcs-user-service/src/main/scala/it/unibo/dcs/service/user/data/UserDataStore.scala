@@ -6,6 +6,8 @@ import rx.lang.scala.Observable
 
 trait UserDataStore {
 
+  def checkIfUserExists(request: GetUserRequest): Observable[Unit]
+
   def getUserByUsername(request: GetUserRequest): Observable[User]
 
   def createUser(request: CreateUserRequest): Observable[User]

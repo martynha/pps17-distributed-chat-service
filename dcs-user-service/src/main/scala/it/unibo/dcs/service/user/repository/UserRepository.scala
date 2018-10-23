@@ -6,6 +6,8 @@ import rx.lang.scala.Observable
 
 trait UserRepository {
 
+  def checkIfUserExists(request: GetUserRequest): Observable[Unit]
+
   def createUser(request: CreateUserRequest): Observable[User]
 
   def getUserByUsername(request: GetUserRequest): Observable[User]

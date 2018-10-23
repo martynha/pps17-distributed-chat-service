@@ -1,10 +1,8 @@
 package it.unibo.dcs.service.webapp.repositories.datastores.api.impl
 
-import io.netty.handler.codec.http.HttpResponseStatus
-import io.vertx.lang.scala.json.Json
-import it.unibo.dcs.commons.VertxWebHelper._
+import io.vertx.lang.scala.json.{Json, JsonObject}
 import it.unibo.dcs.commons.service.{AbstractApi, HttpEndpointDiscovery}
-import it.unibo.dcs.exceptions._
+import it.unibo.dcs.exceptions.{AuthServiceErrorException, InternalException, bodyAsJsonObject}
 import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
 import it.unibo.dcs.service.webapp.interaction.Requests._
 import it.unibo.dcs.service.webapp.repositories.datastores.api.AuthenticationApi
@@ -20,77 +18,41 @@ class AuthenticationRestApi(private[this] val discovery: HttpEndpointDiscovery)
   private val authenticationKeyLabel = "Authorization"
   private val tokenPrefix = "Bearer "
 
-  override def loginUser(loginUserRequest: LoginUserRequest): Observable[String] = {
-    request(authWebClient =>
-      Observable.from(authWebClient.post(loginUserURI).sendJsonObjectFuture(loginUserRequest)))
-      .map(response => responseStatus(response) match {
-        case HttpResponseStatus.OK =>
-          response.bodyAsJsonObject()
-            .getOrElse(throw LoginResponseException("Authentication service returned an empty body"))
-            .getString("token")
-        case _ =>
-          val errorJson = response.bodyAsJsonObject().getOrElse(
-            throw LoginResponseException("Authentication service returned an empty body after an error"))
-          throw AuthServiceErrorException(errorJson)
-      })
+  override def loginUser(request: LoginUserRequest): Observable[String] = makeRequest(client =>
+    Observable.from(client.post(loginUserURI).sendJsonObjectFuture(request)))
+    .map(bodyAsJsonObject(throw InternalException("Authentication service returned an empty body")))
+    .map(getToken)
+
+  override def registerUser(request: RegisterUserRequest): Observable[String] = {
+    makeRequest(client =>
+      Observable.from(client.post(registerUserURI).sendJsonObjectFuture(request)))
+      .map(bodyAsJsonObject(throw InternalException("Authentication service returned an empty body")))
+      .map(getToken)
   }
 
-  override def registerUser(registerRequest: RegisterUserRequest): Observable[String] = {
-    request(authWebClient =>
-      Observable.from(authWebClient.post(registerUserURI).sendJsonObjectFuture(registerRequest)))
-      .map(response => responseStatus(response) match {
-        case HttpResponseStatus.OK =>
-          response.bodyAsJsonObject()
-            .getOrElse(throw AuthRegistrationResponseException("Authentication service returned an empty body"))
-            .getString("token")
-        case _ =>
-          val errorJson = response.bodyAsJsonObject()
-            .getOrElse(throw AuthRegistrationResponseException(
-              "Authentication service returned an empty body after an error"))
-          throw AuthServiceErrorException(errorJson)
-      })
+  override def logoutUser(request: LogoutUserRequest): Observable[Unit] = {
+    makeRequest(client =>
+      Observable.from(client.post(logoutUserURI)
+        .putHeader(authenticationKeyLabel, tokenPrefix + request.token)
+        .sendJsonObjectFuture(request)))
+      .map(bodyAsJsonObject(Json.emptyObj()))
+      .map(_ => ())
   }
 
-  override def logoutUser(logoutRequest: LogoutUserRequest): Observable[Unit] = {
-    request(authWebClient =>
-      Observable.from(authWebClient.post(logoutUserURI)
-        .putHeader(authenticationKeyLabel, tokenPrefix + logoutRequest.token)
-        .sendJsonObjectFuture(logoutRequest)))
-      .map(response => responseStatus(response) match {
-        case HttpResponseStatus.OK => ()
-        case _ =>
-          val errorJson = response.bodyAsJsonObject()
-            .getOrElse(throw LogoutResponseException("Authentication service returned an empty body after an error"))
-          throw AuthServiceErrorException(errorJson)
-      })
-  }
-
-  override def checkToken(checkTokenRequest: CheckTokenRequest): Observable[Unit] =
-    request(tokenWebClient =>
-      Observable.from(tokenWebClient.get(checkTokenURI)
-        .putHeader(authenticationKeyLabel, tokenPrefix + checkTokenRequest.token)
+  override def checkToken(request: CheckTokenRequest): Observable[Unit] =
+    makeRequest(client =>
+      Observable.from(client.get(checkTokenURI)
+        .putHeader(authenticationKeyLabel, tokenPrefix + request.token)
         .sendJsonObjectFuture(Json.obj())))
-      .map(response => responseStatus(response) match {
-        case HttpResponseStatus.OK => ()
-        case _ =>
-          val errorJson = response.bodyAsJsonObject()
-            .getOrElse(throw TokenCheckResponseException("Authentication service returned an empty body after an error"))
-          throw AuthServiceErrorException(errorJson)
-      })
+      .map(bodyAsJsonObject())
+      .map(_ => ())
 
-  override def deleteUser(deleteUserRequest: DeleteUserRequest): Observable[Unit] = {
-    request(authWebClient =>
-      Observable.from(authWebClient.delete(deleteUserURI(deleteUserRequest.username))
-        .putHeader(authenticationKeyLabel, tokenPrefix + deleteUserRequest.token)
-        .sendFuture()))
-      .map(response => responseStatus(response) match {
-        case HttpResponseStatus.OK => ()
-        case _ =>
-          val errorJson = response.bodyAsJsonObject()
-            .getOrElse(
-              throw DeleteUserResponseException("Authentication service returned an empty body after an error"))
-          throw AuthServiceErrorException(errorJson)
-      })
+  override def deleteUser(request: DeleteUserRequest): Observable[Unit] = {
+    makeRequest(client =>
+      Observable.from(client.post(deleteUserURI(request.username)).sendJsonObjectFuture(request)))
+      .map(bodyAsJsonObject())
+      .map(_ => ())
+      .onErrorResumeNext(cause => Observable.error(AuthServiceErrorException(cause)))
   }
 
 }
@@ -103,5 +65,10 @@ private[impl] object AuthenticationRestApi {
   val checkTokenURI = "/protected/tokenValidity"
   val checkLogoutURI = "/validateLogout"
 
+  private[impl] def getToken(json: JsonObject): String = {
+    json.getString("token")
+  }
+
   def deleteUserURI(username: String) = s"/user/$username"
+
 }

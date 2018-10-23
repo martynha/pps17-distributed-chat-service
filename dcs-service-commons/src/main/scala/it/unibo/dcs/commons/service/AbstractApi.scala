@@ -1,10 +1,13 @@
 package it.unibo.dcs.commons.service
 
 import io.vertx.scala.ext.web.client.{HttpResponse, WebClient}
+import it.unibo.dcs.exceptions.ServiceUnavailableException
 import rx.lang.scala.Observable
 
 abstract class AbstractApi(private[this] val discovery: HttpEndpointDiscovery,
                            private[this] val serviceName: String) {
+
+  private[this] val errorObservable = Observable error ServiceUnavailableException(serviceName)
 
   private[this] var clientOption: Option[WebClient] = None
 
@@ -18,15 +21,15 @@ abstract class AbstractApi(private[this] val discovery: HttpEndpointDiscovery,
       })
   }
 
-  protected final def request[T](action: WebClient => Observable[HttpResponse[T]]): Observable[HttpResponse[T]] =
+  protected final def makeRequest[T](action: WebClient => Observable[HttpResponse[T]]): Observable[HttpResponse[T]] =
     clientOption match {
       case Some(c) => action(c)
-        .doOnError { _ =>
+        .onErrorResumeNext { cause =>
           clientOption = None
           discoverClient()
+          errorObservable
         }
-      // TODO: replace with a more meaningful exception
-      case _ => throw new RuntimeException
+      case _ => errorObservable
     }
 
 }

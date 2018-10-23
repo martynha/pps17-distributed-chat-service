@@ -3,7 +3,7 @@ package it.unibo.dcs.service.room
 import io.vertx.core.http.HttpMethod._
 import io.vertx.core.{AbstractVerticle, Context, Vertx => JVertx}
 import io.vertx.lang.scala.json.JsonObject
-import io.vertx.scala.ext.web.Router
+import io.vertx.scala.ext.web.{Router, RoutingContext}
 import io.vertx.scala.ext.web.handler.{BodyHandler, CorsHandler}
 import it.unibo.dcs.commons.RxHelper
 import it.unibo.dcs.commons.interactor.ThreadExecutorExecutionContext

@@ -5,8 +5,10 @@ import java.net.InetAddress
 import io.vertx.lang.scala.ScalaLogger
 import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.core.{DeploymentOptions, Vertx, VertxOptions}
+import io.vertx.servicediscovery.Record
 import it.unibo.dcs.commons.VertxHelper
 import it.unibo.dcs.commons.VertxHelper.Implicits._
+import it.unibo.dcs.commons.service.codecs.RecordMessageCodec
 import it.unibo.dcs.service.webapp.verticles.WebAppVerticle
 
 import scala.language.implicitConversions
@@ -21,12 +23,14 @@ object Launcher extends App {
   val port = args(0).toInt
 
   val config = new JsonObject()
-      .put("host", address)
-      .put("port", port)
+    .put("host", address)
+    .put("port", port)
 
   VertxHelper.toObservable[Vertx](Vertx.clusteredVertx(VertxOptions(), _))
-    .subscribe(vertx => vertx deployVerticle(new WebAppVerticle, DeploymentOptions()
-      .setConfig(config)),
-      cause => logger.error("", cause))
+    .subscribe(vertx => {
+      vertx.eventBus.registerDefaultCodec[Record](new RecordMessageCodec())
+      vertx deployVerticle(new WebAppVerticle, DeploymentOptions()
+        .setConfig(config))
+    }, cause => logger.error("", cause))
 
 }

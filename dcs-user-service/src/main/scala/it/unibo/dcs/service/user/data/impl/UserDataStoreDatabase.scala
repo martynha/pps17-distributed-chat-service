@@ -4,15 +4,23 @@ import io.vertx.lang.scala.json.{JsonArray, JsonObject}
 import io.vertx.scala.ext.sql.SQLConnection
 import it.unibo.dcs.commons.dataaccess.Implicits._
 import it.unibo.dcs.commons.dataaccess.{DataStoreDatabase, ResultSetHelper}
+import it.unibo.dcs.exceptions.{UserAlreadyExistsException, UserNotFoundException}
 import it.unibo.dcs.service.user.data.UserDataStore
 import it.unibo.dcs.service.user.data.impl.UserDataStoreDatabase.Implicits._
 import it.unibo.dcs.service.user.data.impl.UserDataStoreDatabase._
 import it.unibo.dcs.service.user.model.User
-import it.unibo.dcs.service.user.model.exception.UserNotFoundException
 import it.unibo.dcs.service.user.request.{CreateUserRequest, GetUserRequest}
 import rx.lang.scala.Observable
 
 final class UserDataStoreDatabase(connection: SQLConnection) extends DataStoreDatabase(connection) with UserDataStore {
+
+  override def checkIfUserExists(request: GetUserRequest): Observable[Unit] =
+    query(selectUserByUsername, request)
+    .map {resultSet =>
+      if (resultSet.getResults.nonEmpty) {
+        throw UserAlreadyExistsException(request.username)
+      }
+    }
 
   override def getUserByUsername(request: GetUserRequest): Observable[User] =
     query(selectUserByUsername, request)

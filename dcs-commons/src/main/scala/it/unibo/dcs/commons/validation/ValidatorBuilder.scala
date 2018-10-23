@@ -14,12 +14,13 @@ final class ValidatorBuilder[T] private[validation]() {
     this
   }
 
-  def observableRule(condition: T => Boolean, error: Throwable): Rule[T] = {
-    entity =>
-      Observable.just(entity)
-        .filter(condition)
+  def addRule(predicate: T => Boolean, error: Throwable): ValidatorBuilder[T] = {
+    addRule {
+      Observable.just(_)
+        .filter(predicate)
         .singleOption
         .map(opt => opt.getOrElse(throw error))
+    }
   }
 
   private[validation] def build: Validator[T] = {

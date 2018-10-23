@@ -8,8 +8,8 @@ import rx.lang.scala.Observable
 
 final class DeleteRoomUseCase(threadExecutor: ThreadExecutor, postExecutionThread: PostExecutionThread, private[this] val roomRepository: RoomRepository)
 
-  extends UseCase[Unit, DeleteRoomRequest](threadExecutor, postExecutionThread) {
+  extends UseCase[String, DeleteRoomRequest](threadExecutor, postExecutionThread) {
 
-  override protected[this] def createObservable(request: DeleteRoomRequest): Observable[Unit] = roomRepository.deleteRoom(request)
+  override protected[this] def createObservable(request: DeleteRoomRequest): Observable[String] = roomRepository.deleteRoom(request)
 
 }

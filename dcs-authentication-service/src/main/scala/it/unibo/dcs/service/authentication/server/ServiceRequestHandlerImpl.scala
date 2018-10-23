@@ -1,16 +1,16 @@
 package it.unibo.dcs.service.authentication.server
 
 import io.netty.handler.codec.http.HttpResponseStatus
-import io.vertx.lang.scala.json.Json
+import io.vertx.lang.scala.json.{Json, JsonObject}
+import io.vertx.scala.core.http.HttpServerResponse
 import io.vertx.scala.ext.web.RoutingContext
-import it.unibo.dcs.service.authentication.request
-.{CheckTokenRequest, LoginUserRequest, LogoutUserRequest, RegisterUserRequest}
+import it.unibo.dcs.commons.VertxWebHelper.Implicits.{RichHttpServerResponse, jsonObjectToString}
 import it.unibo.dcs.commons.VertxWebHelper._
-import it.unibo.dcs.commons.validation.ErrorTypes._
-import it.unibo.dcs.service.authentication.interactor.usecases
-  .{CheckTokenUseCase, LoginUserUseCase, LogoutUserUseCase, RegisterUserUseCase}
-import it.unibo.dcs.service.authentication.interactor.validations
-  .{LoginUserValidation, LogoutUserValidation, RegisterUserValidation}
+import it.unibo.dcs.exceptions.Implicits.throwableToJsonObject
+import it.unibo.dcs.exceptions.{ErrorSubscriber, InvalidTokenException}
+import it.unibo.dcs.service.authentication.interactor.usecases.{CheckTokenUseCase, LoginUserUseCase, LogoutUserUseCase, RegisterUserUseCase}
+import it.unibo.dcs.service.authentication.interactor.validations.{LoginUserValidation, LogoutUserValidation, RegisterUserValidation}
+import it.unibo.dcs.service.authentication.request.{CheckTokenRequest, LoginUserRequest, LogoutUserRequest, RegisterUserRequest}
 import rx.lang.scala.Subscriber
 
 class ServiceRequestHandlerImpl(loginUserUseCase: LoginUserUseCase, logoutUserUseCase: LogoutUserUseCase,
@@ -21,30 +21,28 @@ class ServiceRequestHandlerImpl(loginUserUseCase: LoginUserUseCase, logoutUserUs
 
   override def handleRegistration(implicit context: RoutingContext): Unit = {
     val credentials: (Option[String], Option[String]) = getCredentials
-    registrationValidation(RegisterUserRequest(credentials._1.get, credentials._2.get))
-      .subscribe(new RegistrationValiditySubscriber(credentials))
+    registrationValidation(RegisterUserRequest(credentials._1.get, credentials._2.get), new RegistrationValiditySubscriber(context.response(), credentials))
   }
 
   override def handleLogin(implicit context: RoutingContext): Unit = {
     val credentials = getCredentials
-    loginValidation(LoginUserRequest(credentials._1.get, credentials._2.get))
-      .subscribe(new LoginValiditySubscriber(credentials))
+    loginValidation(LoginUserRequest(credentials._1.get, credentials._2.get), new LoginValiditySubscriber(context.response(), credentials))
   }
 
   override def handleLogout(implicit context: RoutingContext): Unit = {
     val token = getTokenFromHeader
     /* Request check before execute logout*/
-    logoutUserValidation(LogoutUserRequest(token.get)).subscribe(new LogoutValiditySubscriber)
+    logoutUserValidation(LogoutUserRequest(token.get), new LogoutValiditySubscriber(context.response()))
   }
 
   override def handleTokenCheck(implicit context: RoutingContext): Unit = {
     val token = getTokenFromHeader
     doIfDefined(token, checkTokenUseCase(CheckTokenRequest(token.get))
       .subscribe(tokenIsValid => if (tokenIsValid) {
-        respond(200, "Token is valid")
+        respond(HttpResponseStatus.OK)
       } else {
-        endErrorResponse(context.response(), HttpResponseStatus.UNAUTHORIZED,
-          invalidToken, "Token is invalid")
+        val error: JsonObject = InvalidTokenException
+        context.response().setStatus(HttpResponseStatus.UNAUTHORIZED).end(error)
       }))
   }
 
@@ -55,64 +53,43 @@ class ServiceRequestHandlerImpl(loginUserUseCase: LoginUserUseCase, logoutUserUs
   private def getCredentials(implicit context: RoutingContext): (Option[String], Option[String]) =
     (getUsername, getPassword)
 
-  private class TokenSubscriber(errorMessage: String, errorCode: Int)(implicit routingContext: RoutingContext)
-    extends Subscriber[String] {
-    override def onNext(token: String): Unit = respondWithToken(token, getUsername(routingContext).get)
+  private class TokenSubscriber(protected override val response: HttpServerResponse)
+    extends Subscriber[String]
+      with ErrorSubscriber {
 
-    override def onError(error: Throwable): Unit = {
-      error.printStackTrace()
-      endErrorResponse(routingContext.response(), HttpResponseStatus.valueOf(errorCode),
-        unexpectedTokenError, errorMessage)
-    }
+    override def onNext(token: String): Unit = response.end(Json.obj(("token", token)))
 
-    private def respondWithToken(token: String, username: String)(implicit context: RoutingContext): Unit = {
-      context.response
-        .putHeader("content-type", "application/json")
-        .setStatusCode(201)
-        .end(Json.obj(("token", token)).encodePrettily())
-    }
   }
 
-  private class LogoutSubscriber(implicit routingContext: RoutingContext) extends Subscriber[Unit] {
-    override def onNext(unit: Unit): Unit = respondWithCode(200)
+  private class LogoutSubscriber(protected override val response: HttpServerResponse) extends Subscriber[Unit]
+    with ErrorSubscriber {
 
-    override def onError(error: Throwable): Unit =
-      endErrorResponse(routingContext.response(), HttpResponseStatus.INTERNAL_SERVER_ERROR,
-        errorType = unexpectedLogoutError, description = error.getMessage)
+    override def onCompleted(): Unit = response.setStatus(HttpResponseStatus.RESET_CONTENT).end()
+
   }
 
-  private class LogoutValiditySubscriber(implicit routingContext: RoutingContext) extends Subscriber[Unit] {
+  private class LogoutValiditySubscriber(protected override val response: HttpServerResponse)(implicit context: RoutingContext) extends Subscriber[Unit]
+    with ErrorSubscriber {
 
     override def onCompleted(): Unit =
-      logoutUserUseCase(LogoutUserRequest(getTokenFromHeader.get)).subscribe(new LogoutSubscriber)
+      logoutUserUseCase(LogoutUserRequest(getTokenFromHeader.get)).subscribe(new LogoutSubscriber(response))
 
-    override def onError(error: Throwable): Unit =
-      endErrorResponse(routingContext.response(), HttpResponseStatus.BAD_REQUEST,
-        errorType = invalidToken, description = "Invalid token or user not logged in")
   }
 
-  private class LoginValiditySubscriber(credentials: (Option[String], Option[String]))
-                                       (implicit routingContext: RoutingContext) extends Subscriber[Unit] {
+  private class LoginValiditySubscriber(protected override val response: HttpServerResponse, credentials: (Option[String], Option[String]))
+    extends Subscriber[Unit] with ErrorSubscriber {
 
     override def onCompleted(): Unit =
       loginUserUseCase(LoginUserRequest(credentials._1.get, credentials._2.get))
-        .subscribe(new TokenSubscriber("Wrong username or password", 401))
+        .subscribe(new TokenSubscriber(response))
 
-    override def onError(error: Throwable): Unit =
-      endErrorResponse(routingContext.response(), HttpResponseStatus.UNAUTHORIZED,
-        missingCredentials, "Login credentials not present")
   }
 
-  private class RegistrationValiditySubscriber(credentials: (Option[String], Option[String]))
-                                              (implicit routingContext: RoutingContext) extends Subscriber[Unit] {
+  private class RegistrationValiditySubscriber(protected override val response: HttpServerResponse, credentials: (Option[String], Option[String]))
+    extends Subscriber[Unit]  with ErrorSubscriber {
 
     override def onCompleted(): Unit =
-      registerUserUseCase(RegisterUserRequest(credentials._1.get, credentials._2.get))
-        .subscribe(new TokenSubscriber("Username already taken", 409))
-
-    override def onError(error: Throwable): Unit =
-      endErrorResponse(routingContext.response(), HttpResponseStatus.UNAUTHORIZED,
-        missingCredentials, "Registration credentials not present")
+      registerUserUseCase(RegisterUserRequest(credentials._1.get, credentials._2.get), new TokenSubscriber(response))
   }
 
 }

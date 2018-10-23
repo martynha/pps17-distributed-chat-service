@@ -7,15 +7,16 @@ import io.vertx.lang.scala.json.Json
 import io.vertx.scala.ext.auth.jwt.{JWTAuth, JWTAuthOptions}
 import io.vertx.scala.ext.web.handler.{BodyHandler, CorsHandler, JWTAuthHandler}
 import io.vertx.scala.ext.web.{Router, RoutingContext}
-import it.unibo.dcs.service.authentication.repository.AuthenticationRepository
 import it.unibo.dcs.commons.RxHelper
 import it.unibo.dcs.commons.VertxWebHelper._
 import it.unibo.dcs.commons.interactor.ThreadExecutorExecutionContext
 import it.unibo.dcs.commons.interactor.executor.PostExecutionThread
 import it.unibo.dcs.commons.service.{HttpEndpointPublisher, ServiceVerticle}
-import it.unibo.dcs.service.authentication.authentication.{LoginValidator, LogoutUserValidator, RegistrationValidator}
 import it.unibo.dcs.service.authentication.interactor.usecases.{CheckTokenUseCase, LoginUserUseCase, LogoutUserUseCase, RegisterUserUseCase}
 import it.unibo.dcs.service.authentication.interactor.validations.{LoginUserValidation, LogoutUserValidation, RegisterUserValidation}
+import it.unibo.dcs.service.authentication.repository.AuthenticationRepository
+import it.unibo.dcs.service.authentication.validator.{LoginValidator, LogoutUserValidator, RegistrationValidator}
+
 import scala.io.Source
 import scala.util.{Failure, Success}
 
@@ -103,15 +104,23 @@ final class AuthenticationVerticle(authenticationRepository: AuthenticationRepos
   private def setupRoutes(router: Router, jwtAuth: JWTAuth): Unit = {
     val requestHandler = getRequestHandler(jwtAuth)
     router.post("/register")
-      .consumes("application/json").produces("application/json")
+      .consumes("application/json")
+      .produces("application/json")
       .handler(requestHandler.handleRegistration(_))
 
     router.post("/login")
-      .consumes("application/json").produces("application/json")
+      .consumes("application/json")
+      .produces("application/json")
       .handler(requestHandler.handleLogin(_))
 
-    router.post("/protected/logout").handler(requestHandler.handleLogout(_))
-    router.get("/protected/tokenValidity").handler(requestHandler.handleTokenCheck(_))
+    router.post("/protected/logout")
+      .consumes("application/json")
+      .produces("application/json")
+      .handler(requestHandler.handleLogout(_))
+
+    router.get("/protected/tokenValidity")
+      .produces("application/json")
+      .handler(requestHandler.handleTokenCheck(_))
   }
 
   private def getRequestHandler(jwtAuth: JWTAuth): ServiceRequestHandler = {

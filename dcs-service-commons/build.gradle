@@ -3,10 +3,7 @@
  * Learn how to create Gradle builds at https://guides.gradle.org/creating-new-gradle-builds/
  */
 dependencies {
-    compile project(':dcs-commons')
-
-    compile group: 'io.vertx', name: 'vertx-web-scala_2.12', version: vertxVersion
-    compile group: 'io.vertx', name: 'vertx-web-client-scala_2.12', version: vertxVersion
+    compile project(':dcs-exceptions')
 
     compile group: 'io.vertx', name: 'vertx-service-discovery', version: vertxVersion
 

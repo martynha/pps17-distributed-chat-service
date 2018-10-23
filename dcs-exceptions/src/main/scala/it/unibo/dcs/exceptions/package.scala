@@ -1,63 +1,254 @@
 package it.unibo.dcs
 
-import io.vertx.core.json.JsonObject
+import io.netty.handler.codec.http.HttpResponseStatus
+import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
+import io.vertx.scala.ext.web.client.HttpResponse
+import it.unibo.dcs.exceptions.ErrorType._
+import it.unibo.dcs.exceptions.Implicits.jsonObjectToDcsException
 
 /** It contains all the exceptions used by the APIs */
 package object exceptions {
 
+  private val KEY_ERROR = "error"
+
+  private val KEY_TYPE = "type"
+  private val KEY_EXTRAS = "extras"
+
+  private val KEY_SERVICE_NAME = "serviceName"
+  private val KEY_DESCRIPTION = "description"
+  private val KEY_NAME = "name"
+  private val KEY_USERNAME = "username"
+
+  object ErrorType {
+
+    val Internal = "Internal"
+
+    val ServiceUnavailable = "SERVICE_UNAVAILABLE"
+
+    val UserAlreadyExists = "USER_ALREADY_EXISTS"
+
+    val UserNotFound = "USER_NOT_FOUND"
+
+    val RoomAlreadyExists = "ROOM_ALREADY_EXISTS"
+
+    val RoomNotFound = "ROOM_NOT_FOUND"
+
+    val WrongUsernameOrPassword = "WRONG_USERNAME_OR_PASSWORD"
+
+    val InvalidToken = "INVALID_TOKEN"
+
+    val UsernameRequired = "USERNAME_REQUIRED"
+
+    val FirstNameRequired = "FIRST_NAME_REQUIRED"
+
+    val LastNameRequired = "LAST_NAME_REQUIRED"
+
+    val PasswordRequired = "PASSWORD_REQUIRED"
+
+    val PasswordConfirmRequired = "PASSWORD_CONFIRM_REQUIRED"
+
+    val TokenRequired = "TOKEN_REQUIRED"
+
+    val RoomNameRequired = "ROOM_NAME_REQUIRED"
+
+  }
+
   /** Sum type representing all the specific exceptions for Distributed Chat Service application */
-  sealed trait DcsException extends RuntimeException
+  sealed abstract class DcsException(val errorType: String) extends RuntimeException
 
-  /* Already taken */
-  final case class UsernameAlreadyTaken(username: String) extends DcsException
+  final case class InternalException(description: String = "") extends DcsException(Internal)
 
-  /* Not found*/
-  final case class UserNotFoundException(username: String) extends DcsException
+  final case object KeyRequiredException {
 
-  /* Missing information */
-  final case class MissingUsernameException(message: String) extends DcsException
+    def apply(key: String, error: String) = InternalException(s"Key '$key' is required in $error error")
 
-  final case class MissingLastNameException(message: String) extends DcsException
+  }
 
-  final case class MissingPasswordException(message: String) extends DcsException
+  final case class AuthServiceErrorException(cause: Throwable) extends DcsException(Internal)
 
-  final case class MissingFirstNameException(message: String) extends DcsException
+  final case class RoomServiceErrorException(cause: Throwable) extends DcsException(Internal)
 
-  final case class MissingTokenException(message: String) extends DcsException
+  final case class UserServiceErrorException(cause: Throwable) extends DcsException(Internal)
 
-  final case class MissingRoomNameException(message: String) extends DcsException
+  final case class ServiceUnavailableException(serviceName: String) extends DcsException(ServiceUnavailable)
 
+  final case class UserAlreadyExistsException(username: String) extends DcsException(UserAlreadyExists)
 
-  /* Response exceptions */
-  final case class RegistrationResponseException(message: String, username: String, token: String) extends DcsException
+  final case class UserNotFoundException(username: String) extends DcsException(UserNotFound)
 
-  final case class LoginResponseException(message: String) extends DcsException
+  final case class RoomAlreadyExistsException(name: String) extends DcsException(RoomAlreadyExists)
 
-  final case class LogoutResponseException(message: String) extends DcsException
+  final case class RoomNotFoundException(name: String) extends DcsException(RoomNotFound)
 
-  final case class GetUserResponseException(message: String) extends DcsException
+  final case object InvalidTokenException extends DcsException(InvalidToken)
 
-  final case class UserCreationResponseException(message: String, username: String, token: String) extends DcsException
+  final case object WrongUsernameOrPasswordException extends DcsException(WrongUsernameOrPassword)
 
-  final case class RoomDeletionResponseException(message: String) extends DcsException
+  /* Field required */
+  final case object UsernameRequiredException extends DcsException(UsernameRequired)
 
-  final case class RoomCreationResponseException(message: String) extends DcsException
+  final case object FirstNameRequiredException extends DcsException(FirstNameRequired)
 
-  final case class TokenCheckResponseException(message: String) extends DcsException
+  final case object LastNameRequiredException extends DcsException(LastNameRequired)
 
-  final case class AuthRegistrationResponseException(message: String) extends DcsException
+  final case object PasswordRequiredException extends DcsException(PasswordRequired)
 
-  final case class DeleteUserResponseException(message: String) extends DcsException
+  final case object PasswordConfirmRequiredException extends DcsException(PasswordRequired)
 
-  final case class UserServiceErrorException(errorJson: JsonObject,
-                                             username: String,
-                                             token: String = "") extends DcsException
+  final case object TokenRequiredException extends DcsException(TokenRequired)
 
-  final case class AuthServiceErrorException(errorJson: JsonObject) extends DcsException
+  final case object RoomNameRequiredException extends DcsException(RoomNameRequired)
 
-  final case class RoomServiceErrorException(errorJson: JsonObject,
-                                             username: String,
-                                             token: String) extends DcsException
+  object Implicits {
+
+    implicit def throwableToJsonObject(cause: Throwable): JsonObject = {
+      println(cause.getClass)
+      val error = new JsonObject()
+      cause match {
+        case e: DcsException =>
+          error.put(KEY_TYPE, e.errorType)
+          e match {
+            case ServiceUnavailableException(serviceName) =>
+              error.put(KEY_EXTRAS, Json.obj((KEY_SERVICE_NAME, serviceName)))
+            case UserAlreadyExistsException(username) =>
+              error.put(KEY_EXTRAS, Json.obj((KEY_USERNAME, username)))
+            case UserNotFoundException(username) =>
+              error.put(KEY_EXTRAS, Json.obj((KEY_USERNAME, username)))
+            case RoomAlreadyExistsException(name) =>
+              error.put(KEY_EXTRAS, Json.obj((KEY_NAME, name)))
+            case RoomNotFoundException(name) =>
+              error.put(KEY_EXTRAS, Json.obj((KEY_NAME, name)))
+            case InternalException(description) =>
+              if (description != null && description.nonEmpty)
+                error.put(KEY_EXTRAS, Json.obj((KEY_DESCRIPTION, description)))
+            case _ =>
+          }
+        case _ =>
+          error.put(KEY_TYPE, Internal)
+
+          val description = cause.getMessage
+          if (description != null && description.nonEmpty)
+            error.put(KEY_EXTRAS, Json.obj((KEY_DESCRIPTION, description)))
+      }
+      Json.obj((KEY_ERROR, error))
+    }
+
+    implicit def jsonObjectToDcsException(json: JsonObject): JsonObject = {
+      if (json.containsKey(KEY_ERROR)) {
+        val error = json.getJsonObject(KEY_ERROR)
+        if (error.containsKey(KEY_TYPE)) {
+          error.getString(KEY_TYPE) match {
+            case ServiceUnavailable =>
+              if (error.containsKey(KEY_EXTRAS)) {
+                val extras = error.getJsonObject(KEY_EXTRAS)
+                if (extras.containsKey(KEY_SERVICE_NAME)) {
+                  val serviceName = extras.getString(KEY_SERVICE_NAME)
+                  throw ServiceUnavailableException(serviceName)
+                }
+                throw KeyRequiredException(KEY_SERVICE_NAME, ServiceUnavailable)
+              }
+              throw KeyRequiredException(KEY_USERNAME, ServiceUnavailable)
+            case UserNotFound =>
+              if (error.containsKey(KEY_EXTRAS)) {
+                val extras = error.getJsonObject(KEY_EXTRAS)
+                if (extras.containsKey(KEY_USERNAME)) {
+                  val username = extras.getString(KEY_USERNAME)
+                  throw UserNotFoundException(username)
+                }
+                throw InternalException(s"Missing key '$KEY_USERNAME' in $UserNotFound error")
+                throw KeyRequiredException(KEY_USERNAME, UserNotFound)
+              }
+              throw KeyRequiredException(KEY_NAME, UserNotFound)
+            case UserAlreadyExists =>
+              if (error.containsKey(KEY_EXTRAS)) {
+                val extras = error.getJsonObject(KEY_EXTRAS)
+                if (extras.containsKey(KEY_USERNAME)) {
+                  val username = extras.getString(KEY_USERNAME)
+                  throw UserAlreadyExistsException(username)
+                }
+                throw KeyRequiredException(KEY_USERNAME, UserAlreadyExists)
+              }
+              throw KeyRequiredException(KEY_NAME, UserAlreadyExists)
+            case RoomNotFound =>
+              if (error.containsKey(KEY_EXTRAS)) {
+                val extras = error.getJsonObject(KEY_EXTRAS)
+                if (extras.containsKey(KEY_NAME)) {
+                  val name = extras.getString(KEY_NAME)
+                  throw RoomNotFoundException(name)
+                }
+                throw KeyRequiredException(KEY_NAME, RoomNotFound)
+              }
+              throw KeyRequiredException(KEY_EXTRAS, RoomNotFound)
+            case RoomAlreadyExists =>
+              if (error.containsKey(KEY_EXTRAS)) {
+                val extras = error.getJsonObject(KEY_EXTRAS)
+                if (extras.containsKey(KEY_NAME)) {
+                  val name = extras.getString(KEY_NAME)
+                  throw RoomAlreadyExistsException(name)
+                }
+                throw KeyRequiredException(KEY_NAME, RoomAlreadyExists)
+              }
+              throw KeyRequiredException(KEY_EXTRAS, RoomAlreadyExists)
+            case WrongUsernameOrPassword =>
+              throw WrongUsernameOrPasswordException
+            case UsernameRequired =>
+              throw UsernameRequiredException
+            case FirstNameRequired =>
+              throw FirstNameRequiredException
+            case LastNameRequired =>
+              throw LastNameRequiredException
+            case PasswordRequired =>
+              throw PasswordRequiredException
+            case PasswordConfirmRequired =>
+              throw PasswordConfirmRequiredException
+            case TokenRequired =>
+              throw TokenRequiredException
+            case RoomNameRequired =>
+              throw RoomNameRequiredException
+            case Internal =>
+              if (error.containsKey(KEY_EXTRAS)) {
+                val extras = error.getJsonObject(KEY_EXTRAS)
+                if (extras.containsKey(KEY_DESCRIPTION)) {
+                  val description = extras.getString(KEY_DESCRIPTION)
+                  throw InternalException(description)
+                }
+              }
+              throw InternalException()
+          }
+          throw InternalException(s"Missing key '$KEY_TYPE' in DCS error")
+        }
+      }
+      json
+    }
+
+    implicit def throwableToHttpResponseStatus(cause: Throwable): HttpResponseStatus = cause match {
+      case ServiceUnavailableException(_) =>
+        HttpResponseStatus.SERVICE_UNAVAILABLE
+      case UserNotFoundException(_)
+           | RoomNotFoundException(_) =>
+        HttpResponseStatus.NOT_FOUND
+      case UserAlreadyExistsException(_)
+           | RoomAlreadyExistsException(_) =>
+        HttpResponseStatus.CONFLICT
+      case UsernameRequiredException
+           | FirstNameRequiredException
+           | LastNameRequiredException
+           | PasswordRequiredException
+           | PasswordConfirmRequiredException
+           | TokenRequiredException
+           | RoomNameRequiredException =>
+        HttpResponseStatus.PRECONDITION_FAILED
+      case InvalidTokenException
+           | WrongUsernameOrPasswordException =>
+        HttpResponseStatus.UNAUTHORIZED
+      case _ => HttpResponseStatus.INTERNAL_SERVER_ERROR
+    }
+  }
+
+  def bodyAsJsonObject[T](default: => JsonObject = Json.emptyObj()): HttpResponse[T] => JsonObject = response =>
+    jsonObjectToDcsException(response.bodyAsJsonObject().getOrElse(default))
+
+  def bodyAsJsonArray[T](default: => JsonArray = Json.emptyArr()): HttpResponse[T] => JsonArray = response => response.bodyAsJsonArray()
+    .getOrElse(default)
 
 }
-

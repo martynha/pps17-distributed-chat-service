@@ -8,7 +8,7 @@ import rx.lang.scala.Observable
 
 class RoomRepositoryImpl(roomDataStore: RoomDataStore) extends RoomRepository {
 
-  override def deleteRoom(request: DeleteRoomRequest): Observable[Unit] =
+  override def deleteRoom(request: DeleteRoomRequest): Observable[String] =
     roomDataStore.deleteRoom(request)
 
   override def createRoom(request: CreateRoomRequest): Observable[Room] = roomDataStore.createRoom(request)
