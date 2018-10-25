@@ -15,6 +15,13 @@ trait AuthenticationRepository {
   def createUser(username: String, password: String): Observable[Unit]
 
   /** @param username
+    * Username needed to delete the user
+    * @param token
+    * * The user's jwt token
+    * @return an empty observable stream */
+  def deleteUser(username: String, token: String): Observable[Unit]
+
+  /** @param username
     * Username needed to check that it exists
     * @return an empty observable stream */
   def checkUserExistence(username: String): Observable[Unit]

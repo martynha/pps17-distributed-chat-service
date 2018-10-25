@@ -15,7 +15,7 @@ class JwtTokenDecoder() {
     * @return a username */
   def getUsernameFromToken(token: String): String = {
     val base64EncodedBody = token.split("\\.")(1)
-    val body = new String(base64.decode(base64EncodedBody))
+    val body = new String(base64.decode(base64EncodedBody), "UTF-8")
     Json.fromObjectString(body).getString("sub")
   }
 

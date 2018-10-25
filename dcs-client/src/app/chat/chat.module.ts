@@ -14,6 +14,7 @@ import { AddRoomComponent } from './add-room/add-room.component';
 import { RoomInfoComponent } from './room-info/room-info.component';
 import { FormsModule } from '@angular/forms';
 
+
 @NgModule({
   imports: [
     CommonModule,
@@ -32,4 +33,4 @@ import { FormsModule } from '@angular/forms';
     RoomInfoComponent
   ],
 })
-export class ChatModule { }
+export class ChatModule {}

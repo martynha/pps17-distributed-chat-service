@@ -3,7 +3,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { NgModule } from '@angular/core';
 
-import { HttpClientModule, HttpClient, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
 
 import { LayoutModule } from '@angular/cdk/layout';
 import { OverlayModule } from '@angular/cdk/overlay';
@@ -19,7 +19,6 @@ import { ChatService } from './service/chat.service';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { FormsModule } from '@angular/forms';
-import { ServerInterceptor } from './server-interceptor';
 
 export const createTranslateLoader = (http) => {
   // for development
@@ -56,8 +55,7 @@ export const createTranslateLoader = (http) => {
   ],
   providers: [
     EventBusService,
-    ChatService,
-    { provide: HTTP_INTERCEPTORS, useClass: ServerInterceptor, multi: true }
+    ChatService
   ],
   bootstrap: [AppComponent]
 })

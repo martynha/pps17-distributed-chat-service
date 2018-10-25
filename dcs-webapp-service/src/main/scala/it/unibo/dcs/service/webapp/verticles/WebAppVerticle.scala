@@ -4,11 +4,13 @@ import io.vertx.core.http.HttpMethod._
 import io.vertx.core.{AbstractVerticle, Context, Vertx}
 import io.vertx.scala.core
 import io.vertx.scala.core.eventbus.EventBus
+import io.vertx.scala.ext.bridge.PermittedOptions
 import io.vertx.scala.ext.web.Router
-import io.vertx.scala.ext.web.handler.{BodyHandler, CorsHandler}
-import io.vertx.servicediscovery.{Record, ServiceDiscovery}
-import it.unibo.dcs.commons.service.codecs.RecordMessageCodec
+import io.vertx.scala.ext.web.handler.sockjs.{BridgeOptions, SockJSHandler}
+import io.vertx.scala.ext.web.handler.{BodyHandler, CorsHandler, StaticHandler}
+import io.vertx.servicediscovery.ServiceDiscovery
 import it.unibo.dcs.commons.service.{HttpEndpointPublisher, HttpEndpointPublisherImpl, ServiceVerticle}
+import it.unibo.dcs.service.webapp.verticles.Addresses.rooms
 import it.unibo.dcs.service.webapp.verticles.handler.ServiceRequestHandler
 
 /** Verticle that runs the WebApp Service */
@@ -25,7 +27,7 @@ final class WebAppVerticle extends ServiceVerticle {
 
     initVerticleConfiguration(context)
     val discovery = ServiceDiscovery.create(jVertx)
-    val eventBus: EventBus = initEventBus
+    initEventBus
 
     this.publisher = new HttpEndpointPublisherImpl(discovery, eventBus)
     this.requestHandler = ServiceRequestHandler(jVertx, eventBus)
@@ -44,16 +46,10 @@ final class WebAppVerticle extends ServiceVerticle {
 
   override protected def initializeRouter(router: Router): Unit = {
     /* Enables the fetching of request bodies */
-    router.route().handler(BodyHandler.create())
-
-    val apiRouter = Router.router(vertx)
-
-    implicit val ctx: core.Context = this.ctx
-
-    apiRouter.route()
+    router.route()
       .handler(BodyHandler.create())
 
-    apiRouter.route().handler(CorsHandler.create("*")
+    router.route().handler(CorsHandler.create("*")
       .allowedMethod(GET)
       .allowedMethod(POST)
       .allowedMethod(PATCH)
@@ -63,6 +59,15 @@ final class WebAppVerticle extends ServiceVerticle {
       .allowedHeader("Access-Control-Allow-Origin")
       .allowedHeader("Access-Control-Allow-Credentials")
       .allowedHeader("Content-Type"))
+
+    router.route().handler(StaticHandler.create())
+
+    val apiRouter = Router.router(vertx)
+
+    implicit val ctx: core.Context = this.ctx
+
+    apiRouter.route("/events/*")
+      .handler(sockJSHandler)
 
     apiRouter.post("/register")
       .consumes("application/json")
@@ -102,6 +107,11 @@ final class WebAppVerticle extends ServiceVerticle {
         log.error(s"Could not start server at http://$host:$port", _))
   }
 
+  private def sockJSHandler: SockJSHandler = {
+    val options = BridgeOptions()
+      .addOutboundPermitted(PermittedOptions().setAddress(rooms.deleted))
+
+    SockJSHandler.create(vertx).bridge(options)
+  }
+
 }
-
-

@@ -39,6 +39,14 @@ class AuthenticationDataStoreTest extends FlatSpec with MockFactory {
     assertSubscriber(registerSubscriber)
   }
 
+  it should "call sqlConnection and return a result when deleteUser is called" in {
+    val deleteSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
+    specifyUpdateExpectation()
+    authDataStore deleteUser(username, password) subscribe deleteSubscriber
+
+    assertSubscriber(deleteSubscriber)
+  }
+
   it should "call sqlConnection and return a result when isTokenInvalid is called" in {
     val subscriber: Subscriber[Boolean] = stub[Subscriber[Boolean]]
     specifyQueryExpectation()

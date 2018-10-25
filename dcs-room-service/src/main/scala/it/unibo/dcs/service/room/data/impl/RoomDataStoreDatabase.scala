@@ -62,8 +62,7 @@ private[impl] object RoomDataStoreDatabase {
     }
 
     implicit def jsonObjectToRoom(roomJsonObject: JsonObject): Room = {
-      Room(roomJsonObject.getString("name"),
-        roomJsonObject.getString("owner_username"))
+      Room(roomJsonObject.getString("name"))
     }
   }
 

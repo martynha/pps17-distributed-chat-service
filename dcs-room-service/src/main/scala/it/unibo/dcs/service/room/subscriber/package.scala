@@ -13,7 +13,8 @@ import rx.lang.scala.Subscriber
 
 package object subscriber {
 
-  final class CreateRoomSubscriber(protected override val response: HttpServerResponse) extends Subscriber[Room] with ErrorSubscriber {
+  final class CreateRoomSubscriber(protected override val response: HttpServerResponse) extends Subscriber[Room]
+    with ErrorSubscriber {
 
     private[this] val log = ScalaLogger.getLogger(getClass.getName)
 
@@ -71,7 +72,6 @@ package object subscriber {
     implicit def roomToJsonObject(room: Room): JsonObject = {
       new JsonObject()
         .put("name", room.name)
-        .put("owner_username", room.ownerUsername)
     }
 
   }

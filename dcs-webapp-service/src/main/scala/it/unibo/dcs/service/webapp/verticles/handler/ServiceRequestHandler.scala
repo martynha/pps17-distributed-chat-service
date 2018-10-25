@@ -62,6 +62,7 @@ object ServiceRequestHandler {
     val userRepository = UserRepository(userDataStore)
     val authRepository = AuthenticationRepository(authDataStore)
     val roomRepository = RoomRepository(roomDataStore)
-    new ServiceRequestHandlerImpl(userRepository, authRepository, roomRepository)
+    new ServiceRequestHandlerImpl(eventBus, userRepository, authRepository, roomRepository)
   }
+
 }

@@ -3,7 +3,7 @@ package it.unibo.dcs.service.authentication.interactor.usecases
 import it.unibo.dcs.commons.interactor.UseCase
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
 import it.unibo.dcs.service.authentication.repository.AuthenticationRepository
-import it.unibo.dcs.service.authentication.request.CheckTokenRequest
+import it.unibo.dcs.service.authentication.request.Requests.CheckTokenRequest
 import rx.lang.scala.Observable
 
 /** It represents the use case to use to check that the provided jwt token is valid.
@@ -31,6 +31,6 @@ object CheckTokenUseCase {
     * @param authRepository      authentication repository reference
     * @return the use case object */
   def apply(threadExecutor: ThreadExecutor, postExecutionThread: PostExecutionThread,
-            authRepository: AuthenticationRepository) =
+            authRepository: AuthenticationRepository): CheckTokenUseCase =
     new CheckTokenUseCase(threadExecutor, postExecutionThread, authRepository)
 }

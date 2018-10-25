@@ -23,7 +23,7 @@ class AuthenticationRepositoryTest extends FlatSpec with MockFactory {
     val loginSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
     (authDataStore checkUserExistence _) expects username returns (Observable just expectedResult)
 
-    authRepository checkUserExistence (username) subscribe loginSubscriber
+    authRepository checkUserExistence username subscribe loginSubscriber
 
     (loginSubscriber onNext _) verify expectedResult once()
     (() => loginSubscriber onCompleted) verify() once()
@@ -46,6 +46,16 @@ class AuthenticationRepositoryTest extends FlatSpec with MockFactory {
 
     (registerSubscriber onNext _) verify expectedResult once()
     (() => registerSubscriber onCompleted) verify() once()
+  }
+
+  it should "delete the user when deleteUser is called" in {
+    val deleteUserSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
+    (authDataStore deleteUser(_, _)) expects(username, token) returns (Observable just expectedResult)
+
+    authRepository deleteUser(username, token) subscribe deleteUserSubscriber
+
+    (deleteUserSubscriber onNext _) verify expectedResult once()
+    (() => deleteUserSubscriber onCompleted) verify() once()
   }
 
   it should "check the token validity when isTokenValid is called" in {

@@ -10,6 +10,7 @@ import { CreateRoomRequest } from '../../requests';
   styleUrls: ['./add-room.component.scss']
 })
 export class AddRoomComponent implements OnInit {
+
   name = '';
 
   constructor(private router: Router, private chat: ChatService) {}
@@ -23,22 +24,11 @@ export class AddRoomComponent implements OnInit {
   addRoom() {
     this.chat.createRoom(this.name)
       .subscribe(
-        p => {
-          this.router.navigate(['/rooms', p.room.name]);
+        name => {
+          this.router.navigate(['/rooms', name]);
         },
         err => console.error(err)
       );
-    /*this.parent.createRoom(
-      new CreateRoomRequest(
-        this.name,
-        this.parent.getUser().username,
-        this.parent.getUser().token
-      ));
-    this.name = '';
-    const room = {
-      name: this.name
-    };
-    this.chat.selectRoom(room);
-    this.router.navigate(['/rooms', room.name]);*/
   }
+
 }

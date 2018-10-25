@@ -5,26 +5,35 @@ import { EventBusService } from './event-bus.service';
 import { Room, Participation } from '../model';
 import { CreateRoomRequest, DeleteRoomRequest } from '../requests';
 import { AuthService } from './auth.service';
-import { tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
+  private static API_PREFIX = '/api';
 
-  private static PREFIX = '/api';
+  private static EVENTS = ChatService.API_PREFIX + '/events';
 
-  private static EVENTS = ChatService.PREFIX + '/events';
+  private static ROOMS = ChatService.API_PREFIX + '/rooms';
 
-  private static ROOMS = ChatService.PREFIX + '/rooms';
-
-  private static ROOM_CREATED = 'rooms.created';
+  private static ROOM_DELETED = 'rooms.deleted';
 
   private roomCreated = new Subject<Room>();
   private roomDeleted = new Subject<string>();
   private roomSelected = new Subject<Room>();
 
-  constructor(private http: HttpClient, private eventBus: EventBusService, private auth: AuthService) {}
+  constructor(
+    private http: HttpClient,
+    private eventBus: EventBusService,
+    private auth: AuthService
+  ) {
+    eventBus.connect(ChatService.EVENTS);
+
+    eventBus.registerHandler(ChatService.ROOM_DELETED, (err, msg) => {
+      this.roomDeleted.next(msg.body.name);
+    });
+  }
 
   selectRoom(room: Room) {
     this.roomSelected.next(room);
@@ -34,30 +43,26 @@ export class ChatService {
     return this.roomSelected.asObservable();
   }
 
-  createRoom(name: string): Observable<Participation> {
+  createRoom(name: string): Observable<string> {
     const user = this.auth.user;
-    return this.http.post<Participation>('/api/rooms', new CreateRoomRequest(
-      name,
-      user.username,
-      user.token
-    ))
-    .pipe(tap(p => {
-      this.selectRoom(p.room);
-      this.roomCreated.next(p.room);
-    }));
+    return this.http
+      .post<Room>('/api/rooms', new CreateRoomRequest(name, user.username, user.token))
+      .pipe(tap(room => this.roomCreated.next(room)))
+      .pipe(map(room => room.name));
   }
 
-  deleteRoom(name: string): Observable<Room> {
+  deleteRoom(name: string): Observable<void> {
     const user = this.auth.user;
     const body = new DeleteRoomRequest(name, user.username, user.token);
-    return this.http.request<Room>('delete', ChatService.ROOMS, { body })
-      .pipe(tap(p => {
-        this.roomDeleted.next(p.name);
-      }))
+    return this.http.request<void>('delete', ChatService.ROOMS, {
+      body
+    });
   }
 
   onRoomCreated(): Observable<Room> {
-    return this.roomCreated.asObservable();
+    return this.roomCreated
+      .asObservable()
+      .pipe(tap(room => this.selectRoom(room)));
   }
 
   onRoomDeleted(): Observable<string> {

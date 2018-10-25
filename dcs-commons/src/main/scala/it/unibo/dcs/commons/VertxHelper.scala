@@ -76,7 +76,7 @@ object VertxHelper {
         if (addresses contains name) {
           addresses(name)
         } else {
-          val address = new Address(eventBus, name)
+          val address = Address(eventBus, name)
           addresses(name) = address
           address
         }

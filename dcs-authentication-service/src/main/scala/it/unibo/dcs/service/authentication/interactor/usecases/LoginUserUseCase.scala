@@ -35,6 +35,6 @@ object LoginUserUseCase {
     * @param jwtAuth             jwt authentication provider
     * @return the use case object */
   def apply(threadExecutor: ThreadExecutor, postExecutionThread: PostExecutionThread,
-            authRepository: AuthenticationRepository, jwtAuth: JWTAuth) =
+            authRepository: AuthenticationRepository, jwtAuth: JWTAuth): LoginUserUseCase =
     new LoginUserUseCase(threadExecutor, postExecutionThread, authRepository, jwtAuth)
 }

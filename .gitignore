@@ -513,5 +513,6 @@ local.properties
 ### Project specific
 
 /dcs-*/build/
+webroot/
 .vertx/
 .~*.lun#

@@ -44,7 +44,7 @@ final class RegisterUserUseCase(private[this] val threadExecutor: ThreadExecutor
         case RoomServiceErrorException(error) =>
           log.info("Rolling back room repository...")
           rollbackAuthRepository(request.username, token, error)
-          rollbackUserRepository(request.username, error)
+            .onErrorResumeNext(_ => rollbackUserRepository(request.username, error))
       }
     } yield {
       val result = RegisterResult(user, token)

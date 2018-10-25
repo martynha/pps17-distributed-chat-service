@@ -37,5 +37,5 @@ dependencies {
     compile project(':dcs-interactor-commons')
     compile project(':dcs-exceptions')
 
-    testCompile "io.vertx:vertx-unit:3.5.4"
+    compile group: 'io.vertx', name: 'vertx-bridge-common-scala_2.12', version: vertxVersion
 }
