@@ -1,8 +1,8 @@
 package it.unibo.dcs.service
 
 import io.vertx.scala.ext.auth.jwt.JWTAuth
-import it.unibo.dcs.service.authentication.repository.AuthenticationRepository
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
+import it.unibo.dcs.service.authentication.repository.AuthenticationRepository
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
 

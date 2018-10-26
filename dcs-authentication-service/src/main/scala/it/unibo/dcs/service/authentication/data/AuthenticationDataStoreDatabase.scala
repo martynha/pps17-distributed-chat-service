@@ -1,6 +1,7 @@
 package it.unibo.dcs.service.authentication.data
 
 import java.util.Date
+
 import io.vertx.core.{AsyncResult, Future}
 import io.vertx.lang.scala.json.Json
 import io.vertx.scala.ext.sql.{ResultSet, SQLConnection}

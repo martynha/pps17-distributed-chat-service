@@ -1,6 +1,5 @@
 package it.unibo.dcs.service.webapp.repositories.impl
 
-import it.unibo.dcs.service.webapp.interaction.Requests
 import it.unibo.dcs.service.webapp.interaction.Requests._
 import it.unibo.dcs.service.webapp.repositories.AuthenticationRepository
 import it.unibo.dcs.service.webapp.repositories.datastores.AuthenticationDataStore

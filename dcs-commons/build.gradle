@@ -12,5 +12,7 @@ dependencies {
 
     compile group: 'commons-io', name: 'commons-io', version: apacheCommonsIOVersion
 
+    compile group: 'org.apache.httpcomponents', name: 'httpcore', version: httpCoreVersion
+
     compile group: 'com.google.code.gson', name: 'gson', version: gsonVersion
 }

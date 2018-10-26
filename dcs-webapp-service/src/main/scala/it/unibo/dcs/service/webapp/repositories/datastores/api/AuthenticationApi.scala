@@ -11,6 +11,11 @@ import rx.lang.scala.Observable
 /** Utility wrapper for making requests to the Authentication Service via the network */
 trait AuthenticationApi {
 
+  /** Delete a user given its info
+    *
+    * @param request needed info to delete a user
+    * @return an empty observable
+    */
   def deleteUser(request: DeleteUserRequest): Observable[Unit]
 
 

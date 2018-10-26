@@ -2,32 +2,25 @@ package usecases
 
 import java.util.Date
 
-import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
 import it.unibo.dcs.service.webapp.interaction.Requests.{CheckTokenRequest, CreateRoomRequest}
 import it.unibo.dcs.service.webapp.interaction.Results.RoomCreationResult
 import it.unibo.dcs.service.webapp.model.{Room, User}
-import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, RoomRepository}
-import it.unibo.dcs.service.webapp.usecases.CreateRoomUseCase
-import org.scalamock.scalatest.MockFactory
-import org.scalatest.{FlatSpec, OneInstancePerTest}
+import it.unibo.dcs.service.webapp.repositories.RoomRepository
+import it.unibo.dcs.service.webapp.usecases.{CreateRoomUseCase, JoinRoomUseCase}
 import rx.lang.scala.{Observable, Subscriber}
 
 import scala.language.postfixOps
 
-class CreateRoomUseCaseSpec extends FlatSpec with MockFactory with OneInstancePerTest {
+class CreateRoomUseCaseSpec extends UseCaseSpec {
   private val user = User("niklegend", "Nicola", "Piscaglia", "bio", visible = true, new Date)
   private val room = Room("Room 1")
-  private val token = "token"
 
   private val createRoomRequest = CreateRoomRequest("Room 1", user.username, token)
   private val checkTokenRequest = CheckTokenRequest(token)
 
   private val roomCreationResult = RoomCreationResult(room)
 
-  private val threadExecutor: ThreadExecutor = mock[ThreadExecutor]
-  private val postExecutionThread: PostExecutionThread = mock[PostExecutionThread]
   private val roomRepository: RoomRepository = mock[RoomRepository]
-  private val authRepository: AuthenticationRepository = mock[AuthenticationRepository]
 
   private val roomCreationSubscriber: Subscriber[RoomCreationResult] = stub[Subscriber[RoomCreationResult]]
 

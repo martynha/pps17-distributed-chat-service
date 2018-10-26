@@ -8,23 +8,17 @@ import it.unibo.dcs.service.webapp.interaction.Results.LoginResult
 import it.unibo.dcs.service.webapp.model.User
 import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, UserRepository}
 import it.unibo.dcs.service.webapp.usecases.LoginUserUseCase
-import org.scalamock.scalatest.MockFactory
-import org.scalatest.{FlatSpec, OneInstancePerTest}
 import rx.lang.scala.{Observable, Subscriber}
 
 import scala.language.postfixOps
 
-class LoginUseCaseSpec extends FlatSpec with MockFactory with OneInstancePerTest {
+class LoginUseCaseSpec extends UseCaseSpec {
 
   private val loginRequest = LoginUserRequest("niklegend", "password")
   private val user = User("niklegend", "Nicola", "Piscaglia", "bio", visible = true, new Date)
 
-  private val threadExecutor: ThreadExecutor = mock[ThreadExecutor]
-  private val postExecutionThread: PostExecutionThread = mock[PostExecutionThread]
   private val userRepository: UserRepository = mock[UserRepository]
-  private val authRepository: AuthenticationRepository = mock[AuthenticationRepository]
 
-  private val token: String = "token"
   private val loginResult: LoginResult = LoginResult(user, token)
 
   private val loginSubscriber: Subscriber[LoginResult] = stub[Subscriber[LoginResult]]

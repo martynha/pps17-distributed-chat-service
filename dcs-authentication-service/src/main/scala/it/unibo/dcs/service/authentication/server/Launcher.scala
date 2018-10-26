@@ -2,18 +2,18 @@ package it.unibo.dcs.service.authentication.server
 
 import java.net.InetAddress
 
-import io.vertx.lang.scala.{ScalaLogger, VertxExecutionContext}
 import io.vertx.lang.scala.json.Json
+import io.vertx.lang.scala.{ScalaLogger, VertxExecutionContext}
 import io.vertx.scala.core.{DeploymentOptions, Vertx, VertxOptions}
 import io.vertx.scala.ext.jdbc.JDBCClient
 import io.vertx.scala.ext.sql.SQLConnection
 import io.vertx.servicediscovery.{Record, ServiceDiscovery}
-import it.unibo.dcs.service.authentication.data.AuthenticationDataStoreDatabase
-import it.unibo.dcs.service.authentication.repository.AuthenticationRepositoryImpl
 import it.unibo.dcs.commons.IoHelper
 import it.unibo.dcs.commons.VertxHelper.Implicits._
 import it.unibo.dcs.commons.service.HttpEndpointPublisherImpl
 import it.unibo.dcs.commons.service.codecs.RecordMessageCodec
+import it.unibo.dcs.service.authentication.data.AuthenticationDataStoreDatabase
+import it.unibo.dcs.service.authentication.repository.AuthenticationRepositoryImpl
 
 import scala.util.{Failure, Success}
 

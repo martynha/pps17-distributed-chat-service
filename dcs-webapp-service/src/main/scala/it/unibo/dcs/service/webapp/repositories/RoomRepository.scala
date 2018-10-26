@@ -1,7 +1,7 @@
 package it.unibo.dcs.service.webapp.repositories
 
-import it.unibo.dcs.service.webapp.interaction.Requests.{CreateRoomRequest, DeleteRoomRequest, RegisterUserRequest}
-import it.unibo.dcs.service.webapp.model.Room
+import it.unibo.dcs.service.webapp.interaction.Requests.{CreateRoomRequest, DeleteRoomRequest, RegisterUserRequest, RoomJoinRequest}
+import it.unibo.dcs.service.webapp.model.{Room, User}
 import it.unibo.dcs.service.webapp.repositories.datastores.RoomDataStore
 import it.unibo.dcs.service.webapp.repositories.impl.RoomRepositoryImpl
 import rx.lang.scala.Observable
@@ -9,14 +9,32 @@ import rx.lang.scala.Observable
 /** Structure that handles Rooms data access and storage. */
 trait RoomRepository {
 
+  /** Store a new user given its information
+    *
+    * @param request needed data to register a new user
+    * @return an empty observable
+    */
   def registerUser(request: RegisterUserRequest): Observable[Unit]
 
-  /** @param request
-    * Needed data to create a new room *
+  /** Create and store a new room given the creation request
+    *
+    * @param request Needed data to create a new room
     * @return an observable stream composed by the created room. */
   def createRoom(request: CreateRoomRequest): Observable[Room]
 
+  /** Delete a room given the deletion request
+    *
+    * @param request the room deletion request
+    * @return an observable stream of the deleted room's name
+    */
   def deleteRoom(request: DeleteRoomRequest): Observable[String]
+
+  /** It adds the user to the list of participants in the room
+    *
+    * @param request room join request
+    * @return an observable stream of the user who join the room
+    */
+  def joinRoom(request: RoomJoinRequest): Observable[User]
 }
 
 /** Companion object */

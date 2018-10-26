@@ -8,8 +8,12 @@ import rx.lang.scala.Observable
 /** Structure that allows access to authentication info by different means (e.g. network, file, database, etc) */
 trait AuthenticationDataStore {
 
+  /** Delete a user given its info
+    *
+    * @param request needed data to delete a user
+    * @return an empty observable
+    */
   def deleteUser(request: DeleteUserRequest): Observable[Unit]
-
 
   /**
     * It checks the credential validity and returns the token of the logged user

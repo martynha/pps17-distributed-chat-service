@@ -3,7 +3,7 @@ package it.unibo.dcs.service.webapp
 import java.net.InetAddress
 
 import io.vertx.lang.scala.ScalaLogger
-import io.vertx.lang.scala.json.JsonObject
+import io.vertx.lang.scala.json.Json
 import io.vertx.scala.core.{DeploymentOptions, Vertx, VertxOptions}
 import io.vertx.servicediscovery.Record
 import it.unibo.dcs.commons.VertxHelper
@@ -20,17 +20,16 @@ object Launcher extends App {
   private val logger = ScalaLogger.getLogger(getClass.getName)
 
   private val address = InetAddress.getLocalHost.getHostAddress
-  val port = args(0).toInt
+  private val port = args(0).toInt
+  private val config = Json.obj(("host", address), ("port", port))
 
-  val config = new JsonObject()
-    .put("host", address)
-    .put("port", port)
+  private val startErrorMessage = "Error in WebAppVerticle clustered start"
 
   VertxHelper.toObservable[Vertx](Vertx.clusteredVertx(VertxOptions(), _))
     .subscribe(vertx => {
       vertx.eventBus.registerDefaultCodec[Record](new RecordMessageCodec())
       vertx deployVerticle(new WebAppVerticle, DeploymentOptions()
         .setConfig(config))
-    }, cause => logger.error("", cause))
+    }, cause => logger.error(startErrorMessage, cause))
 
 }

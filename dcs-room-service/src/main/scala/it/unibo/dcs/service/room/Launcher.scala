@@ -40,6 +40,6 @@ object Launcher extends App {
           .put("host", InetAddress.getLocalHost.getHostAddress)
           .put("port", args(0).toInt)
         vertx.deployVerticle(new RoomVerticle(roomRepository, publisher), DeploymentOptions().setConfig(config))
-    }, cause => logger.error("", cause))
+    }, cause => logger.error("Could not create Vert.x instance", cause))
 
 }

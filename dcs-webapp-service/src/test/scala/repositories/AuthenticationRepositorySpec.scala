@@ -1,34 +1,30 @@
 package repositories
 
-import java.util.Date
-
 import it.unibo.dcs.service.webapp.interaction.Requests._
-import it.unibo.dcs.service.webapp.model.{Room, User}
 import it.unibo.dcs.service.webapp.repositories.AuthenticationRepository
 import it.unibo.dcs.service.webapp.repositories.datastores.AuthenticationDataStore
 import it.unibo.dcs.service.webapp.repositories.impl.AuthenticationRepositoryImpl
-import org.scalamock.scalatest.MockFactory
-import org.scalatest.{FlatSpec, OneInstancePerTest}
 import rx.lang.scala.{Observable, Subscriber}
 
 import scala.language.postfixOps
 
-class AuthenticationRepositorySpec extends FlatSpec with MockFactory with OneInstancePerTest {
+class AuthenticationRepositorySpec extends RepositorySpec {
 
   private val dataStore: AuthenticationDataStore = mock[AuthenticationDataStore]
   private val repository: AuthenticationRepository = new AuthenticationRepositoryImpl(dataStore)
-  private val user = User("niklegend", "nicola", "piscaglia", "bla", visible = true, new Date())
-  private val registerRequest = RegisterUserRequest(user.username, user.firstName,
-    user.lastName, "password", "password")
-  private val room = Room("Room 1")
+
   private val token = "token"
+
   private val roomCreationRequest = CheckTokenRequest(token)
   private val loginUserRequest = LoginUserRequest(user.username, "password")
   private val logoutUserRequest = LogoutUserRequest(user.username, token)
+  private val deleteUserRequest = DeleteUserRequest(user.username, token)
+
   private val registeredSubscriber: Subscriber[String] = stub[Subscriber[String]]
   private val roomCreationSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
   private val loginSubscriber: Subscriber[String] = stub[Subscriber[String]]
   private val logoutSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
+  private val deleteUserSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
 
   it should "create a new room" in {
     // Given
@@ -88,5 +84,19 @@ class AuthenticationRepositorySpec extends FlatSpec with MockFactory with OneIns
     // Then
     // Verify that `subscriber.onCompleted` has been called once
     (() => logoutSubscriber onCompleted) verify() once()
+  }
+
+  it should "delete a previously saved user" in {
+    // Given
+    (dataStore registerUser _) expects registerRequest returns (Observable just token)
+    (dataStore deleteUser _) expects deleteUserRequest returns Observable.empty
+
+    // When
+    repository.registerUser(registerRequest)
+      .flatMap(_ => repository.deleteUser(deleteUserRequest))
+      .subscribe(deleteUserSubscriber)
+
+    // Then
+    (() => deleteUserSubscriber onCompleted) verify() once()
   }
 }

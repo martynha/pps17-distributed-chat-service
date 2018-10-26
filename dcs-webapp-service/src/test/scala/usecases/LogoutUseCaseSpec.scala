@@ -7,22 +7,15 @@ import it.unibo.dcs.service.webapp.interaction.Requests.LogoutUserRequest
 import it.unibo.dcs.service.webapp.model.User
 import it.unibo.dcs.service.webapp.repositories.AuthenticationRepository
 import it.unibo.dcs.service.webapp.usecases.LogoutUserUseCase
-import org.scalamock.scalatest.MockFactory
-import org.scalatest.{FlatSpec, OneInstancePerTest}
 import rx.lang.scala.{Observable, Subscriber}
 
 import scala.language.postfixOps
 
-class LogoutUseCaseSpec extends FlatSpec with MockFactory with OneInstancePerTest {
+class LogoutUseCaseSpec extends UseCaseSpec {
 
   private val user = User("niklegend", "Nicola", "Piscaglia", "bio", visible = true, new Date)
-  private val token = "token"
 
   private val logoutUserRequest = LogoutUserRequest(user.username, token)
-
-  private val threadExecutor: ThreadExecutor = mock[ThreadExecutor]
-  private val postExecutionThread: PostExecutionThread = mock[PostExecutionThread]
-  private val authRepository: AuthenticationRepository = mock[AuthenticationRepository]
 
   private val logoutSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
 

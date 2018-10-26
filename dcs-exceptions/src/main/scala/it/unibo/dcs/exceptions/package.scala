@@ -163,7 +163,6 @@ package object exceptions {
                   throw UserNotFoundException(username)
                 }
                 throw InternalException(s"Missing key '$KEY_USERNAME' in $UserNotFound error")
-                throw KeyRequiredException(KEY_USERNAME, UserNotFound)
               }
               throw KeyRequiredException(KEY_NAME, UserNotFound)
             case UserAlreadyExists =>

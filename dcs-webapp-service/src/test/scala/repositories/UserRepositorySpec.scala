@@ -1,26 +1,21 @@
 package repositories
 
-import java.util.Date
-
-import it.unibo.dcs.service.webapp.interaction.Requests.RegisterUserRequest
 import it.unibo.dcs.service.webapp.model.User
 import it.unibo.dcs.service.webapp.repositories.UserRepository
 import it.unibo.dcs.service.webapp.repositories.datastores.UserDataStore
 import it.unibo.dcs.service.webapp.repositories.impl.UserRepositoryImpl
-import org.scalamock.scalatest.MockFactory
-import org.scalatest.{FlatSpec, OneInstancePerTest}
 import rx.lang.scala.{Observable, Subscriber}
 
 import scala.language.postfixOps
 
-class UserRepositorySpec extends FlatSpec with MockFactory with OneInstancePerTest {
+class UserRepositorySpec extends RepositorySpec {
+
   private val userDataStore: UserDataStore = mock[UserDataStore]
   private val repository: UserRepository = new UserRepositoryImpl(userDataStore)
-  private val user = User("niklegend", "nicola", "piscaglia", "bla", visible = true, new Date())
-  private val registerRequest = RegisterUserRequest(user.username, user.firstName,
-    user.lastName, "password", "password")
+
   private val createUserSubscriber: Subscriber[User] = stub[Subscriber[User]]
   private val getUserSubscriber: Subscriber[User] = stub[Subscriber[User]]
+  private val deleteUserSubscriber: Subscriber[String] = stub[Subscriber[String]]
 
   it should "register a new user" in {
     // Given
@@ -44,9 +39,21 @@ class UserRepositorySpec extends FlatSpec with MockFactory with OneInstancePerTe
     repository.getUserByUsername(user.username).subscribe(getUserSubscriber)
 
     // Then
-    // Verify that `subscriber.onNext` has been called once with `token` as argument
+    // Verify that `subscriber.onNext` has been called once with `user` as argument
     (getUserSubscriber onNext _) verify user once()
     // Verify that `subscriber.onCompleted` has been called once
     (() => getUserSubscriber onCompleted) verify() once()
+  }
+
+  it should "delete a registered user given its information" in {
+    // Given
+    (userDataStore deleteUser _) expects user.username returns Observable.just(user.username) noMoreThanOnce()
+
+    // When
+    repository.deleteUser(user.username).subscribe(deleteUserSubscriber)
+
+    // Then
+    (deleteUserSubscriber onNext _) verify user.username once()
+    (() => deleteUserSubscriber onCompleted) verify() once()
   }
 }

@@ -10,51 +10,40 @@ import scala.language.implicitConversions
 /** It wraps all requests used by request handler, use cases, repositories, datastores and APIs */
 object Requests {
 
-  final case class LoginUserRequest(username: String, password: String)
+  /** Sum type representing all the specific requests for Distributed Chat Service application */
+  sealed trait DcsRequest
 
-  final case class DeleteUserRequest(username: String, token: String)
+  final case class LoginUserRequest(username: String, password: String) extends DcsRequest
 
-  final case class RegisterUserRequest(username: String, firstName: String, lastName: String, password: String, passwordConfirm: String)
+  final case class DeleteUserRequest(username: String, token: String) extends DcsRequest
 
-  final case class LogoutUserRequest(username: String, token: String)
+  final case class RegisterUserRequest(username: String, firstName: String,
+                                       lastName: String, password: String,
+                                       passwordConfirm: String) extends DcsRequest
 
-  final case class CreateRoomRequest(name: String, username: String, token: String)
+  final case class LogoutUserRequest(username: String, token: String) extends DcsRequest
 
-  final case class DeleteRoomRequest(name: String, username: String, token: String)
+  final case class CreateRoomRequest(name: String, username: String, token: String) extends DcsRequest
 
-  final case class CheckTokenRequest(token: String)
+  final case class DeleteRoomRequest(name: String, username: String, token: String) extends DcsRequest
 
-  /** It enables implicit conversions in order to clean code that deal with requests. */
+  final case class RoomJoinRequest(name: String, username: String, token: String) extends DcsRequest
+
+  final case class CheckTokenRequest(token: String) extends DcsRequest
+
+  /** It enables implicit conversions in order to clean code that deals with requests. */
   object Implicits {
 
-    implicit def deleteRoomRequestToJson(request: DeleteRoomRequest): JsonObject = {
-      Json.obj(("name", request.name), ("username", request.username), ("token", request.token))
-    }
+    private val gson = new Gson()
+
+    implicit def requestToJson(request: DcsRequest): JsonObject = Json.fromObjectString(gson.toJson(request))
 
     implicit def jsonToDeleteRoomRequest(json: JsonObject): DeleteRoomRequest = {
       DeleteRoomRequest(json.getString("name"), json.getString("username"), json.getString("token"))
     }
 
-    implicit def checkTokenRequestToJson(request: CheckTokenRequest): JsonObject = {
-      Json.obj(("token", request.token))
-    }
-
     implicit def jsonToCheckTokenRequest(json: JsonObject): CheckTokenRequest = {
       CheckTokenRequest(json.getString("token"))
-    }
-
-    implicit def createRoomRequestToJsonObject(request: CreateRoomRequest): JsonObject = {
-      Json.obj(("name", request.name), ("username", request.username))
-    }
-
-    implicit def registerUserRequestToJsonObject(request: RegisterUserRequest): JsonObject = {
-      Json.obj(("username", request.username), ("firstName", request.firstName),
-        ("lastName", request.lastName), ("password", request.password),
-        ("passwordConfirm", request.passwordConfirm))
-    }
-
-    implicit def deleteUserRequestToJsonObject(request: DeleteUserRequest): JsonObject = {
-      Json.fromObjectString(new Gson().toJson(request))
     }
 
     implicit def jsonObjectToRegisterUserRequest(json: JsonObject): RegisterUserRequest = {
@@ -62,18 +51,8 @@ object Requests {
         json.getString("lastName"), json.getString("password"), json.getString("passwordConfirm"))
     }
 
-    implicit def logoutUserRequestToJsonObject(request: LogoutUserRequest): JsonObject = {
-      Json.obj(("username", request.username))
-    }
-
-    implicit def usernameToJsonObject(username: String): JsonObject = Json.obj(("username", username))
-
     implicit def jsonObjectToUsername(json: JsonObject): String = {
       json.getString("username")
-    }
-
-    implicit def loginUserRequestToJsonObject(request: LoginUserRequest): JsonObject = {
-      Json.obj(("username", request.username), ("password", request.password))
     }
 
     implicit def jsonObjectToLoginUserRequest(json: JsonObject): LoginUserRequest = {
@@ -97,6 +76,10 @@ object Requests {
     implicit def jsonObjectToCreateRoomRequest(json: JsonObject): CreateRoomRequest = {
       CreateRoomRequest(json.getString("name"), json.getString("username"),
         json.getString("token"))
+    }
+
+    implicit def jsonObjectToRoomJoinRequest(json: JsonObject): RoomJoinRequest = {
+      RoomJoinRequest(json.getString("name"), json.getString("username"), json.getString("token"))
     }
   }
 

@@ -1,34 +1,31 @@
 package repositories.datastores
 
-import java.util.Date
-
 import it.unibo.dcs.service.webapp.interaction.Requests._
-import it.unibo.dcs.service.webapp.model.{Room, User}
+import it.unibo.dcs.service.webapp.model.User
 import it.unibo.dcs.service.webapp.repositories.datastores.AuthenticationDataStore
 import it.unibo.dcs.service.webapp.repositories.datastores.api.AuthenticationApi
 import it.unibo.dcs.service.webapp.repositories.datastores.impl.AuthenticationDataStoreNetwork
-import org.scalamock.scalatest.MockFactory
-import org.scalatest.{FlatSpec, OneInstancePerTest}
 import rx.lang.scala.{Observable, Subscriber}
 
 import scala.language.postfixOps
 
-class AuthenticationDataStoreSpec extends FlatSpec with MockFactory with OneInstancePerTest {
+class AuthenticationDataStoreSpec extends DataStoreSpec {
 
   private val authApi: AuthenticationApi = mock[AuthenticationApi]
   private val dataStore: AuthenticationDataStore = new AuthenticationDataStoreNetwork(authApi)
-  private val user = User("niklegend", "nicola", "piscaglia", "bla", visible = true, new Date())
+
   private val token = "token"
-  private val registerRequest = RegisterUserRequest(user.username, user.firstName,
-    user.lastName, "password", "password")
+
   private val loginUserRequest = LoginUserRequest(user.username, "password")
   private val logoutUserRequest = LogoutUserRequest(user.username, token)
   private val roomCreationRequest = CheckTokenRequest(token)
+  private val deleteUserRequest = DeleteUserRequest(user.username, token)
+
   private val registeredSubscriber: Subscriber[String] = stub[Subscriber[String]]
   private val roomCreationSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
   private val loginSubscriber: Subscriber[String] = stub[Subscriber[String]]
   private val logoutSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
-
+  private val deleteUserSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
 
   it should "check the creation of a new room" in {
     // Given
@@ -88,6 +85,21 @@ class AuthenticationDataStoreSpec extends FlatSpec with MockFactory with OneInst
     // Then
     // Verify that `subscriber.onCompleted` has been called once
     (() => logoutSubscriber onCompleted) verify() once()
+  }
+
+  it should "delete an existing user" in {
+    // Given
+    (authApi registerUser _) expects registerRequest returns (Observable just token)
+    (authApi deleteUser _) expects deleteUserRequest returns Observable.empty
+
+    // When
+    dataStore.registerUser(registerRequest)
+      .flatMap(_ => dataStore.deleteUser(deleteUserRequest))
+      .subscribe(deleteUserSubscriber)
+
+    // Then
+    // Verify that `subscriber.onCompleted` has been called once
+    (() => deleteUserSubscriber onCompleted) verify() once()
   }
 
 

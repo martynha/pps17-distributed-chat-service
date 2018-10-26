@@ -1,10 +1,10 @@
 package it.unibo.dcs.service.authentication.interactor
 
-import io.vertx.lang.scala.json.JsonObject
-import it.unibo.dcs.service.MocksForUseCases._
-import io.vertx.scala.ext.auth.jwt.JWTOptions
 import _root_.it.unibo.dcs.service.authentication.interactor.usecases.LoginUserUseCase
 import _root_.it.unibo.dcs.service.authentication.request.Requests.LoginUserRequest
+import io.vertx.lang.scala.json.JsonObject
+import io.vertx.scala.ext.auth.jwt.JWTOptions
+import it.unibo.dcs.service.MocksForUseCases._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
 import rx.lang.scala.{Observable, Subscriber}

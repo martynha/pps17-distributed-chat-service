@@ -4,11 +4,11 @@ import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.lang.scala.json.Json
 import io.vertx.scala.core.http.HttpServerResponse
 import io.vertx.scala.ext.web.RoutingContext
+import it.unibo.dcs.commons.VertxWebHelper.Implicits.{RichHttpServerResponse, jsonObjectToString}
 import it.unibo.dcs.commons.VertxWebHelper.respond
 import it.unibo.dcs.exceptions.ErrorSubscriber
 import it.unibo.dcs.service.authentication.interactor.usecases._
 import it.unibo.dcs.service.authentication.request.Requests._
-import it.unibo.dcs.commons.VertxWebHelper.Implicits.{RichHttpServerResponse, jsonObjectToString}
 import rx.lang.scala.Subscriber
 
 package object subscriber {
