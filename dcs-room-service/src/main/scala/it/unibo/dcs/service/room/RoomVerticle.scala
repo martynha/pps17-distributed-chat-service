@@ -13,7 +13,7 @@ import it.unibo.dcs.service.room.RoomVerticle.Implicits._
 import it.unibo.dcs.service.room.interactor.usecases.{CreateRoomUseCase, CreateUserUseCase, DeleteRoomUseCase}
 import it.unibo.dcs.service.room.interactor.validations.{CreateRoomValidation, CreateUserValidation, DeleteRoomValidation}
 import it.unibo.dcs.service.room.repository.RoomRepository
-import it.unibo.dcs.service.room.request.{CreateRoomRequest, CreateUserRequest, DeleteRoomRequest}
+import it.unibo.dcs.service.room.request.{CreateRoomRequest, CreateUserRequest, DeleteRoomRequest, JoinRoomRequest}
 import it.unibo.dcs.service.room.subscriber.{CreateRoomValiditySubscriber, CreateUserValiditySubscriber, DeleteRoomValiditySubscriber}
 import it.unibo.dcs.service.room.validator.{CreateRoomValidator, CreateUserValidator, DeleteRoomValidator}
 
@@ -94,6 +94,15 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
         val checkSubscriber = new DeleteRoomValiditySubscriber(routingContext.response(), request, deleteRoomUseCase)
         deleteRoomValidation(request, checkSubscriber)
       })
+
+    router.post("/joinRoom")
+      .consumes("application/json")
+      .produces("application/json")
+      .handler(routingContext => {
+        val request = routingContext.getBodyAsJson.head
+        //checkSubscriber = new JoinRoomValiditySubscriber(routingContext.response(), request, joinRoomUseCase)
+        //joinRoomValidation(request, checkSubscriber)
+      })
   }
 
   override def start(): Unit = startHttpServer(host, port)
@@ -119,6 +128,8 @@ object RoomVerticle {
     implicit def jsonObjectToDeleteRoomRequest(json: JsonObject): DeleteRoomRequest =
       DeleteRoomRequest(json.getString("name"), json.getString("username"))
 
+    implicit def jsonObjectToJoinRoomRequest(json: JsonObject): JoinRoomRequest =
+      JoinRoomRequest(json.getString("name"), json.getString("username"))
   }
 
 }

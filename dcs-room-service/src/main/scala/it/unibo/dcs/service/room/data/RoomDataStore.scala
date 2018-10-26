@@ -1,7 +1,7 @@
 package it.unibo.dcs.service.room.data
 
-import it.unibo.dcs.service.room.model.Room
-import it.unibo.dcs.service.room.request.{CreateRoomRequest, CreateUserRequest, DeleteRoomRequest, GetRoomRequest}
+import it.unibo.dcs.service.room.model.{Participation, Room}
+import it.unibo.dcs.service.room.request._
 import rx.lang.scala.Observable
 
 trait RoomDataStore {
@@ -14,4 +14,7 @@ trait RoomDataStore {
 
   def deleteRoom(request: DeleteRoomRequest): Observable[String]
 
+  def joinRoom(request: JoinRoomRequest): Observable[Participation]
+
+  def getParticipationByKey(request: JoinRoomRequest): Observable[Participation]
 }

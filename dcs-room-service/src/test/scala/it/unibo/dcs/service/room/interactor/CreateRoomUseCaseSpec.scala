@@ -20,10 +20,13 @@ final class CreateRoomUseCaseSpec extends FlatSpec with MockFactory with OneInst
   val subscriber = stub[Subscriber[Room]]
 
   it should "Create a room when the CreateRoomUseCase is execute" in {
+    //Given
     (roomRepository createRoom _) expects request returns Observable.just()
 
+    //When
     createRoomUseCase(request).subscribe(subscriber)
 
+    //Then
     (subscriber.onCompleted: () => Unit) verify() once()
   }
 }

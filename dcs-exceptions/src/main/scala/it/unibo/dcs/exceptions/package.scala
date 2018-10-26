@@ -51,6 +51,9 @@ package object exceptions {
 
     val RoomNameRequired = "ROOM_NAME_REQUIRED"
 
+    val ParticipationNotFound = "PARTICIPATION_NOT_FOUND"
+
+    val ParticipationAlreadyExists = "PARTICIPATION_ALREADY_EXISTS"
   }
 
   /** Sum type representing all the specific exceptions for Distributed Chat Service application */
@@ -79,6 +82,10 @@ package object exceptions {
   final case class RoomAlreadyExistsException(name: String) extends DcsException(RoomAlreadyExists)
 
   final case class RoomNotFoundException(name: String) extends DcsException(RoomNotFound)
+
+  final case class ParticipationAlreadyExistsException(username:String, name: String) extends DcsException(ParticipationAlreadyExists)
+
+  final case class ParticipationNotFoundException(username: String, name: String) extends DcsException(ParticipationNotFound)
 
   final case object InvalidTokenException extends DcsException(InvalidToken)
 
@@ -189,6 +196,34 @@ package object exceptions {
                 throw KeyRequiredException(KEY_NAME, RoomAlreadyExists)
               }
               throw KeyRequiredException(KEY_EXTRAS, RoomAlreadyExists)
+            case ParticipationNotFound =>
+              if (error.containsKey(KEY_EXTRAS)) {
+                val extras = error.getJsonObject(KEY_EXTRAS)
+                if (extras.containsKey(KEY_NAME)) {
+                  val name = extras.getString(KEY_NAME)
+                  if (extras.containsKey(KEY_USERNAME)) {
+                    val username = extras.getString(KEY_USERNAME)
+                    throw ParticipationNotFoundException(username, name)
+                  }
+                  throw KeyRequiredException(KEY_USERNAME, ParticipationNotFound)
+                }
+                throw KeyRequiredException(KEY_NAME, ParticipationNotFound)
+              }
+              throw KeyRequiredException(KEY_EXTRAS, ParticipationNotFound)
+            case ParticipationAlreadyExists =>
+              if (error.containsKey(KEY_EXTRAS)) {
+                val extras = error.getJsonObject(KEY_EXTRAS)
+                if (extras.containsKey(KEY_NAME)) {
+                  val name = extras.getString(KEY_NAME)
+                  if (extras.containsKey(KEY_USERNAME)) {
+                    val username = extras.getString(KEY_USERNAME)
+                    throw ParticipationAlreadyExistsException(username, name)
+                  }
+                  throw KeyRequiredException(KEY_USERNAME, ParticipationAlreadyExists)
+                }
+                throw KeyRequiredException(KEY_NAME, ParticipationAlreadyExists)
+              }
+              throw KeyRequiredException(KEY_EXTRAS, ParticipationAlreadyExists)
             case WrongUsernameOrPassword =>
               throw WrongUsernameOrPasswordException
             case UsernameRequired =>
@@ -225,7 +260,8 @@ package object exceptions {
       case ServiceUnavailableException(_) =>
         HttpResponseStatus.SERVICE_UNAVAILABLE
       case UserNotFoundException(_)
-           | RoomNotFoundException(_) =>
+           | RoomNotFoundException(_)
+           | ParticipationNotFoundException(_,_) =>
         HttpResponseStatus.NOT_FOUND
       case UserAlreadyExistsException(_)
            | RoomAlreadyExistsException(_) =>
