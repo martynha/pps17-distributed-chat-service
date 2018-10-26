@@ -1,7 +1,5 @@
 package it.unibo.dcs.service.room.data.impl
 
-import java.util.Date
-
 import io.vertx.core.json.JsonArray
 import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.ext.sql.SQLConnection

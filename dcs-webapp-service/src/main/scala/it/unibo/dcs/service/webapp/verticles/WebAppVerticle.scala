@@ -106,6 +106,11 @@ final class WebAppVerticle extends ServiceVerticle {
       .produces(ContentType.APPLICATION_JSON)
       .handler(context => requestHandler handleRoomDeletion context)
 
+    apiRouter.get("/rooms")
+      .consumes(ContentType.APPLICATION_JSON)
+      .produces(ContentType.APPLICATION_JSON)
+      .handler(context => requestHandler handleGetRooms context)
+
     router.mountSubRouter("/api", apiRouter)
   }
 

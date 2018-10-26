@@ -1,7 +1,7 @@
 package it.unibo.dcs.service.webapp.interaction
 
 import com.google.gson.Gson
-import io.vertx.lang.scala.json.{Json, JsonObject}
+import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
 import it.unibo.dcs.service.webapp.model.{Room, User}
 
 import scala.language.implicitConversions
@@ -19,6 +19,8 @@ object Results {
   final case class RoomCreationResult(room: Room) extends DcsResult
 
   final case class RoomJoinResult(joinedUser: User) extends DcsResult
+
+  final case class GetRoomsResult(rooms: List[Room]) extends DcsResult
 
   /** It enables implicit conversions in order to clean code that deals with results. */
   object Implicits {
@@ -49,6 +51,12 @@ object Results {
 
     implicit def roomCreationResultToJsonObject(result: RoomCreationResult): JsonObject = {
       Json.fromObjectString(gson.toJson(result.room))
+    }
+
+    implicit def getRoomsToJsonObject(result: GetRoomsResult): JsonArray = {
+      result.rooms
+        .map(x => Json.fromObjectString(gson.toJson(x)))
+        .foldLeft(new JsonArray)(_ add _)
     }
 
   }

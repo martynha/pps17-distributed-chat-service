@@ -49,6 +49,12 @@ trait ServiceRequestHandler {
     * @param context Vertx routing context
     * @param ctx     Vertx context passed implicitly */
   def handleRoomCreation(context: RoutingContext)(implicit ctx: Context): Unit
+
+  /** Get rooms request handler
+    *
+    * @param context Vertx routing context
+    * @param ctx     Vertx context passed implicitly */
+  def handleGetRooms(context: RoutingContext)(implicit ctx: Context): Unit
 }
 
 /** Companion object */
