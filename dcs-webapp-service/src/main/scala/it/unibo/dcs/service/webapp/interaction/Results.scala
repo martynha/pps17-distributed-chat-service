@@ -2,7 +2,8 @@ package it.unibo.dcs.service.webapp.interaction
 
 import com.google.gson.Gson
 import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
-import it.unibo.dcs.service.webapp.model.{Room, User}
+import it.unibo.dcs.service.webapp.model.{Participation, Room, User}
+import it.unibo.dcs.service.webapp.interaction.JsonLabels.tokenLabel
 
 import scala.language.implicitConversions
 
@@ -18,7 +19,7 @@ object Results {
 
   final case class RoomCreationResult(room: Room) extends DcsResult
 
-  final case class RoomJoinResult(joinedUser: User) extends DcsResult
+  final case class RoomJoinResult(participation: Participation) extends DcsResult
 
   final case class GetRoomsResult(rooms: List[Room]) extends DcsResult
 
@@ -28,25 +29,24 @@ object Results {
     private val gson = new Gson()
 
     implicit def registrationResultToJsonString(result: RegisterResult): String =
-      resultToJsonString(result.user, _.put("token", result.token))
+      resultToJsonString(result.user, _.put(tokenLabel, result.token))
 
     implicit def loginResultToJsonString(result: LoginResult): String =
-      resultToJsonString(result.user, _.put("token", result.token))
+      resultToJsonString(result.user, _.put(tokenLabel, result.token))
 
     implicit def roomCreationResultToJsonString(result: RoomCreationResult): String = resultToJsonString(result.room)
 
-    implicit def roomJoinResultToJsonString(result: RoomJoinResult): String = resultToJsonString(result)
+    implicit def roomJoinResultToJsonString(result: RoomJoinResult): String = resultToJsonString(result.participation)
 
-    private def resultToJsonString(result: Product, build: JsonObject => JsonObject = identity): String = {
-      build(Json.fromObjectString(gson.toJson(result))) encode()
-    }
+    private def resultToJsonString(result: Product, transformations: JsonObject => JsonObject = identity): String =
+      transformations(Json.fromObjectString(gson.toJson(result))) encode()
 
     implicit def registrationResultToJsonObject(result: RegisterResult): JsonObject = {
-      Json.fromObjectString(gson.toJson(result.user)).put("token", result.token)
+      Json.fromObjectString(gson.toJson(result.user)).put(tokenLabel, result.token)
     }
 
     implicit def loginResultToJsonObject(result: LoginResult): JsonObject = {
-      Json.fromObjectString(gson.toJson(result.user)).put("token", result.token)
+      Json.fromObjectString(gson.toJson(result.user)).put(tokenLabel, result.token)
     }
 
     implicit def roomCreationResultToJsonObject(result: RoomCreationResult): JsonObject = {

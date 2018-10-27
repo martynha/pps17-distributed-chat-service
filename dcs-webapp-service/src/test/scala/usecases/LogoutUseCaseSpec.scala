@@ -1,19 +1,12 @@
 package usecases
 
-import java.util.Date
-
-import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
 import it.unibo.dcs.service.webapp.interaction.Requests.LogoutUserRequest
-import it.unibo.dcs.service.webapp.model.User
-import it.unibo.dcs.service.webapp.repositories.AuthenticationRepository
 import it.unibo.dcs.service.webapp.usecases.LogoutUserUseCase
 import rx.lang.scala.{Observable, Subscriber}
 
 import scala.language.postfixOps
 
 class LogoutUseCaseSpec extends UseCaseSpec {
-
-  private val user = User("niklegend", "Nicola", "Piscaglia", "bio", visible = true, new Date)
 
   private val logoutUserRequest = LogoutUserRequest(user.username, token)
 

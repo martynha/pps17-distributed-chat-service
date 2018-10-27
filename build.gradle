@@ -31,6 +31,16 @@ task stage(type: Copy) {
     }
 }
 
+task test {
+    subprojects*.test
+}
+
+task testReport(type: TestReport) {
+    destinationDir = file("$buildDir/reports/allTests")
+    // Include the results from the `test` task in all subprojects
+    reportOn subprojects*.test
+}
+
 task scalaDoc(type: ScalaDoc, description: 'Generate scaladoc', group: 'Documentation') {
     destinationDir = file("$buildDir/docs/scaladoc")
     title = "$project.name $version API"

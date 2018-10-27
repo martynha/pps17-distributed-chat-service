@@ -10,10 +10,9 @@ import scala.language.postfixOps
 
 class DeleteRoomUseCaseSpec extends UseCaseSpec {
 
-  private val username = "ale"
   private val roomName = "Room 1"
   private val room = Room(roomName)
-  private val deleteRoomRequest = DeleteRoomRequest(room.name, username, token)
+  private val deleteRoomRequest = DeleteRoomRequest(room.name, user.username, token)
 
   private val roomRepository: RoomRepository = mock[RoomRepository]
 

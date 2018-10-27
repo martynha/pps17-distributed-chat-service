@@ -1,7 +1,7 @@
 package it.unibo.dcs
 
 import io.vertx.core.AsyncResult
-import io.vertx.scala.core.eventbus.{DeliveryOptions, EventBus, Message}
+import io.vertx.scala.core.eventbus.{DeliveryOptions, EventBus, Message, MessageConsumer}
 import it.unibo.dcs.commons.VertxHelper.Implicits.functionToHandler
 
 import scala.reflect.runtime.universe.TypeTag
@@ -18,7 +18,8 @@ package object commons {
 
   sealed trait Consumer extends EventBusObject {
 
-    final def apply[T: TypeTag](handler: Message[T] => Unit): Unit = eventBus.consumer[T](address, handler)
+    final def handle[T: TypeTag](handler: Message[T] => Unit): MessageConsumer[T] =
+      eventBus.consumer[T](address, handler)
 
   }
 

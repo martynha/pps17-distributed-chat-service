@@ -1,7 +1,12 @@
 package it.unibo.dcs.service.webapp.repositories
 
+<<<<<<< HEAD
 import it.unibo.dcs.service.webapp.interaction.Requests._
 import it.unibo.dcs.service.webapp.model.{Room, User}
+=======
+import it.unibo.dcs.service.webapp.interaction.Requests.{CreateRoomRequest, DeleteRoomRequest, RegisterUserRequest, RoomJoinRequest}
+import it.unibo.dcs.service.webapp.model.{Participation, Room}
+>>>>>>> 7f6f478a217290ac32c2fce89fcc688008bf3fc4
 import it.unibo.dcs.service.webapp.repositories.datastores.RoomDataStore
 import it.unibo.dcs.service.webapp.repositories.impl.RoomRepositoryImpl
 import rx.lang.scala.Observable
@@ -29,19 +34,14 @@ trait RoomRepository {
     */
   def deleteRoom(request: DeleteRoomRequest): Observable[String]
 
-  /** It adds the user to the list of participants in the room
-    *
-    * @param request room join request
-    * @return an observable stream of the user who join the room
-    */
-  def joinRoom(request: RoomJoinRequest): Observable[User]
-
   /** It get the list of all rooms where the user has not yet joined
     *
     * @param request get rooms request
     * @return an observable stream of the list of rooms
     */
   def getRooms(request: GetRoomsRequest): Observable[List[Room]]
+
+  def joinRoom(request: RoomJoinRequest): Observable[Participation]
 }
 
 /** Companion object */

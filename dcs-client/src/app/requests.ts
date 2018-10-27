@@ -40,3 +40,11 @@ export class DeleteRoomRequest {
   }
 
 }
+
+export class JoinRoomRequest {
+
+  constructor(public name: string, public username: string, public token: string) {
+  }
+
+}
+

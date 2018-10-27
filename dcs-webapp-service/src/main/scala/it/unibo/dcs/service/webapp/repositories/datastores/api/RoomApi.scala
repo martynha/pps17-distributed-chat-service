@@ -5,7 +5,7 @@ import io.vertx.scala.core.eventbus.EventBus
 import io.vertx.servicediscovery.ServiceDiscovery
 import it.unibo.dcs.commons.service.HttpEndpointDiscoveryImpl
 import it.unibo.dcs.service.webapp.interaction.Requests._
-import it.unibo.dcs.service.webapp.model.{Room, User}
+import it.unibo.dcs.service.webapp.model.{Participation, Room}
 import it.unibo.dcs.service.webapp.repositories.datastores.api.impl.RoomRestApi
 import rx.lang.scala.Observable
 
@@ -15,9 +15,9 @@ trait RoomApi {
   /** It adds the user to the list of participants in the room
     *
     * @param request needed info to join a room
-    * @return an observable stream of the joined user
+    * @return an observable stream of the new participation
     */
-  def joinRoom(request: RoomJoinRequest): Observable[User]
+  def joinRoom(request: RoomJoinRequest): Observable[Participation]
 
 
   /** Register a new user given its info

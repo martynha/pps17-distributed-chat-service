@@ -3,6 +3,7 @@ package it.unibo.dcs.service.webapp.interaction
 import com.google.gson.Gson
 import io.vertx.lang.scala.json.{Json, JsonObject}
 import it.unibo.dcs.commons.dataaccess.Implicits.stringToDate
+import it.unibo.dcs.service.webapp.interaction.JsonLabels._
 import it.unibo.dcs.service.webapp.model.{Room, User}
 
 import scala.language.implicitConversions
@@ -41,47 +42,47 @@ object Requests {
     implicit def requestToJson(request: DcsRequest): JsonObject = Json.fromObjectString(gson.toJson(request))
 
     implicit def jsonToDeleteRoomRequest(json: JsonObject): DeleteRoomRequest = {
-      DeleteRoomRequest(json.getString("name"), json.getString("username"), json.getString("token"))
+      DeleteRoomRequest(json.getString(roomNameLabel), json.getString(usernameLabel), json.getString(tokenLabel))
     }
 
     implicit def jsonToCheckTokenRequest(json: JsonObject): CheckTokenRequest = {
-      CheckTokenRequest(json.getString("token"))
+      CheckTokenRequest(json.getString(tokenLabel))
     }
 
     implicit def jsonObjectToRegisterUserRequest(json: JsonObject): RegisterUserRequest = {
-      RegisterUserRequest(json.getString("username"), json.getString("firstName"),
-        json.getString("lastName"), json.getString("password"), json.getString("passwordConfirm"))
+      RegisterUserRequest(json.getString(usernameLabel), json.getString(firstNameLabel),
+        json.getString(lastNameLabel), json.getString(passwordLabel), json.getString(passwordConfirmLabel))
     }
 
     implicit def jsonObjectToUsername(json: JsonObject): String = {
-      json.getString("username")
+      json.getString(usernameLabel)
     }
 
     implicit def jsonObjectToLoginUserRequest(json: JsonObject): LoginUserRequest = {
-      LoginUserRequest(json.getString("username"), json.getString("password"))
+      LoginUserRequest(json.getString(usernameLabel), json.getString(passwordLabel))
     }
 
     implicit def jsonObjectToLogoutUserRequest(json: JsonObject): LogoutUserRequest = {
-      LogoutUserRequest(json.getString("username"), json.getString("authentication"))
+      LogoutUserRequest(json.getString(usernameLabel), json.getString(authenticationLabel))
     }
 
     implicit def jsonObjectToUser(json: JsonObject): User = {
-      User(json.getString("username"), json.getString("firstName"),
-        json.getString("lastName"), json.getString("bio"), json.getBoolean("visible"),
-        json.getString("lastSeen"))
+      User(json.getString(usernameLabel), json.getString(firstNameLabel),
+        json.getString(lastNameLabel), json.getString(bioLabel), json.getBoolean(visibleLabel),
+        json.getString(lastSeenLabel))
     }
 
     implicit def jsonObjectToRoom(json: JsonObject): Room = {
-      Room(json.getString("name"))
+      Room(json.getString(roomNameLabel))
     }
 
     implicit def jsonObjectToCreateRoomRequest(json: JsonObject): CreateRoomRequest = {
-      CreateRoomRequest(json.getString("name"), json.getString("username"),
-        json.getString("token"))
+      CreateRoomRequest(json.getString(roomNameLabel), json.getString(usernameLabel),
+        json.getString(tokenLabel))
     }
 
     implicit def jsonObjectToRoomJoinRequest(json: JsonObject): RoomJoinRequest = {
-      RoomJoinRequest(json.getString("name"), json.getString("username"), json.getString("token"))
+      RoomJoinRequest(json.getString(roomNameLabel), json.getString(usernameLabel), json.getString(tokenLabel))
     }
 
     implicit def jsonObjectToGetRoomsRequest(json: JsonObject): GetRoomsRequest = {

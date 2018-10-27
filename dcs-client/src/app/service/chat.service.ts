@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
-import { Subject, Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { EventBusService } from './event-bus.service';
-import { Room, Participation } from '../model';
-import { CreateRoomRequest, DeleteRoomRequest } from '../requests';
-import { AuthService } from './auth.service';
-import { map, tap } from 'rxjs/operators';
+import {Injectable} from '@angular/core';
+import {Observable, Subject} from 'rxjs';
+import {HttpClient} from '@angular/common/http';
+import {EventBusService} from './event-bus.service';
+import {Participation, Room} from '../model';
+import {CreateRoomRequest, DeleteRoomRequest, JoinRoomRequest} from '../requests';
+import {AuthService} from './auth.service';
+import {map, tap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -18,10 +18,12 @@ export class ChatService {
   private static ROOMS = ChatService.API_PREFIX + '/rooms';
 
   private static ROOM_DELETED = 'rooms.deleted';
+  private static ROOM_JOINED = 'rooms.joined';
 
   private roomCreated = new Subject<Room>();
   private roomDeleted = new Subject<string>();
   private roomSelected = new Subject<Room>();
+  private roomJoined = new Subject<Participation>();
 
   constructor(
     private http: HttpClient,
@@ -32,6 +34,10 @@ export class ChatService {
 
     eventBus.registerHandler(ChatService.ROOM_DELETED, (err, msg) => {
       this.roomDeleted.next(msg.body.name);
+    });
+
+    eventBus.registerHandler(ChatService.ROOM_JOINED, (err, msg) => {
+      this.roomJoined.next(msg.body)
     });
   }
 
@@ -59,6 +65,12 @@ export class ChatService {
     });
   }
 
+  joinRoom(name: string): Observable<Participation> {
+    const user = this.auth.user;
+    const body = new JoinRoomRequest(name, user.username, user.token);
+    return this.http.post<Participation>(ChatService.ROOMS + "/" + name, body);
+  }
+
   onRoomCreated(): Observable<Room> {
     return this.roomCreated
       .asObservable()
@@ -67,5 +79,9 @@ export class ChatService {
 
   onRoomDeleted(): Observable<string> {
     return this.roomDeleted.asObservable();
+  }
+
+  onRoomJoined(): Observable<Participation> {
+    return this.roomJoined.asObservable();
   }
 }

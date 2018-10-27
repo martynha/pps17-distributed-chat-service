@@ -10,10 +10,12 @@ buildscript {
     }
     dependencies {
         classpath "gradle.plugin.cz.augi:gradle-wartremover:0.9.4"
+        classpath "org.github.ngbinh.scalastyle:gradle-scalastyle-plugin_2.11:1.0.1"
     }
 }
 
 apply plugin: "cz.augi.gradle.wartremover"
+apply plugin: 'scalaStyle'
 
 jar {
     manifest {
@@ -29,6 +31,13 @@ wartremover {
     warningWarts.remove("NonUnitStatements")
     warningWarts.remove("Throw")
     warningWarts.remove("DefaultArguments")
+}
+
+scalaStyle {
+    configLocation = "scalastyle_config.xml"
+    includeTestSourceDirectory = true
+    source = "src/main/scala"
+    testSource = "src/test/scala"
 }
 
 dependencies {

@@ -1,10 +1,7 @@
 package usecases
 
-import java.util.Date
-
 import it.unibo.dcs.service.webapp.interaction.Requests.RegisterUserRequest
 import it.unibo.dcs.service.webapp.interaction.Results.RegisterResult
-import it.unibo.dcs.service.webapp.model.User
 import it.unibo.dcs.service.webapp.repositories.{RoomRepository, UserRepository}
 import it.unibo.dcs.service.webapp.usecases.RegisterUserUseCase
 import rx.lang.scala.{Observable, Subscriber}
@@ -13,7 +10,6 @@ import scala.language.postfixOps
 
 class RegisterUseCaseSpec extends UseCaseSpec {
 
-  private val user = User("niklegend", "Nicola", "Piscaglia", "bio", visible = true, new Date)
   private val registerRequest = RegisterUserRequest(user.username, user.firstName, user.lastName, "password", "password")
 
   private val userRepository: UserRepository = mock[UserRepository]

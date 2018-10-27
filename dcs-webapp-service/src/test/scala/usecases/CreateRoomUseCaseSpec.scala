@@ -1,18 +1,16 @@
 package usecases
 
-import java.util.Date
-
 import it.unibo.dcs.service.webapp.interaction.Requests.{CheckTokenRequest, CreateRoomRequest}
 import it.unibo.dcs.service.webapp.interaction.Results.RoomCreationResult
-import it.unibo.dcs.service.webapp.model.{Room, User}
+import it.unibo.dcs.service.webapp.model.Room
 import it.unibo.dcs.service.webapp.repositories.RoomRepository
-import it.unibo.dcs.service.webapp.usecases.{CreateRoomUseCase, JoinRoomUseCase}
+import it.unibo.dcs.service.webapp.usecases.CreateRoomUseCase
 import rx.lang.scala.{Observable, Subscriber}
 
 import scala.language.postfixOps
 
 class CreateRoomUseCaseSpec extends UseCaseSpec {
-  private val user = User("niklegend", "Nicola", "Piscaglia", "bio", visible = true, new Date)
+
   private val room = Room("Room 1")
 
   private val createRoomRequest = CreateRoomRequest("Room 1", user.username, token)

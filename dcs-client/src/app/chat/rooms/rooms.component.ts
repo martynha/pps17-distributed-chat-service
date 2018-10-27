@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { ChatService } from '../../service/chat.service';
-import { Router } from '@angular/router';
-import { remove } from 'lodash';
+import {Component, OnInit} from '@angular/core';
+import {ChatService} from '../../service/chat.service';
+import {Router} from '@angular/router';
+import {remove} from 'lodash';
 
-import { Room } from '../../model';
+import {Room} from '../../model';
 
 @Component({
   selector: 'app-rooms',
@@ -20,11 +20,19 @@ export class RoomsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.chat.onRoomCreated().subscribe(room => {
-      console.log('Room created!');
-      this.rooms.unshift(room);
-    });
-    this.chat.onRoomDeleted().subscribe(name => remove(this.rooms, room => room.name === name));
+    this.chat.onRoomCreated()
+      .subscribe(room => {
+        console.log('Room created!');
+        this.rooms.unshift(room);
+      });
+
+    this.chat.onRoomDeleted()
+      .subscribe(name => remove(this.rooms, room => room.name === name));
+
+    this.chat.onRoomJoined()
+      .subscribe(participation =>
+        this.rooms.find(room => participation.room === room)
+          .participations.push(participation))
   }
 
   addExpandClass(element) {
@@ -40,11 +48,18 @@ export class RoomsComponent implements OnInit {
     this.router.navigate(['/rooms', room.name]);
   }
 
+  joinRoom(room: Room) {
+    console.log("joined room: " + room.name);
+    this.chat.joinRoom(room.name)
+      .subscribe(() => {},
+        err => console.error(err))
+  }
+
   deleteRoom(room: Room) {
     console.log(room);
     this.chat.deleteRoom(room.name)
-      .subscribe(() => {}, err => console.error(err)
-    );
+      .subscribe(() => {},
+        err => console.error(err));
   }
 
 }

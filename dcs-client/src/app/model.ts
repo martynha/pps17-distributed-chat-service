@@ -46,6 +46,6 @@ export interface User {
 
     rooms?: Room[];
 
-    participaitons?: Participation[];
+    participations?: Participation[];
 
 }

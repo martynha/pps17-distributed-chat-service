@@ -1,12 +1,8 @@
 package usecases
 
-import java.util.Date
-
-import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
 import it.unibo.dcs.service.webapp.interaction.Requests.LoginUserRequest
 import it.unibo.dcs.service.webapp.interaction.Results.LoginResult
-import it.unibo.dcs.service.webapp.model.User
-import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, UserRepository}
+import it.unibo.dcs.service.webapp.repositories.UserRepository
 import it.unibo.dcs.service.webapp.usecases.LoginUserUseCase
 import rx.lang.scala.{Observable, Subscriber}
 
@@ -15,7 +11,6 @@ import scala.language.postfixOps
 class LoginUseCaseSpec extends UseCaseSpec {
 
   private val loginRequest = LoginUserRequest("niklegend", "password")
-  private val user = User("niklegend", "Nicola", "Piscaglia", "bio", visible = true, new Date)
 
   private val userRepository: UserRepository = mock[UserRepository]
 
