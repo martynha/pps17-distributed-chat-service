@@ -36,6 +36,13 @@ trait RoomDataStore {
     * @param request needed data to store a room
     * @return an observable stream of just the created room */
   def createRoom(request: CreateRoomRequest): Observable[Room]
+
+  /** Get a list of rooms
+    *
+    * @param request needed data to get rooms
+    * @return an observable stream of the list of rooms
+    */
+  def getRooms(request: GetRoomsRequest): Observable[List[Room]]
 }
 
 /** Companion object */

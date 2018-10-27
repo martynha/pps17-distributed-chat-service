@@ -41,6 +41,12 @@ trait RoomApi {
     */
   def deleteRoom(request: DeleteRoomRequest): Observable[String]
 
+  /** It get the list of all rooms where the user has not yet joined
+    *
+    * @param request get rooms request
+    * @return an observable stream of the list of rooms
+    */
+  def getRooms(request: GetRoomsRequest): Observable[List[Room]]
 }
 
 /** Companion object */

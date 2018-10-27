@@ -29,6 +29,8 @@ object Requests {
 
   final case class RoomJoinRequest(name: String, username: String, token: String) extends DcsRequest
 
+  final case class GetRoomsRequest(username: String, token: String) extends DcsRequest
+
   final case class CheckTokenRequest(token: String) extends DcsRequest
 
   /** It enables implicit conversions in order to clean code that deals with requests. */
@@ -80,6 +82,10 @@ object Requests {
 
     implicit def jsonObjectToRoomJoinRequest(json: JsonObject): RoomJoinRequest = {
       RoomJoinRequest(json.getString("name"), json.getString("username"), json.getString("token"))
+    }
+
+    implicit def jsonObjectToGetRoomsRequest(json: JsonObject): GetRoomsRequest = {
+      GetRoomsRequest(json.getString("username"), json.getString("token"))
     }
   }
 

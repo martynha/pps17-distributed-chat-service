@@ -58,15 +58,15 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
       useCase(_, JoinRoomSubscriber(context.response()))
     }
 
-  /** Get rooms request handler
-    *
-    * @param context Vertx routing context
-    * @param ctx     Vertx context passed implicitly */
   override def handleGetRooms(context: RoutingContext)(implicit ctx: Context): Unit = {
     handleRequestParam(context, "user") {
       username => {
-        val useCase = GetRoomsUseCase(authRepository, roomRepository)
-        useCase (_, GetRoomsSubscriber(context.response))
+        handleRequestParam(context, "token") {
+         token => {
+           val useCase = GetRoomsUseCase(authRepository, roomRepository)
+           useCase (new JsonObject().put("username", username).put("token", token), GetRoomsSubscriber(context.response))
+         }
+        }
       }
     }
   }
