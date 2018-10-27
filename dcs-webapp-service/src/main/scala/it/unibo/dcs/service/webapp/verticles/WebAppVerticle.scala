@@ -12,7 +12,8 @@ import it.unibo.dcs.commons.VertxWebHelper.Implicits.contentTypeToString
 import it.unibo.dcs.commons.service.{HttpEndpointPublisher, HttpEndpointPublisherImpl, ServiceVerticle}
 import it.unibo.dcs.service.webapp.verticles.Addresses.rooms
 import it.unibo.dcs.service.webapp.verticles.handler.ServiceRequestHandler
-import org.apache.http.entity.ContentType.APPLICATION_JSON
+import org.apache.http.entity.ContentType
+import org.apache.http.entity.ContentType._
 
 /** Verticle that runs the WebApp Service */
 final class WebAppVerticle extends ServiceVerticle {

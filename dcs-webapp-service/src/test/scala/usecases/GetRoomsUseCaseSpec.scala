@@ -7,11 +7,9 @@ import it.unibo.dcs.service.webapp.interaction.Results.GetRoomsResult
 import it.unibo.dcs.service.webapp.model.{Room, User}
 import it.unibo.dcs.service.webapp.repositories.RoomRepository
 import it.unibo.dcs.service.webapp.usecases.GetRoomsUseCase
-import it.unibo.dcs.service.webapp.verticles.handler.impl.subscribers.GetRoomsSubscriber
 import rx.lang.scala.{Observable, Subscriber}
 
 class GetRoomsUseCaseSpec extends UseCaseSpec {
-  private val user = User("martynha", "Martina", "Magnani", "bio", visible = true, new Date)
   private val room = Room("AulaMagna")
   private val rooms = List(room, room, room)
 

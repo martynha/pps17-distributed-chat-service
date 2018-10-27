@@ -1,12 +1,8 @@
 package it.unibo.dcs.service.webapp.repositories
 
-<<<<<<< HEAD
 import it.unibo.dcs.service.webapp.interaction.Requests._
-import it.unibo.dcs.service.webapp.model.{Room, User}
-=======
 import it.unibo.dcs.service.webapp.interaction.Requests.{CreateRoomRequest, DeleteRoomRequest, RegisterUserRequest, RoomJoinRequest}
-import it.unibo.dcs.service.webapp.model.{Participation, Room}
->>>>>>> 7f6f478a217290ac32c2fce89fcc688008bf3fc4
+import it.unibo.dcs.service.webapp.model.{Participation, Room, User}
 import it.unibo.dcs.service.webapp.repositories.datastores.RoomDataStore
 import it.unibo.dcs.service.webapp.repositories.impl.RoomRepositoryImpl
 import rx.lang.scala.Observable
