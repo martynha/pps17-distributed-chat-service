@@ -1,6 +1,6 @@
 package repositories
 
-import it.unibo.dcs.service.webapp.interaction.Requests.{CreateRoomRequest, DeleteRoomRequest}
+import it.unibo.dcs.service.webapp.interaction.Requests.{CreateRoomRequest, DeleteRoomRequest, GetRoomsRequest}
 import it.unibo.dcs.service.webapp.model.Room
 import it.unibo.dcs.service.webapp.repositories.RoomRepository
 import it.unibo.dcs.service.webapp.repositories.datastores.RoomDataStore
@@ -15,14 +15,17 @@ class RoomRepositorySpec extends RepositorySpec {
   private val repository: RoomRepository = new RoomRepositoryImpl(roomDataStore)
 
   private val room = Room("Room 1")
+  private val rooms: List[Room]  = List(room, room, room)
   private val token = "token"
 
   private val roomCreationRequest = CreateRoomRequest("Room 1", user.username, token)
   private val deleteRoomRequest = DeleteRoomRequest(room.name, user.username, token)
+  private val getRoomsRequest = GetRoomsRequest("martynha", token)
 
   private val createRoomSubscriber: Subscriber[Room] = stub[Subscriber[Room]]
   private val deleteRoomSubscriber: Subscriber[String] = stub[Subscriber[String]]
   private val registerUserSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
+  private val getRoomsSubscriber: Subscriber[List[Room]] = stub[Subscriber[List[Room]]]
 
   it should "create a new room" in {
     // Given
@@ -64,4 +67,18 @@ class RoomRepositorySpec extends RepositorySpec {
     (() => registerUserSubscriber onCompleted) verify() once()
   }
 
+  it should "gets a list of rooms" in {
+    //Given
+    (roomDataStore getRooms _) expects getRoomsRequest returns Observable.just(rooms)
+
+    //When
+    repository getRooms getRoomsRequest subscribe getRoomsSubscriber
+
+    //Then
+    //Verify that 'suscriber.onNext' has been callen once
+    (getRoomsSubscriber onNext _) verify rooms once()
+    // Verify that `subscriber.onCompleted` has been called once
+    (() => getRoomsSubscriber onCompleted) verify() once()
+    //
+  }
 }
