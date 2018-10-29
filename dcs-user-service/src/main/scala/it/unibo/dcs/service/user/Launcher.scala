@@ -15,7 +15,6 @@ import it.unibo.dcs.commons.{IoHelper, VertxHelper}
 import it.unibo.dcs.service.user.data.UserDataStore
 import it.unibo.dcs.service.user.data.impl.UserDataStoreDatabase
 import it.unibo.dcs.service.user.repository.impl.UserRepositoryImpl
-import it.unibo.dcs.service.user.server.UserVerticle
 
 import scala.language.implicitConversions
 
