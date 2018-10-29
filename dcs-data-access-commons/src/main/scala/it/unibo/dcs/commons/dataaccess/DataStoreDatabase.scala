@@ -2,6 +2,7 @@ package it.unibo.dcs.commons.dataaccess
 
 import io.vertx.lang.scala.json.JsonArray
 import io.vertx.scala.ext.sql.{ResultSet, SQLConnection, UpdateResult}
+import it.unibo.dcs.commons.RxHelper.unit
 import it.unibo.dcs.commons.VertxHelper
 import it.unibo.dcs.commons.VertxHelper.Implicits.functionToHandler
 import rx.lang.scala.Observable
@@ -15,7 +16,7 @@ abstract class DataStoreDatabase(private[this] val connection: SQLConnection) {
   }
 
   def execute(sql: String, params: JsonArray): Observable[Unit] = {
-    update(sql, params).map(_ => ())
+    update(sql, params).map(unit)
   }
 
   def query(sql: String): Observable[ResultSet] = {

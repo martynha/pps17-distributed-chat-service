@@ -12,6 +12,8 @@ import scala.collection.mutable
 import scala.reflect.ClassTag
 import scala.util.{Failure, Success, Try}
 
+import ReflectionHelper.asClassOf
+
 object VertxHelper {
 
   def toObservable[T](action: (AsyncResult[T] => Unit) => Unit): Observable[T] = toObservable[T, T](identity)(action)
@@ -84,7 +86,5 @@ object VertxHelper {
     }
 
   }
-
-  private def asClassOf[T](ct: ClassTag[T]): Class[T] = ct.runtimeClass.asInstanceOf[Class[T]]
 
 }

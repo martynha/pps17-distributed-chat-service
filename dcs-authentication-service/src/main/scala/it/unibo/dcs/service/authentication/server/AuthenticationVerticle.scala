@@ -3,8 +3,8 @@ package it.unibo.dcs.service.authentication.server
 import io.vertx.core
 import io.vertx.core.{AbstractVerticle, Context}
 import io.vertx.scala.ext.auth.jwt.JWTAuth
-import io.vertx.scala.ext.web.Router
 import io.vertx.scala.ext.web.handler.BodyHandler
+import io.vertx.scala.ext.web.Router
 import it.unibo.dcs.commons.RxHelper
 import it.unibo.dcs.commons.VertxWebHelper.Implicits.contentTypeToString
 import it.unibo.dcs.commons.VertxWebHelper._
@@ -16,6 +16,7 @@ import it.unibo.dcs.service.authentication.server.containers._
 import it.unibo.dcs.service.authentication.server.handlers.{ServiceRequestHandler, ServiceRequestHandlerImpl}
 import it.unibo.dcs.service.authentication.server.setupHelpers._
 import org.apache.http.entity.ContentType
+
 /** Verticle that runs the Authentication Service */
 final class AuthenticationVerticle(private[this] val authenticationRepository: AuthenticationRepository,
                                    private[this] val publisher: HttpEndpointPublisher) extends ServiceVerticle {
@@ -61,7 +62,6 @@ final class AuthenticationVerticle(private[this] val authenticationRepository: A
       .handler(requestHandler.handleLogin(_))
 
     router.post("/protected/logout")
-      .consumes(ContentType.APPLICATION_JSON)
       .produces(ContentType.APPLICATION_JSON)
       .handler(requestHandler.handleLogout(_))
 

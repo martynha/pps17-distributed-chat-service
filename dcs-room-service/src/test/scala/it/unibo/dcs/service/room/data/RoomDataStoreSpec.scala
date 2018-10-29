@@ -8,7 +8,8 @@ import io.vertx.scala.ext.jdbc.JDBCClient
 import io.vertx.scala.ext.sql.SQLConnection
 import it.unibo.dcs.commons.IoHelper
 import it.unibo.dcs.service.room.data.impl.RoomDataStoreDatabase
-import it.unibo.dcs.service.room.request.{CreateUserRequest, DeleteRoomRequest}
+import it.unibo.dcs.service.room.model.Room
+import it.unibo.dcs.service.room.request.{CreateRoomRequest, CreateUserRequest, DeleteRoomRequest, GetRoomsRequest}
 
 object RoomDataStoreSpec extends App {
 
@@ -65,6 +66,7 @@ object RoomDataStoreSpec extends App {
         }, context.fail)
       insertAsync.await()
     })
+    .test("Get all the rooms", testGetRoomsMethod _)
     .test("Delete a room", context => {
       val insertAsync = context.async(2)
       connection.execute("INSERT INTO `users` (`username`) VALUES ('mvandi')", context.asyncAssertSuccess(result => {
@@ -100,6 +102,20 @@ object RoomDataStoreSpec extends App {
       deleteAsync.await()
     })
     .run(new TestOptions().addReporter(new ReportOptions().setTo("console")))
+
+  private def testGetRoomsMethod(context: TestContext): Unit = {
+    val exampleRoom = "TestExampleRoom1"
+    val exampleUser = "TestExampleUser1"
+    val selectAsync = context.async(1)
+    roomDataStore.createUser(CreateUserRequest(exampleUser))
+      .subscribe(_ => roomDataStore.createRoom(CreateRoomRequest(exampleRoom, exampleUser))
+        .subscribe(_ => roomDataStore.getRooms(GetRoomsRequest())
+          .subscribe(result => {
+            assert(result.contains(Room(exampleRoom)))
+            selectAsync.countDown()
+          }, context.fail)))
+    selectAsync.await()
+  }
 
   private def resultHandler(context: TestContext, async: Async): Handler[AsyncResult[Unit]] = ar => {
     if (ar.succeeded()) {

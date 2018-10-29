@@ -9,11 +9,11 @@ import rx.lang.scala.Subscriber
 
 class AuthenticationDataStoreTest extends FlatSpec with MockFactory {
 
-  val username = "ale"
-  val password = "123"
-  val token = "token"
-  val sqlConnection: SQLConnection = mock[SQLConnection]
-  val authDataStore: AuthenticationDataStore = new AuthenticationDataStoreDatabase(sqlConnection)
+  private val username = "ale"
+  private val password = "123"
+  private val token = "token"
+  private val sqlConnection: SQLConnection = mock[SQLConnection]
+  private val authDataStore: AuthenticationDataStore = new AuthenticationDataStoreDatabase(sqlConnection)
 
   it should "call sqlConnection and return a result when checkUserExistence is called" in {
     val loginSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]

@@ -6,9 +6,9 @@ import io.vertx.core.http.HttpHeaders
 import io.vertx.core.http.HttpMethod._
 import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
 import io.vertx.scala.core.http.HttpServerResponse
+import io.vertx.scala.ext.web.{Router, RoutingContext}
 import io.vertx.scala.ext.web.client.HttpResponse
 import io.vertx.scala.ext.web.handler.CorsHandler
-import io.vertx.scala.ext.web.{Router, RoutingContext}
 import it.unibo.dcs.commons.VertxWebHelper.Implicits._
 import org.apache.http.entity.ContentType
 
@@ -34,7 +34,9 @@ object VertxWebHelper {
   def doIfDefined(id: Option[_], action: => Unit)(implicit context: RoutingContext): Unit =
     if (id.isDefined) {
       action
-    } else respondWithCode(400)
+    } else {
+      respond(HttpResponseStatus.BAD_REQUEST)
+    }
 
   def getTokenFromHeader(implicit context: RoutingContext): Option[String] = {
     context.request().headers().get(HttpHeaders.AUTHORIZATION.toString).map(token => token.split(" ").last)

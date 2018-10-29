@@ -160,7 +160,7 @@ paths:
           type: "string"
       responses:
         204:
-          description: The user was successfully delete.
+          description: The user was successfully deleted.
           schema:
             required:
               - username

@@ -9,13 +9,13 @@ import rx.lang.scala.{Observable, Subscriber}
 
 class DeleteUserUseCaseTest extends FlatSpec with MockFactory {
 
-  val username= "ale"
-  val token = "header.eyJzdWIiOiAiYWxlIn0=.signature"
-  val request = DeleteUserRequest(username, token)
-  val expectedResult: Unit = Unit
+  private val username= "ale"
+  private val token = "header.eyJzdWIiOiAiYWxlIn0=.signature"
+  private val request = DeleteUserRequest(username, token)
+  private val expectedResult: Unit = Unit
 
-  val subscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
-  val deleteUserUseCase = new DeleteUserUseCase(threadExecutor, postExecutionThread, authRepository)
+  private val subscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
+  private val deleteUserUseCase = new DeleteUserUseCase(threadExecutor, postExecutionThread, authRepository)
 
   it should "delete the user when the use case is executed" in {
     (authRepository deleteUser(_, _)) expects(username, token) returns (Observable just expectedResult)

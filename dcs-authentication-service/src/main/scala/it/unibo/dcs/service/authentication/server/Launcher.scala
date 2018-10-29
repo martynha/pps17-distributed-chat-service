@@ -2,8 +2,8 @@ package it.unibo.dcs.service.authentication.server
 
 import java.net.InetAddress
 
-import io.vertx.lang.scala.json.Json
 import io.vertx.lang.scala.{ScalaLogger, VertxExecutionContext}
+import io.vertx.lang.scala.json.Json
 import io.vertx.scala.core.{DeploymentOptions, Vertx, VertxOptions}
 import io.vertx.scala.ext.jdbc.JDBCClient
 import io.vertx.scala.ext.sql.SQLConnection

@@ -19,7 +19,7 @@ final class ValidatorBuilder[T] private[validation]() {
       Observable.just(_)
         .filter(predicate)
         .singleOption
-        .map(opt => opt.getOrElse(throw error))
+        .map(_.getOrElse(throw error))
     }
   }
 
@@ -36,7 +36,7 @@ final class ValidatorBuilder[T] private[validation]() {
 
 object ValidatorBuilder {
 
-  private[validation] val EXCEPTION = new IllegalStateException("builder has already been built")
+  private[validation] val EXCEPTION = new IllegalStateException("ValidatorBuilder has already been built")
 
 
 }

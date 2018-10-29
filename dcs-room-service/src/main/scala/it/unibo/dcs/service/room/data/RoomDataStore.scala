@@ -10,6 +10,8 @@ trait RoomDataStore {
 
   def getRoomByName(request: GetRoomRequest): Observable[Room]
 
+  def getRooms(request: GetRoomsRequest): Observable[Set[Room]]
+
   def createRoom(request: CreateRoomRequest): Observable[Room]
 
   def deleteRoom(request: DeleteRoomRequest): Observable[String]

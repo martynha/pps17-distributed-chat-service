@@ -11,6 +11,7 @@ trait ErrorSubscriber extends Subscriber[Nothing] {
   protected val response: HttpServerResponse
 
   override def onError(error: Throwable): Unit = {
+    error.printStackTrace()
     val json: JsonObject = error
     response.setStatus(error).end(json)
   }

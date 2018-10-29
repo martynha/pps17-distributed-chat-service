@@ -9,12 +9,12 @@ import rx.lang.scala.{Observable, Subscriber}
 
 class CheckTokenUseCaseTest extends FlatSpec with MockFactory {
 
-  val token = "token"
-  val request = CheckTokenRequest(token)
-  val expectedResult = true
+  private val token = "token"
+  private val request = CheckTokenRequest(token)
+  private val expectedResult = true
 
-  val subscriber: Subscriber[Boolean] = stub[Subscriber[Boolean]]
-  val useCase = new CheckTokenUseCase(threadExecutor, postExecutionThread, authRepository)
+  private val subscriber: Subscriber[Boolean] = stub[Subscriber[Boolean]]
+  private val useCase = new CheckTokenUseCase(threadExecutor, postExecutionThread, authRepository)
 
   it should "return true when the use case is executed" in {
     (authRepository isTokenValid _) expects request.token returns (Observable just expectedResult)
