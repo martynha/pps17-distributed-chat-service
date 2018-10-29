@@ -1,6 +1,8 @@
 package it.unibo.dcs.service.user.interactor.usecases
 
-import it.unibo.dcs.commons.interactor.UseCase
+import io.vertx.scala.core.Context
+import it.unibo.dcs.commons.RxHelper
+import it.unibo.dcs.commons.interactor.{ThreadExecutorExecutionContext, UseCase}
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
 import it.unibo.dcs.service.user.model.User
 import it.unibo.dcs.service.user.repository.UserRepository
@@ -15,3 +17,21 @@ final class CreateUserUseCase(private[this] val threadExecutor: ThreadExecutor,
   override protected[this] def createObservable(request: CreateUserRequest): Observable[User] = userRepository.createUser(request)
 
 }
+
+/*
+/** Companion object */
+object CreateUserUseCase {
+
+  /** Factory method to create the use case
+    *
+    * @param userRepository user repository reference
+    * @param ctx            Vertx context
+    * @return               the use case object */
+  def create(userRepository: UserRepository)(implicit ctx: Context): CreateUserUseCase = {
+    val threadExecutor: ThreadExecutor = ThreadExecutorExecutionContext(ctx.owner())
+    val postExecutionThread: PostExecutionThread = PostExecutionThread(RxHelper.scheduler(ctx))
+    new CreateUserUseCase(threadExecutor, postExecutionThread, userRepository)
+  }
+
+}
+*/

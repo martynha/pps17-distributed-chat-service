@@ -1,4 +1,4 @@
-package it.unibo.dcs.service.user
+package it.unibo.dcs.service.user.server
 
 import io.vertx.core.http.HttpMethod._
 import io.vertx.core.{AbstractVerticle, Context, Vertx}
@@ -11,7 +11,6 @@ import it.unibo.dcs.commons.interactor.ThreadExecutorExecutionContext
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
 import it.unibo.dcs.commons.service.{HttpEndpointPublisher, ServiceVerticle}
 import it.unibo.dcs.commons.validation.Validator
-import it.unibo.dcs.service.user.UserVerticle.Implicits._
 import it.unibo.dcs.service.user.interactor.usecases.{CreateUserUseCase, GetUserUseCase}
 import it.unibo.dcs.service.user.interactor.validations.ValidateUserCreation
 import it.unibo.dcs.service.user.repository.UserRepository
@@ -21,6 +20,7 @@ import it.unibo.dcs.service.user.validator.UserCreationValidator
 import org.apache.http.entity.ContentType
 
 import scala.language.implicitConversions
+import it.unibo.dcs.service.user.server.UserVerticle.Implicits._
 
 final class UserVerticle(private[this] val userRepository: UserRepository, private[this] val publisher: HttpEndpointPublisher) extends ServiceVerticle {
 
@@ -34,9 +34,9 @@ final class UserVerticle(private[this] val userRepository: UserRepository, priva
   override def init(jVertx: Vertx, context: Context, verticle: AbstractVerticle): Unit = {
     super.init(jVertx, context, verticle)
 
-
     host = config getString "host"
     port = config getInteger "port"
+
   }
 
   override def start(): Unit = {
