@@ -60,6 +60,10 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
       val validation = new JoinRoomValidation(threadExecutor, postExecutionThread, JoinRoomValidator())
       new JoinRoomUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
     }
+    val sendMessageUseCase = {
+      val validation = new SendMessageValidation(threadExecutor, postExecutionThread, SendMessageValidator())
+      new SendMessageUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
+    }
 
     router.post("/users")
       .consumes(ContentType.APPLICATION_JSON)
@@ -108,13 +112,14 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
         getRoomsUseCase(request, subscriber)
       })
 
-    router.post("/joinRoom")
-      .consumes("application/json")
-      .produces("application/json")
+    router.post("/rooms/:name/messages")
+      .consumes(ContentType.APPLICATION_JSON)
+      .produces(ContentType.APPLICATION_JSON)
       .handler(routingContext => {
-        val request = routingContext.getBodyAsJson.head
-        val checkSubscriber = new JoinRoomValiditySubscriber(routingContext.response(), request, joinRoomUseCase)
-        joinRoomValidation(request, checkSubscriber)
+        val roomName = routingContext.request().getParam("name").head
+        val request = routingContext.getBodyAsJson().head.put("name", roomName)
+        val subscriber = new SendMessageSubscriber(routingContext.response())
+        sendMessageUseCase(request, subscriber)
       })
   }
 
@@ -144,8 +149,8 @@ object RoomVerticle {
     implicit def jsonObjectToJoinRoomRequest(json: JsonObject): JoinRoomRequest =
       gson fromJsonObject[JoinRoomRequest] json
 
-    implicit def jsonObjectToJoinRoomRequest(json: JsonObject): JoinRoomRequest =
-      JoinRoomRequest(json.getString("name"), json.getString("username"))
+    implicit def JsonObjectToSendMessageRequest(json: JsonObject): SendMessageRequest =
+      gson fromJsonObject[SendMessageRequest] json
   }
 
 }

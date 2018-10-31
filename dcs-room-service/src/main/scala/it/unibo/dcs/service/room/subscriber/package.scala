@@ -7,7 +7,7 @@ import it.unibo.dcs.commons.JsonHelper.Implicits.{RichGson, jsonObjectToString}
 import it.unibo.dcs.commons.Logging
 import it.unibo.dcs.commons.VertxWebHelper.Implicits._
 import it.unibo.dcs.exceptions.ErrorSubscriber
-import it.unibo.dcs.service.room.model.{Participation, Room}
+import it.unibo.dcs.service.room.model.{Message, Participation, Room}
 import it.unibo.dcs.service.room.subscriber.Implicits._
 import rx.lang.scala.Subscriber
 
@@ -19,9 +19,9 @@ package object subscriber {
     with ErrorSubscriber with Logging {
 
     override def onNext(room: Room): Unit = {
-      val json: JsonObject = room
-      log.info(s"Answering with room: $json")
-      response.setStatus(HttpResponseStatus.CREATED).end(json)
+      val result: JsonObject = room
+      log.info(s"Answering with room: $result")
+      response.setStatus(HttpResponseStatus.CREATED).end(result)
     }
 
   }
@@ -59,13 +59,17 @@ package object subscriber {
       rooms.foreach(room => results.add(roomToJsonObject(room)))
       response.end(results.encodePrettily())
     }
-
   }
 
-  class JoinRoomValiditySubscriber(protected override val response: HttpServerResponse,
-                                   request: JoinRoomRequest,
-                                   joinRoomUseCase: JoinRoomUseCase) extends Subscriber[Unit] with ErrorSubscriber {
-    override def onCompleted(): Unit = joinRoomUseCase(request, new JoinRoomSubscriber(response))
+  class SendMessageSubscriber(protected override val response: HttpServerResponse) extends Subscriber[Message]
+    with ErrorSubscriber with Logging {
+
+    override def onNext(message: Message): Unit = {
+      val result: JsonObject = message
+      log.info(s"Answering with room: $result")
+      response.setStatus(HttpResponseStatus.CREATED).end(result)
+
+    }
   }
 
   object Implicits {
@@ -74,12 +78,8 @@ package object subscriber {
 
     implicit def participationToJsonObject(participation: Participation): JsonObject = gson toJsonObject participation
 
-    implicit def participationToJsonObject(participation: Participation): JsonObject = {
-      new JsonObject()
-        .put("username", participation.username)
-        .put("name", participation.room.name)
-        .put("join_date", participation.joinDate)
-    }
+    implicit def messageToJsonObject(message: Message): JsonObject = gson toJsonObject message
+
   }
 
 }
