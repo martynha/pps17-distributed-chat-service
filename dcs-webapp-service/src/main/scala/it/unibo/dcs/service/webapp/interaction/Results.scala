@@ -2,8 +2,8 @@ package it.unibo.dcs.service.webapp.interaction
 
 import com.google.gson.Gson
 import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
+import it.unibo.dcs.service.webapp.interaction.Labels.JsonLabels.tokenLabel
 import it.unibo.dcs.service.webapp.model.{Participation, Room, User}
-import it.unibo.dcs.service.webapp.interaction.JsonLabels.tokenLabel
 
 import scala.language.implicitConversions
 
@@ -53,7 +53,11 @@ object Results {
       Json.fromObjectString(gson.toJson(result.room))
     }
 
-    implicit def getRoomsToJsonObject(result: GetRoomsResult): JsonArray = {
+    implicit def roomJoinResultToJsonObject(result: RoomJoinResult): JsonObject = {
+      Json.fromObjectString(gson.toJson(result.participation))
+    }
+
+    implicit def getRoomsToJsonArray(result: GetRoomsResult): JsonArray = {
       result.rooms
         .map(x => Json.fromObjectString(gson.toJson(x)))
         .foldLeft(new JsonArray)(_ add _)

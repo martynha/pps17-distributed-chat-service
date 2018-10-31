@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { LoginRequest, RegisterRequest, LogoutRequest } from '../requests';
-import { Observable } from 'rxjs';
-import { User } from '../model';
+import {Injectable} from '@angular/core';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {LoginRequest, LogoutRequest, RegisterRequest} from '../requests';
+import {Observable} from 'rxjs';
+import {User} from '../model';
 
-import { map, tap } from 'rxjs/operators';
+import {tap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -26,7 +26,17 @@ export class AuthService {
     return this._user;
   }
 
-  constructor(private http: HttpClient) {}
+  get authOptions() {
+    return {
+      headers: new HttpHeaders({
+        'Authorization' : 'Bearer ' + this.user.token
+      })
+    }
+  }
+
+  constructor(private http: HttpClient) {
+  }
+
 
   isAuthenticated(): boolean {
     return !(!this._user);
@@ -43,8 +53,10 @@ export class AuthService {
   }
 
   logout(): Observable<void> {
-    return this.http.post<void>(AuthService.LOGOUT, new LogoutRequest(this.user.token))
-      .pipe(tap(
+    return this.http.request<void>('delete', AuthService.LOGOUT, {
+      body: new LogoutRequest(this.user.username),
+      headers: this.authOptions.headers
+    }).pipe(tap(
         _ => {},
         _ => {},
         () => this._user = undefined));

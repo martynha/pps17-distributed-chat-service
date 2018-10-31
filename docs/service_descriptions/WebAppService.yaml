@@ -35,7 +35,6 @@ paths:
               - firstName
               - lastName
               - password
-              - passwordConfirm
             properties:
               username:
                 type: string
@@ -44,8 +43,6 @@ paths:
               lastName:
                 type: string
               password:
-                type: string
-              passwordConfirm:
                 type: string
           required: true
       responses:
@@ -235,6 +232,103 @@ paths:
       responses:
         204:
           description: The room was successfully deleted.
+  /rooms/{name}/messages:
+    get:
+      security:
+        - Bearer: []
+      summary: Retrieves a list of all the messages in a room.
+      produces:
+        - "application/json"
+      parameters:
+        - name: "name"
+          in: path
+          description: The name of the room in which retrieve the messages.
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: A list of Message
+          schema:
+            type: array
+            items:
+              required:
+                - content
+                - timestamp
+                - participation
+              properties:
+                content:
+                  type: string
+                participation:
+                  required:
+                    - room
+                    - username
+                  properties:
+                    room:
+                      required:
+                        - name
+                      properties:
+                        name:
+                          type: string
+                    username:
+                      type: string
+                timestamp:
+                  type: string
+                  format: date-time
+    post:
+      summary: Creates a new message in a room.
+      security:
+        - Bearer: []
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "name"
+          in: path
+          description: The name of the room in which retrieve the messages.
+          required: true
+          type: "string"
+        - name: message
+          in: body
+          description: The Message to create.
+          schema:
+            required:
+              - content
+              - username
+            properties:
+              content:
+                type: string
+              username:
+                type: string
+          required: true
+      responses:
+        201:
+          description: The message was successfully created.
+          schema:
+              required:
+                - content
+                - timestamp
+                - participation
+              properties:
+                content:
+                  type: string
+                participation:
+                  required:
+                    - room
+                    - username
+                  properties:
+                    room:
+                      required:
+                        - name
+                      properties:
+                        name:
+                          type: string
+                    username:
+                      type: string
+                timestamp:
+                  type: string
+                  format: date-time
+
   /rooms/{name}/participations:
     post:
       summary: Creates a new participation.

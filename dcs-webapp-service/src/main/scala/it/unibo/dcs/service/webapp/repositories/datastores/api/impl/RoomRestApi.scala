@@ -1,8 +1,8 @@
 package it.unibo.dcs.service.webapp.repositories.datastores.api.impl
 
-import io.vertx.lang.scala.json.{JsonArray, JsonObject}
-import it.unibo.dcs.commons.dataaccess.Implicits.stringToDate
 import com.google.gson.Gson
+import io.vertx.lang.scala.json.{JsonArray, JsonObject}
+import it.unibo.dcs.commons.RxHelper.Implicits.RichObservable
 import it.unibo.dcs.commons.service.{AbstractApi, HttpEndpointDiscovery}
 import it.unibo.dcs.exceptions.{InternalException, RoomServiceErrorException, bodyAsJsonArray, bodyAsJsonObject}
 import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
@@ -10,6 +10,7 @@ import it.unibo.dcs.service.webapp.interaction.Requests._
 import it.unibo.dcs.service.webapp.model.{Participation, Room}
 import it.unibo.dcs.service.webapp.repositories.datastores.api.RoomApi
 import it.unibo.dcs.service.webapp.repositories.datastores.api.impl.RoomRestApi._
+import it.unibo.dcs.service.webapp.repositories.datastores.api.impl.RoomRestApi.Implicits._
 import rx.lang.scala.Observable
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -21,7 +22,7 @@ class RoomRestApi(private[this] val discovery: HttpEndpointDiscovery)
     makeRequest(client =>
       Observable.from(client.post(createRoomURI).sendJsonObjectFuture(createRoomRequest)))
       .map(bodyAsJsonObject(throw InternalException("Room service returned an empty body")))
-      .map(getRoom)
+      .mapImplicitly
   }
 
   override def deleteRoom(deletionRequest: DeleteRoomRequest): Observable[String] = {
@@ -35,59 +36,51 @@ class RoomRestApi(private[this] val discovery: HttpEndpointDiscovery)
     makeRequest(client =>
       Observable.from(client.post(createUser).sendJsonObjectFuture(userRegistrationRequest)))
       .map(bodyAsJsonObject())
-      .map(_ => {})
       .onErrorResumeNext(cause => Observable.error(RoomServiceErrorException(cause)))
+      .toCompletable
   }
 
   override def joinRoom(request: RoomJoinRequest): Observable[Participation] = {
     makeRequest(client =>
       Observable.from(client.post(joinRoomURI(request.name)).sendJsonObjectFuture(request)))
       .map(bodyAsJsonObject(throw InternalException("Room service returned an empty body")))
-      .map(getParticipation)
+      .mapImplicitly
   }
 
   override def getRooms(request: GetRoomsRequest): Observable[List[Room]] = {
     makeRequest(client =>
       Observable.from(client.get(RoomRestApi.getRooms).sendJsonObjectFuture(request)))
       .map(bodyAsJsonArray(throw InternalException("Room service returned an empty body")))
-      .map(getRoomList)
+      .mapImplicitly
   }
 }
 
 private[impl] object RoomRestApi {
 
-  val createRoomURI = "/createRoom"
+  private val createRoomURI = "/createRoom"
 
-  val deleteRoomURI = "/deleteRoom"
+  private val deleteRoomURI = "/deleteRoom"
 
-  val createUser = "/createUser"
+  private val createUser = "/createUser"
 
-  val getRooms = "/rooms"
+  private val getRooms = "/rooms"
 
   private def joinRoomURI(roomName: String) = s"/joinRoom/$roomName"
 
-  private[impl] def getRoom(json: JsonObject) = {
-    Room(json.getString("name"))
-  }
+  object Implicits {
 
-  private[impl] def getParticipation(json: JsonObject): Participation = {
-    new Gson().fromJson(json, Participation.getClass)
-  }
-
-  private[impl] def getRoomList(jsonArray: JsonArray): List[Room] = {
-    Stream.range(0, jsonArray.size)
-      .map(jsonArray.getJsonObject)
-      .map(_.getJsonObject("room"))
-      .map(_.getString("name"))
-      .map(Room)
-      .toList
-    /*
-    val roomList: List[Room] = List()
-    for (i <- 0 to jsonArray.size) {
-      roomList :+ Room(jsonArray.getJsonObject(i).getString("name"))
+    implicit def jsonObjectToParticipation(json: JsonObject): Participation = {
+      new Gson().fromJson(json, Participation.getClass)
     }
-    roomList
-    */
+
+    implicit def jsonArrayToRooms(json: JsonArray): List[Room] = {
+      Stream.range(0, json.size)
+        .map(json.getJsonObject)
+        .map(_.getString("name"))
+        .map(Room)
+        .toList
+    }
+
   }
 
 }

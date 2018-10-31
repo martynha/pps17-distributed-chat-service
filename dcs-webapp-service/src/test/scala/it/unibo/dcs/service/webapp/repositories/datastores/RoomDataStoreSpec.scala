@@ -1,8 +1,8 @@
-package repositories.datastores
+package it.unibo.dcs.service.webapp.repositories.datastores
 
 import java.util.Date
 
-import it.unibo.dcs.service.webapp.interaction.Requests.{CreateRoomRequest, DeleteRoomRequest, RoomJoinRequest, GetRoomsRequest}
+import it.unibo.dcs.service.webapp.interaction.Requests.{CreateRoomRequest, DeleteRoomRequest, GetRoomsRequest, RoomJoinRequest}
 import it.unibo.dcs.service.webapp.model.{Participation, Room}
 import it.unibo.dcs.service.webapp.repositories.datastores.RoomDataStore
 import it.unibo.dcs.service.webapp.repositories.datastores.api.RoomApi
@@ -17,7 +17,7 @@ class RoomDataStoreSpec extends DataStoreSpec {
   private val dataStore: RoomDataStore = new RoomDataStoreNetwork(roomApi)
 
   private val room = Room("Room 1")
-  private val rooms: List[Room]  = List(room, room, room)
+  private val rooms: List[Room] = List(room, room, room)
   private val token = "token"
   private val participation = Participation(new Date(), room, user)
 

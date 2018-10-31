@@ -33,13 +33,10 @@ paths:
             required:
               - username
               - password
-              - passwordConfirm
             properties:
               username:
                 type: string
               password:
-                type: string
-              passwordConfirm:
                 type: string
           required: true
       responses:

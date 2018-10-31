@@ -7,6 +7,8 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
 import rx.lang.scala.{Observable, Subscriber}
 
+import scala.language.postfixOps
+
 class AuthenticationRepositoryTest extends FlatSpec with MockFactory {
 
   val username = "ale"

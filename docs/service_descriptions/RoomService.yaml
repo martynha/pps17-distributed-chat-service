@@ -207,6 +207,58 @@ paths:
                 timestamp:
                   type: string
                   format: date-time
+    post:
+      summary: Creates a new message in a room.
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "name"
+          in: path
+          description: The name of the room in which retrieve the messages.
+          required: true
+          type: "string"
+        - name: message
+          in: body
+          description: The Message to create.
+          schema:
+            required:
+              - content
+              - username
+            properties:
+              content:
+                type: string
+              username:
+                type: string
+          required: true
+      responses:
+        201:
+          description: The message was successfully created.
+          schema:
+              required:
+                - content
+                - timestamp
+                - participation
+              properties:
+                content:
+                  type: string
+                participation:
+                  required:
+                    - room
+                    - username
+                  properties:
+                    room:
+                      required:
+                        - name
+                      properties:
+                        name:
+                          type: string
+                    username:
+                      type: string
+                timestamp:
+                  type: string
+                  format: date-time
 
   /users:
     post:

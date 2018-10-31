@@ -1,8 +1,9 @@
 package it.unibo.dcs.service.webapp.verticles.handler.impl.subscribers
 
+import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.core.http.HttpServerResponse
-import it.unibo.dcs.commons.VertxWebHelper.Implicits.jsonObjectToString
+import it.unibo.dcs.commons.VertxWebHelper.Implicits._
 import it.unibo.dcs.exceptions.ErrorSubscriber
 import it.unibo.dcs.service.webapp.interaction.Results.Implicits._
 import it.unibo.dcs.service.webapp.interaction.Results.RegisterResult
@@ -14,7 +15,7 @@ final class RegisterUserSubscriber(protected override val response: HttpServerRe
   override def onNext(result: RegisterResult): Unit = {
     val res: JsonObject = result
     println(s"Retrieving result: $res")
-    response end res
+    response setStatus HttpResponseStatus.CREATED end res.encode()
   }
 
 }

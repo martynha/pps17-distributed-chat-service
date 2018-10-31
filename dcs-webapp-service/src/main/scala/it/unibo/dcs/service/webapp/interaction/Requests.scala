@@ -3,12 +3,12 @@ package it.unibo.dcs.service.webapp.interaction
 import com.google.gson.Gson
 import io.vertx.lang.scala.json.{Json, JsonObject}
 import it.unibo.dcs.commons.dataaccess.Implicits.stringToDate
-import it.unibo.dcs.service.webapp.interaction.JsonLabels._
+import it.unibo.dcs.service.webapp.interaction.Labels.JsonLabels._
 import it.unibo.dcs.service.webapp.model.{Room, User}
 
 import scala.language.implicitConversions
 
-/** It wraps all requests used by request handler, use cases, repositories, datastores and APIs */
+/** It wraps all requests used by request handler, use cases, it.unibo.dcs.service.webapp.repositories, datastores and APIs */
 object Requests {
 
   /** Sum type representing all the specific requests for Distributed Chat Service application */

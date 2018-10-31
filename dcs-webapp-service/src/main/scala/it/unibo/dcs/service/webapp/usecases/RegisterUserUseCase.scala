@@ -40,16 +40,13 @@ final class RegisterUserUseCase(private[this] val threadExecutor: ThreadExecutor
           log.info("Rolling back auth repository...")
           rollbackAuthRepository(request.username, token, error)
       }
-    } yield {
-      roomRepository.registerUser(request).onErrorResumeNext {
+      _ <- roomRepository.registerUser(request).onErrorResumeNext {
         case RoomServiceErrorException(error) =>
-          log.info("Rolling back room repository...")
+          log.info("Rolling back auth and room it.unibo.dcs.service.webapp.repositories...")
           rollbackAuthRepository(request.username, token, error)
           rollbackUserRepository(request.username, error)
-      }.subscribe()
-
-      RegisterResult(user, token)
-    }
+      }
+    } yield RegisterResult(user, token)
 
   /* Rollback changes previously performed in Authentication service */
   private def rollbackAuthRepository(username: String, token: String, error: Throwable): Observable[User] = {

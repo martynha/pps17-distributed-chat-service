@@ -2,7 +2,7 @@ package it.unibo.dcs.service.webapp.verticles
 
 private[verticles] object Addresses {
 
-  object rooms {
+  object Rooms {
 
     private val prefix = "rooms"
 

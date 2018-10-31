@@ -6,6 +6,8 @@ import io.vertx.scala.ext.web.client.HttpResponse
 import it.unibo.dcs.exceptions.ErrorType._
 import it.unibo.dcs.exceptions.Implicits.jsonObjectToDcsException
 
+import scala.language.implicitConversions
+
 /** It contains all the exceptions used by the APIs */
 package object exceptions {
 
@@ -260,10 +262,11 @@ package object exceptions {
         HttpResponseStatus.SERVICE_UNAVAILABLE
       case UserNotFoundException(_)
            | RoomNotFoundException(_)
-           | ParticipationNotFoundException(_,_) =>
+           | ParticipationNotFoundException(_, _) =>
         HttpResponseStatus.NOT_FOUND
       case UserAlreadyExistsException(_)
-           | RoomAlreadyExistsException(_) =>
+           | RoomAlreadyExistsException(_)
+           | ParticipationAlreadyExistsException(_, _) =>
         HttpResponseStatus.CONFLICT
       case UsernameRequiredException
            | FirstNameRequiredException
@@ -273,6 +276,7 @@ package object exceptions {
            | TokenRequiredException
            | RoomNameRequiredException =>
         HttpResponseStatus.PRECONDITION_FAILED
+        // HttpResponseStatus.UNPROCESSABLE_ENTITY
       case InvalidTokenException
            | WrongUsernameOrPasswordException =>
         HttpResponseStatus.UNAUTHORIZED
@@ -283,7 +287,19 @@ package object exceptions {
   def bodyAsJsonObject[T](default: => JsonObject = Json.emptyObj()): HttpResponse[T] => JsonObject = response =>
     jsonObjectToDcsException(response.bodyAsJsonObject().getOrElse(default))
 
-  def bodyAsJsonArray[T](default: => JsonArray = Json.emptyArr()): HttpResponse[T] => JsonArray = response => response.bodyAsJsonArray()
-    .getOrElse(default)
+  def bodyAsJsonArray[T](default: => JsonArray = Json.emptyArr()): HttpResponse[T] => JsonArray = response =>
+    if (isJsonArray(response))
+      response.bodyAsJsonArray().getOrElse(default)
+    else {
+      jsonObjectToDcsException(response.bodyAsJsonObject().head)
+      default
+    }
+
+  private def isJsonArray[T](response: HttpResponse[T]): Boolean = {
+    response.bodyAsString().fold(false) { s =>
+      if (s.startsWith("[")) true
+      else false
+    }
+  }
 
 }

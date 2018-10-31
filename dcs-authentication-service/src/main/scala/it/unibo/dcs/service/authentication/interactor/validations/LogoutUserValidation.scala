@@ -1,6 +1,6 @@
 package it.unibo.dcs.service.authentication.interactor.validations
 
-import it.unibo.dcs.commons.interactor.SimpleValidation
+import it.unibo.dcs.commons.interactor.Validation
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
 import it.unibo.dcs.commons.validation.Validator
 import it.unibo.dcs.service.authentication.request.Requests.LogoutUserRequest
@@ -14,7 +14,7 @@ import it.unibo.dcs.service.authentication.request.Requests.LogoutUserRequest
 final class LogoutUserValidation(private[this] val threadExecutor: ThreadExecutor,
                                  private[this] val postExecutionThread: PostExecutionThread,
                                  private[this] val validator: Validator[LogoutUserRequest])
-  extends SimpleValidation[LogoutUserRequest](threadExecutor, postExecutionThread, validator)
+  extends Validation[LogoutUserRequest](threadExecutor, postExecutionThread, validator)
 
 object LogoutUserValidation {
 

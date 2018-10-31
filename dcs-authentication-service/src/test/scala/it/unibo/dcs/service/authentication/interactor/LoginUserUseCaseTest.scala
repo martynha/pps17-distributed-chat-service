@@ -9,6 +9,8 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
 import rx.lang.scala.{Observable, Subscriber}
 
+import scala.language.postfixOps
+
 class LoginUserUseCaseTest extends FlatSpec with MockFactory {
 
   private val request = LoginUserRequest("ale", "123456")

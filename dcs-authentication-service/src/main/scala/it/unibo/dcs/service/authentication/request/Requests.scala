@@ -1,6 +1,6 @@
 package it.unibo.dcs.service.authentication.request
 
-/** It wraps all requests used by request handler, use cases, repositories, datastores and APIs */
+/** It wraps all requests used by request handler, use cases, it.unibo.dcs.service.webapp.repositories, datastores and APIs */
 object Requests {
 
   /** Request to check that the specified jwt token is valid */

@@ -1,15 +1,15 @@
 package it.unibo.dcs.service.room
 
-import com.google.gson.Gson
 import io.vertx.core.{AbstractVerticle, Context, Vertx => JVertx}
 import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.ext.web.Router
-import io.vertx.scala.ext.web.handler.{BodyHandler, CorsHandler}
-import it.unibo.dcs.commons.{JsonHelper, RxHelper, VertxWebHelper}
+import io.vertx.scala.ext.web.handler.BodyHandler
+import it.unibo.dcs.commons.JsonHelper.Implicits.RichGson
 import it.unibo.dcs.commons.VertxWebHelper.Implicits.contentTypeToString
 import it.unibo.dcs.commons.interactor.ThreadExecutorExecutionContext
 import it.unibo.dcs.commons.interactor.executor.PostExecutionThread
 import it.unibo.dcs.commons.service.{HttpEndpointPublisher, ServiceVerticle}
+import it.unibo.dcs.commons.{RxHelper, VertxWebHelper}
 import it.unibo.dcs.service.room.RoomVerticle.Implicits._
 import it.unibo.dcs.service.room.interactor.usecases._
 import it.unibo.dcs.service.room.interactor.validations._
@@ -129,19 +129,17 @@ object RoomVerticle {
 
   object Implicits {
 
-    private val gson = new Gson
-
     implicit def jsonObjectToCreateUserRequest(json: JsonObject): CreateUserRequest =
-      JsonHelper.fromJson[CreateUserRequest](gson, json)
+      gson fromJsonObject[CreateUserRequest] json
 
     implicit def jsonObjectToCreateRoomRequest(json: JsonObject): CreateRoomRequest =
-      JsonHelper.fromJson[CreateRoomRequest](gson, json)
+      gson fromJsonObject[CreateRoomRequest] json
 
     implicit def jsonObjectToDeleteRoomRequest(json: JsonObject): DeleteRoomRequest =
-      JsonHelper.fromJson[DeleteRoomRequest](gson, json)
+      gson fromJsonObject[DeleteRoomRequest] json
 
     implicit def jsonObjectToJoinRoomRequest(json: JsonObject): JoinRoomRequest =
-      JsonHelper.fromJson[JoinRoomRequest](gson, json)
+      gson fromJsonObject[JoinRoomRequest] json
 
     implicit def jsonObjectToJoinRoomRequest(json: JsonObject): JoinRoomRequest =
       JoinRoomRequest(json.getString("name"), json.getString("username"))

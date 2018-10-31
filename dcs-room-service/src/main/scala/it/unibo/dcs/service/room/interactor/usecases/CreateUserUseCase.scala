@@ -14,7 +14,6 @@ final class CreateUserUseCase(threadExecutor: ThreadExecutor,
   extends UseCase[Unit, CreateUserRequest](threadExecutor, postExecutionThread) {
 
   override protected[this] def createObservable(request: CreateUserRequest): Observable[Unit] =
-    createUserValidation(request)
-      .flatMap(_ => roomRepository.createUser(request))
+    createUserValidation(request).flatMap(_ => roomRepository.createUser(request))
 
 }

@@ -1,10 +1,11 @@
 package it.unibo.dcs.service.user
 
 import io.vertx.core.http.HttpMethod._
-import io.vertx.core.{AbstractVerticle, Context, Vertx}
-import io.vertx.lang.scala.json.JsonObject
+import io.vertx.core.{AbstractVerticle, Context => JContext, Vertx => JVertx}
+import io.vertx.lang.scala.json.{Json, JsonObject}
 import io.vertx.scala.ext.web.Router
 import io.vertx.scala.ext.web.handler.{BodyHandler, CorsHandler}
+import it.unibo.dcs.commons.JsonHelper.Implicits.RichGson
 import it.unibo.dcs.commons.RxHelper
 import it.unibo.dcs.commons.VertxWebHelper.Implicits.contentTypeToString
 import it.unibo.dcs.commons.interactor.ThreadExecutorExecutionContext
@@ -15,7 +16,7 @@ import it.unibo.dcs.service.user.interactor.usecases.{CreateUserUseCase, GetUser
 import it.unibo.dcs.service.user.interactor.validations.ValidateUserCreation
 import it.unibo.dcs.service.user.repository.UserRepository
 import it.unibo.dcs.service.user.request.{CreateUserRequest, GetUserRequest}
-import it.unibo.dcs.service.user.subscriber.{GetUserSubscriber, ValidateUserCreationSubscriber}
+import it.unibo.dcs.service.user.subscriber._
 import it.unibo.dcs.service.user.validator.UserCreationValidator
 import org.apache.http.entity.ContentType
 
@@ -26,11 +27,7 @@ final class UserVerticle(private[this] val userRepository: UserRepository, priva
   private var host: String = _
   private var port: Int = _
 
-  private var getUserUseCase: GetUserUseCase = _
-  private var createUserUseCase: CreateUserUseCase = _
-  private var validateUserCreation: ValidateUserCreation = _
-
-  override def init(jVertx: Vertx, context: Context, verticle: AbstractVerticle): Unit = {
+  override def init(jVertx: JVertx, context: JContext, verticle: AbstractVerticle): Unit = {
     super.init(jVertx, context, verticle)
 
     host = config getString "host"
@@ -65,18 +62,21 @@ final class UserVerticle(private[this] val userRepository: UserRepository, priva
     val threadExecutor: ThreadExecutor = ThreadExecutorExecutionContext(vertx)
     val postExecutionThread: PostExecutionThread = PostExecutionThread(RxHelper.scheduler(this.ctx))
 
-    val validator: Validator[CreateUserRequest] = UserCreationValidator(userRepository)
-
     val getUserUseCase = new GetUserUseCase(threadExecutor, postExecutionThread, userRepository)
-    val createUserUseCase = new CreateUserUseCase(threadExecutor, postExecutionThread, userRepository)
-    val validateUserCreation = new ValidateUserCreation(threadExecutor, postExecutionThread, validator)
+
+    val createUserUseCase = {
+      val validator: Validator[CreateUserRequest] = UserCreationValidator(userRepository)
+      val validation = new ValidateUserCreation(threadExecutor, postExecutionThread, validator)
+      new CreateUserUseCase(threadExecutor, postExecutionThread, userRepository, validation)
+    }
 
     router.get("/getUser/:username")
       .produces(ContentType.APPLICATION_JSON)
       .handler(routingContext => {
         val username = routingContext.request().getParam("username").head
+        val request = Json.obj(("username", username))
         val subscriber = new GetUserSubscriber(routingContext.response())
-        getUserUseCase(username, subscriber)
+        getUserUseCase(request, subscriber)
       })
 
     router.post("/createUser")
@@ -85,8 +85,8 @@ final class UserVerticle(private[this] val userRepository: UserRepository, priva
       .handler(routingContext => {
         val request = routingContext.getBodyAsJson().head
         log.info(s"Received request: $request")
-        val checkSubscriber = new ValidateUserCreationSubscriber(routingContext.response(), request, createUserUseCase)
-        validateUserCreation(request, checkSubscriber)
+        val subscriber = new CreateUserSubscriber(routingContext.response())
+        createUserUseCase(request, subscriber)
       })
   }
 
@@ -96,12 +96,11 @@ object UserVerticle {
 
   object Implicits {
 
-    implicit def jsonObjectToRequest(json: JsonObject): CreateUserRequest =
-      CreateUserRequest(json.getString("username"),
-        json.getString("firstName"), json.getString("lastName"))
+    implicit def jsonObjectToCreateUserRequest(json: JsonObject): CreateUserRequest =
+      gson fromJsonObject[CreateUserRequest] json
 
-    implicit def stringToRequest(username: String): GetUserRequest =
-      GetUserRequest(username)
+    implicit def jsonObjectToGetUserRequest(json: JsonObject): GetUserRequest =
+      gson fromJsonObject[GetUserRequest] json
 
   }
 

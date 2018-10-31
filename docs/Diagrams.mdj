@@ -31459,7 +31459,7 @@
 											"height": 13,
 											"autoResize": false,
 											"underline": false,
-											"text": "it.unibo.dcs.service.webapp.usecases.LoginUseCase",
+											"text": "it.unibo.dcs.service.webapp.it.unibo.dcs.service.webapp.usecases.LoginUseCase",
 											"horizontalAlignment": 2,
 											"verticalAlignment": 5,
 											"wordWrap": false

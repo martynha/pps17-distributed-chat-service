@@ -19,4 +19,5 @@ trait RoomDataStore {
   def joinRoom(request: JoinRoomRequest): Observable[Participation]
 
   def getParticipationByKey(request: JoinRoomRequest): Observable[Participation]
+
 }

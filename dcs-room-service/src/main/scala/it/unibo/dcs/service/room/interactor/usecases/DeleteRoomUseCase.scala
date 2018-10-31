@@ -15,7 +15,6 @@ final class DeleteRoomUseCase(threadExecutor: ThreadExecutor,
   extends UseCase[String, DeleteRoomRequest](threadExecutor, postExecutionThread) {
 
   override protected[this] def createObservable(request: DeleteRoomRequest): Observable[String] =
-    deleteRoomValidation(request)
-      .flatMap(_ => roomRepository.deleteRoom(request))
+    deleteRoomValidation(request).flatMap(_ => roomRepository.deleteRoom(request))
 
 }

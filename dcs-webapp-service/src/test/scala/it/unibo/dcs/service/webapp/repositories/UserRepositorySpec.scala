@@ -1,4 +1,4 @@
-package repositories
+package it.unibo.dcs.service.webapp.repositories
 
 import it.unibo.dcs.service.webapp.model.User
 import it.unibo.dcs.service.webapp.repositories.UserRepository

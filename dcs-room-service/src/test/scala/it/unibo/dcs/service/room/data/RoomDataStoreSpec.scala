@@ -69,11 +69,11 @@ object RoomDataStoreSpec extends App {
     .test("Get all the rooms", testGetRoomsMethod _)
     .test("Delete a room", context => {
       val insertAsync = context.async(2)
-      connection.execute("INSERT INTO `users` (`username`) VALUES ('mvandi')", context.asyncAssertSuccess(result => {
+      connection.execute("INSERT INTO `users` (`username`) VALUES ('mvandi')", context.asyncAssertSuccess(_ => {
         insertAsync.countDown()
       }))
 
-      connection.execute("INSERT INTO `rooms` (`name`, `owner_username`) VALUES ('Test room', 'mvandi')", context.asyncAssertSuccess(result => {
+      connection.execute("INSERT INTO `rooms` (`name`, `owner_username`) VALUES ('Test room', 'mvandi')", context.asyncAssertSuccess(_ => {
         insertAsync.countDown()
       }))
       insertAsync.await()
@@ -133,7 +133,7 @@ object RoomDataStoreSpec extends App {
       "drop table if exists users"
     )
 
-  private def createTables(connection: SQLConnection, context: TestContext) =
+  private def createTables(connection: SQLConnection, context: TestContext): Unit =
     executeQueries(connection, context,
       "create table messages (" +
         "username varchar(20) not null," +
@@ -158,7 +158,7 @@ object RoomDataStoreSpec extends App {
         "constraint id_user primary key (username))"
     )
 
-  private def executeQueries(connection: SQLConnection, context: TestContext, queries: String*) = {
+  private def executeQueries(connection: SQLConnection, context: TestContext, queries: String*): Unit = {
     val async = context.async(queries.size)
     queries.foreach(connection.execute(_, resultHandler(context, async)))
     async.await()

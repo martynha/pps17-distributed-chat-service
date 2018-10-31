@@ -1,23 +1,23 @@
-package repositories.datastores
+package it.unibo.dcs.service.webapp.repositories
 
 import it.unibo.dcs.service.webapp.interaction.Requests._
+import it.unibo.dcs.service.webapp.repositories.AuthenticationRepository
 import it.unibo.dcs.service.webapp.repositories.datastores.AuthenticationDataStore
-import it.unibo.dcs.service.webapp.repositories.datastores.api.AuthenticationApi
-import it.unibo.dcs.service.webapp.repositories.datastores.impl.AuthenticationDataStoreNetwork
+import it.unibo.dcs.service.webapp.repositories.impl.AuthenticationRepositoryImpl
 import rx.lang.scala.{Observable, Subscriber}
 
 import scala.language.postfixOps
 
-class AuthenticationDataStoreSpec extends DataStoreSpec {
+class AuthenticationRepositorySpec extends RepositorySpec {
 
-  private val authApi: AuthenticationApi = mock[AuthenticationApi]
-  private val dataStore: AuthenticationDataStore = new AuthenticationDataStoreNetwork(authApi)
+  private val dataStore: AuthenticationDataStore = mock[AuthenticationDataStore]
+  private val repository: AuthenticationRepository = new AuthenticationRepositoryImpl(dataStore)
 
   private val token = "token"
 
+  private val roomCreationRequest = CheckTokenRequest(token)
   private val loginUserRequest = LoginUserRequest(user.username, "password")
   private val logoutUserRequest = LogoutUserRequest(user.username, token)
-  private val roomCreationRequest = CheckTokenRequest(token)
   private val deleteUserRequest = DeleteUserRequest(user.username, token)
 
   private val registeredSubscriber: Subscriber[String] = stub[Subscriber[String]]
@@ -26,12 +26,12 @@ class AuthenticationDataStoreSpec extends DataStoreSpec {
   private val logoutSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
   private val deleteUserSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
 
-  it should "check the creation of a new room" in {
+  it should "create a new room" in {
     // Given
-    (authApi checkToken _) expects roomCreationRequest returns (Observable just token)
+    (dataStore checkToken _) expects roomCreationRequest returns (Observable just token) once()
 
     // When
-    dataStore.checkToken(roomCreationRequest).subscribe(roomCreationSubscriber)
+    repository.checkToken(roomCreationRequest).subscribe(roomCreationSubscriber)
 
     // Then
     // Verify that `subscriber.onCompleted` has been called once
@@ -40,10 +40,10 @@ class AuthenticationDataStoreSpec extends DataStoreSpec {
 
   it should "register a new user" in {
     // Given
-    (authApi registerUser _) expects registerRequest returns (Observable just token)
+    (dataStore registerUser _) expects registerRequest returns (Observable just token) noMoreThanOnce()
 
     // When
-    dataStore.registerUser(registerRequest).subscribe(registeredSubscriber)
+    repository.registerUser(registerRequest).subscribe(registeredSubscriber)
 
     // Then
     // Verify that `subscriber.onNext` has been called once with `token` as argument
@@ -55,12 +55,12 @@ class AuthenticationDataStoreSpec extends DataStoreSpec {
 
   it should "authenticate a registered user" in {
     // Given
-    (authApi registerUser _) expects registerRequest returns (Observable just token)
-    (authApi loginUser _) expects loginUserRequest returns (Observable just token)
+    (dataStore registerUser _) expects registerRequest returns (Observable just token)
+    (dataStore loginUser _) expects loginUserRequest returns (Observable just token)
 
     // When
-    dataStore.registerUser(registerRequest).subscribe(_ => {
-      dataStore.loginUser(loginUserRequest).subscribe(loginSubscriber)
+    repository.registerUser(registerRequest).subscribe(_ => {
+      repository.loginUser(loginUserRequest).subscribe(loginSubscriber)
     })
 
     // Then
@@ -73,12 +73,12 @@ class AuthenticationDataStoreSpec extends DataStoreSpec {
 
   it should "logout a logged user" in {
     // Given
-    (authApi loginUser _) expects loginUserRequest returns (Observable just token)
-    (authApi logoutUser _) expects logoutUserRequest returns Observable.empty
+    (dataStore loginUser _) expects loginUserRequest returns (Observable just token)
+    (dataStore logoutUser _) expects logoutUserRequest returns Observable.empty
 
     // When
-    dataStore.loginUser(loginUserRequest).subscribe(_ => {
-      dataStore.logoutUser(logoutUserRequest).subscribe(logoutSubscriber)
+    repository.loginUser(loginUserRequest).subscribe(_ => {
+      repository.logoutUser(logoutUserRequest).subscribe(logoutSubscriber)
     })
 
     // Then
@@ -86,20 +86,17 @@ class AuthenticationDataStoreSpec extends DataStoreSpec {
     (() => logoutSubscriber onCompleted) verify() once()
   }
 
-  it should "delete an existing user" in {
+  it should "delete a previously saved user" in {
     // Given
-    (authApi registerUser _) expects registerRequest returns (Observable just token)
-    (authApi deleteUser _) expects deleteUserRequest returns Observable.empty
+    (dataStore registerUser _) expects registerRequest returns (Observable just token)
+    (dataStore deleteUser _) expects deleteUserRequest returns Observable.empty
 
     // When
-    dataStore.registerUser(registerRequest)
-      .flatMap(_ => dataStore.deleteUser(deleteUserRequest))
+    repository.registerUser(registerRequest)
+      .flatMap(_ => repository.deleteUser(deleteUserRequest))
       .subscribe(deleteUserSubscriber)
 
     // Then
-    // Verify that `subscriber.onCompleted` has been called once
     (() => deleteUserSubscriber onCompleted) verify() once()
   }
-
-
 }

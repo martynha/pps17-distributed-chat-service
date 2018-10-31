@@ -2,7 +2,7 @@ package it.unibo.dcs.service.webapp.verticles.handler.impl.subscribers
 
 import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.core.http.HttpServerResponse
-import it.unibo.dcs.commons.VertxWebHelper.Implicits.jsonObjectToString
+import it.unibo.dcs.commons.JsonHelper.Implicits.jsonObjectToString
 import it.unibo.dcs.exceptions.ErrorSubscriber
 import it.unibo.dcs.service.webapp.interaction.Results.Implicits.loginResultToJsonObject
 import it.unibo.dcs.service.webapp.interaction.Results.LoginResult

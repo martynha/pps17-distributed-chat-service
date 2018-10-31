@@ -1,13 +1,13 @@
-package usecases
-
-import java.util.Date
+package it.unibo.dcs.service.webapp.usecases
 
 import it.unibo.dcs.service.webapp.interaction.Requests.{CheckTokenRequest, GetRoomsRequest}
 import it.unibo.dcs.service.webapp.interaction.Results.GetRoomsResult
-import it.unibo.dcs.service.webapp.model.{Room, User}
+import it.unibo.dcs.service.webapp.model.Room
 import it.unibo.dcs.service.webapp.repositories.RoomRepository
 import it.unibo.dcs.service.webapp.usecases.GetRoomsUseCase
 import rx.lang.scala.{Observable, Subscriber}
+
+import scala.language.postfixOps
 
 class GetRoomsUseCaseSpec extends UseCaseSpec {
   private val room = Room("AulaMagna")

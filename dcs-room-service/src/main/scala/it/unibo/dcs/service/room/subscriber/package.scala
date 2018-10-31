@@ -3,12 +3,14 @@ package it.unibo.dcs.service.room
 import io.vertx.lang.scala.ScalaLogger
 import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
 import io.vertx.scala.core.http.HttpServerResponse
-import it.unibo.dcs.commons.JsonHelper
-import it.unibo.dcs.commons.VertxWebHelper.Implicits.jsonObjectToString
+import it.unibo.dcs.commons.JsonHelper.Implicits.{RichGson, jsonObjectToString}
 import it.unibo.dcs.exceptions.ErrorSubscriber
 import it.unibo.dcs.service.room.model.{Participation, Room}
 import it.unibo.dcs.service.room.subscriber.Implicits._
 import rx.lang.scala.Subscriber
+
+import scala.language.implicitConversions
+
 package object subscriber {
 
   final class CreateRoomSubscriber(protected override val response: HttpServerResponse) extends Subscriber[Room]
@@ -69,10 +71,9 @@ package object subscriber {
 
   object Implicits {
 
-    implicit def roomToJsonObject(room: Room): JsonObject = JsonHelper.toJsonObject(gson, room)
+    implicit def roomToJsonObject(room: Room): JsonObject = gson toJsonObject room
 
-    implicit def participationToJsonObject(participation: Participation): JsonObject =
-      JsonHelper.toJsonObject(gson, participation)
+    implicit def participationToJsonObject(participation: Participation): JsonObject = gson toJsonObject participation
 
     implicit def participationToJsonObject(participation: Participation): JsonObject = {
       new JsonObject()

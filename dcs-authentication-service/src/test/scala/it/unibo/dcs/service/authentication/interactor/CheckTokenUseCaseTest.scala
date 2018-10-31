@@ -7,6 +7,8 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
 import rx.lang.scala.{Observable, Subscriber}
 
+import scala.language.postfixOps
+
 class CheckTokenUseCaseTest extends FlatSpec with MockFactory {
 
   private val token = "token"

@@ -11,11 +11,10 @@ import rx.lang.scala.Observable
 class JoinRoomUseCase (threadExecutor: ThreadExecutor,
                        postExecutionThread: PostExecutionThread,
                        private[this] val roomRepository: RoomRepository,
-                       private[this] val joinRoomValidation: JoinRoomValidation)
+                       private[this] val validation: JoinRoomValidation)
   extends UseCase[Participation, JoinRoomRequest](threadExecutor, postExecutionThread){
 
   override protected[this] def createObservable(request: JoinRoomRequest): Observable[Participation] =
-    joinRoomValidation(request)
-      .flatMap(_ => roomRepository.joinRoom(request))
+    validation(request).flatMap(_ => roomRepository.joinRoom(request))
 
 }

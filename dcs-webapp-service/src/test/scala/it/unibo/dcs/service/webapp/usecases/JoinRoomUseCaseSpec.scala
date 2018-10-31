@@ -1,4 +1,4 @@
-package usecases
+package it.unibo.dcs.service.webapp.usecases
 
 import java.util.Date
 

@@ -1,8 +1,10 @@
 package it.unibo.dcs.service.webapp.verticles.handler.impl.subscribers
 
+import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.lang.scala.json.Json
 import io.vertx.scala.core.http.HttpServerResponse
 import it.unibo.dcs.commons.Publisher
+import it.unibo.dcs.commons.VertxWebHelper.Implicits._
 import it.unibo.dcs.exceptions._
 import rx.lang.scala.Subscriber
 
@@ -13,7 +15,7 @@ final class RoomDeletionSubscriber(protected override val response: HttpServerRe
   with ErrorSubscriber {
 
   override def onNext(name: String): Unit = {
-    response.end()
+    response.setStatus(HttpResponseStatus.NO_CONTENT).end()
     publisher.publish(Json.obj(("name", name)))
   }
 

@@ -2,27 +2,24 @@ package it.unibo.dcs.service.user.interactor
 
 import java.util.Date
 
-import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
+import it.unibo.dcs.service.user.Mocks._
 import it.unibo.dcs.service.user.interactor.usecases.GetUserUseCase
 import it.unibo.dcs.service.user.model.User
-import it.unibo.dcs.service.user.repository.UserRepository
 import it.unibo.dcs.service.user.request.GetUserRequest
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
 import rx.lang.scala.{Observable, Subscriber}
 
+import scala.language.postfixOps
+
 class GetUserUseCaseSpec extends FlatSpec with MockFactory {
 
-  val request = GetUserRequest("martyha")
-  val expectedUser = User("martynha", "Martina", "Magnani", "", true, new Date())
+  private val request = GetUserRequest("martyha")
+  private val expectedUser = User(request.username, "Martina", "Magnani", "", visible = true, new Date())
 
-  val threadExecutor: ThreadExecutor = mock[ThreadExecutor]
-  val postExecutionThread: PostExecutionThread = mock[PostExecutionThread]
-  val userRepository: UserRepository = mock[UserRepository]
+  private val subscriber = stub[Subscriber[User]]
 
-  val subscriber: Subscriber[User] = stub[Subscriber[User]]
-
-  val getUserUseCase = new GetUserUseCase(threadExecutor, postExecutionThread, userRepository)
+  private val getUserUseCase = new GetUserUseCase(threadExecutor, postExecutionThread, userRepository)
 
   it should "get a user by username (request) when the use case is executed" in {
     // Given

@@ -13,7 +13,7 @@ trait UserRepository {
     *
     * @param username username
     * @return an observable stream of the deleted user's username
-    * */
+    **/
   def deleteUser(username: String): Observable[String]
 
   /** Retrieve a user given its username

@@ -1,4 +1,4 @@
-package repositories
+package it.unibo.dcs.service.webapp.repositories
 
 import java.util.Date
 

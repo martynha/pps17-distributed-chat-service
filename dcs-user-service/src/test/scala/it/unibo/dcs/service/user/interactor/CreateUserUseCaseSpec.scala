@@ -2,32 +2,37 @@ package it.unibo.dcs.service.user.interactor
 
 import java.util.Date
 
-import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
+import it.unibo.dcs.commons.validation.Validator
+import it.unibo.dcs.service.user.Mocks._
 import it.unibo.dcs.service.user.interactor.usecases.CreateUserUseCase
+import it.unibo.dcs.service.user.interactor.validations.ValidateUserCreation
 import it.unibo.dcs.service.user.model.User
-import it.unibo.dcs.service.user.repository.UserRepository
-import it.unibo.dcs.service.user.request.CreateUserRequest
+import it.unibo.dcs.service.user.request.{CreateUserRequest, GetUserRequest}
+import it.unibo.dcs.service.user.validator.UserCreationValidator
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
 import rx.lang.scala.{Observable, Subscriber}
 
+import scala.language.postfixOps
+
 class CreateUserUseCaseSpec extends FlatSpec with MockFactory {
 
-  val request = CreateUserRequest("martynha", "Martina", "Magnani")
-  val expectedUser = User("martynha", "Martina", "Magnani", "", true, new Date())
+  private val request = CreateUserRequest("martynha", "Martina", "Magnani")
+  private val expectedUser = User(request.username, request.firstName, request.lastName, "", visible = true, new Date())
 
-  val threadExecutor: ThreadExecutor = mock[ThreadExecutor]
-  val postExecutionThread: PostExecutionThread = mock[PostExecutionThread]
-  val userRepository: UserRepository = mock[UserRepository]
+  private val subscriber = stub[Subscriber[User]]
 
-  val subscriber: Subscriber[User] = stub[Subscriber[User]]
-
-  val createUserUseCase = new CreateUserUseCase(threadExecutor, postExecutionThread, userRepository)
+  private val createUserUseCase = {
+    val validator = UserCreationValidator(userRepository)
+    val validation = new ValidateUserCreation(threadExecutor, postExecutionThread, validator)
+    new CreateUserUseCase(threadExecutor, postExecutionThread, userRepository, validation)
+  }
 
   it should "create a new user when the use case is executed" in {
     // Given
     // userRepository is called with `request` as parameter returns an observable that contains only `user`
     (userRepository createUser _) expects request returns (Observable just expectedUser)
+    (userRepository checkIfUserExists  _) expects GetUserRequest(request.username) returns (Observable just())
 
     // When
     // createUserUseCase is executed with argument `request`
