@@ -1,10 +1,12 @@
 package it.unibo.dcs.service.room.repository
 
-import it.unibo.dcs.service.room.model.{Participation, Room}
+import it.unibo.dcs.service.room.model.{Message, Participation, Room}
 import it.unibo.dcs.service.room.request._
 import rx.lang.scala.Observable
 
 trait RoomRepository {
+
+  def sendMessage(request: SendMessageRequest): Observable[Message]
 
   def createUser(request: CreateUserRequest): Observable[Unit]
 

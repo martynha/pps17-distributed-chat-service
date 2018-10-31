@@ -56,6 +56,17 @@ final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDa
         }
       }
 
+  override def sendMessage(request: SendMessageRequest): Observable[Message] = execute(insertMessageQuery, request)
+    .flatMap( _ => getMessageByKey(request))
+
+  override def getMessageByKey(request: SendMessageRequest): Observable[Message] =
+    query(selectMessageByKey, request)
+    .map { resultSet =>
+        if (resultSet.getResults.isEmpty) {
+          throw MessageNotFoundExeption(request.username, request.name)
+        }
+
+    }
 }
 
 private[impl] object RoomDataStoreDatabase {
@@ -73,6 +84,8 @@ private[impl] object RoomDataStoreDatabase {
   val selectAllRooms = "SELECT * FROM `rooms`"
 
   val selectParticipationByKey = "SELECT * FROM `participations` WHERE `username` = ? AND `name` = ?"
+
+  val insertMessageQuery = "INSERT INTO `messages` (`name`, `username`, `content`) VALUES (?, ?, ?)"
 
   object Implicits {
 
@@ -94,10 +107,15 @@ private[impl] object RoomDataStoreDatabase {
     implicit def requestToParams(request: JoinRoomRequest): JsonArray =
       new JsonArray().add(request.username).add(request.name)
 
+    implicit def requestToParams(request: SendMessageRequest): JsonArray =
+      new JsonArray().add(request.name).add(request.username).add(request.content)
+
     implicit def jsonObjectToRoom(json: JsonObject): Room = gson fromJsonObject[Room] json
 
     implicit def jsonObjectToParticipation(json: JsonObject): Participation =
       gson.fromJsonObject[ParticipationDto](json)
+
+    implicit def jsonObjectToMessage(json: JsonObject): Message = gson fromJsonObject[Message] json
 
   }
 
