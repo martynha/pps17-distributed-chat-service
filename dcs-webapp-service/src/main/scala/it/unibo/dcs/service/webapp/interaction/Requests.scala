@@ -1,8 +1,8 @@
 package it.unibo.dcs.service.webapp.interaction
 
-import com.google.gson.Gson
 import io.vertx.lang.scala.json.{Json, JsonObject}
 import it.unibo.dcs.commons.dataaccess.Implicits.stringToDate
+import it.unibo.dcs.service.webapp.gson
 import it.unibo.dcs.service.webapp.interaction.Labels.JsonLabels._
 import it.unibo.dcs.service.webapp.model.{Room, User}
 
@@ -36,8 +36,6 @@ object Requests {
 
   /** It enables implicit conversions in order to clean code that deals with requests. */
   object Implicits {
-
-    private val gson = new Gson()
 
     implicit def requestToJson(request: DcsRequest): JsonObject = Json.fromObjectString(gson.toJson(request))
 

@@ -16,7 +16,7 @@ class JoinRoomUseCaseSpec extends UseCaseSpec {
   private val roomRepository: RoomRepository = mock[RoomRepository]
 
   private val room = Room("Room 1")
-  private val participation = Participation(new Date(), room, user)
+  private val participation = Participation(new Date(), room, user.username)
 
   private val joinRoomRequest = RoomJoinRequest(room.name, user.username, token)
 

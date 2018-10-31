@@ -1,7 +1,7 @@
 package it.unibo.dcs.service.webapp.interaction
 
-import com.google.gson.Gson
 import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
+import it.unibo.dcs.service.webapp.gson
 import it.unibo.dcs.service.webapp.interaction.Labels.JsonLabels.tokenLabel
 import it.unibo.dcs.service.webapp.model.{Participation, Room, User}
 
@@ -25,8 +25,6 @@ object Results {
 
   /** It enables implicit conversions in order to clean code that deals with results. */
   object Implicits {
-
-    private val gson = new Gson()
 
     implicit def registrationResultToJsonString(result: RegisterResult): String =
       resultToJsonString(result.user, _.put(tokenLabel, result.token))

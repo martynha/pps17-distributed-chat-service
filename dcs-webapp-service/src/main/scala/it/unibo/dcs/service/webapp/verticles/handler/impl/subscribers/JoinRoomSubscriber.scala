@@ -18,7 +18,7 @@ final class JoinRoomSubscriber(protected override val response: HttpServerRespon
   override def onNext(result: RoomJoinResult): Unit = {
     val res: JsonObject = result
     response.setStatus(HttpResponseStatus.CREATED).end(res.encode())
-    publisher.publish(result)
+    publisher.publish(res)
   }
 }
 
@@ -26,5 +26,3 @@ object JoinRoomSubscriber {
   def apply(response: HttpServerResponse,
             publisher: Publisher): JoinRoomSubscriber = new JoinRoomSubscriber(response, publisher)
 }
-
-

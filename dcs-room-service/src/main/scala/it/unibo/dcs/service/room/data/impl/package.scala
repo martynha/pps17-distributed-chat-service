@@ -8,13 +8,13 @@ import scala.language.implicitConversions
 
 package object impl {
 
-  private[impl] final case class ParticipationDto(room: Room, username: String, join_date: Date)
+  private[impl] final case class ParticipationDto(name: String, username: String, join_date: Date)
 
   private[impl] object Implicits {
 
     implicit def participationDtoToParticipation(dto: ParticipationDto): Participation =
       Participation(
-        room = dto.room,
+        room = Room(dto.name),
         username = dto.username,
         joinDate = dto.join_date
       )

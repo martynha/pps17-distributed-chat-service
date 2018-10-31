@@ -14,17 +14,13 @@ export interface Participation {
 
     room: Room;
 
-    user: User;
-
-    messages?: Message[];
+    username: string;
 
 }
 
 export interface Room {
 
     name: string;
-
-    participations?: Participation[];
 
 }
 
@@ -43,9 +39,5 @@ export interface User {
     lastSeen: Date;
 
     token: string;
-
-    rooms?: Room[];
-
-    participations?: Participation[];
 
 }

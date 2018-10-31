@@ -21,7 +21,7 @@ const routes: Routes = [
     path: '',
     loadChildren: './chat/chat.module#ChatModule',
     canActivate: [AuthGuard]
-},
+  }
 ];
 
 @NgModule({
@@ -29,4 +29,4 @@ const routes: Routes = [
   exports: [RouterModule],
   providers: [AuthGuard]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

@@ -110,4 +110,5 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
   private[this] def handleRequestToken(context: RoutingContext)(handler: String => Unit): Unit = {
     handleRequestHeader(context, HttpHeaders.AUTHORIZATION.toString)(handler)
   }
+
 }

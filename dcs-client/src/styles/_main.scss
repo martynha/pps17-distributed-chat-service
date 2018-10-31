@@ -34,3 +34,8 @@ body {
   bottom: 0;
   width: calc(100% - #{$left});
 }
+
+.flex-pull-right {
+  display: flex;
+  justify-content: flex-end;
+}

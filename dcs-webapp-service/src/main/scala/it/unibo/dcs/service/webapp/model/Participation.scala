@@ -6,6 +6,6 @@ import java.util.Date
   *
   * @param joinDate date of the room join
   * @param room     the room joined by the user
-  * @param user     the user who joined the room
+  * @param username     the username of the user who joined the room
   */
-case class Participation(joinDate: Date, room: Room, user: User)
+case class Participation(joinDate: Date, room: Room, username: String)

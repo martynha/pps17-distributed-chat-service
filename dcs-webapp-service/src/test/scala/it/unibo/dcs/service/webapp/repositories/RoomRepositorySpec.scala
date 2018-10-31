@@ -19,7 +19,7 @@ class RoomRepositorySpec extends RepositorySpec {
   private val room = Room("Room 1")
   private val rooms: List[Room] = List(room, room, room)
   private val token = "token"
-  private val participation = Participation(new Date(), room, user)
+  private val participation = Participation(new Date(), room, user.username)
 
   private val roomCreationRequest = CreateRoomRequest("Room 1", user.username, token)
   private val deleteRoomRequest = DeleteRoomRequest(room.name, user.username, token)

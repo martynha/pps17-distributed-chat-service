@@ -13,7 +13,9 @@ import { BlankComponent } from './blank/blank.component';
 import { AddRoomComponent } from './add-room/add-room.component';
 import { RoomInfoComponent } from './room-info/room-info.component';
 import { FormsModule } from '@angular/forms';
-
+import { SidebarComponent } from './sidebar/sidebar.component';
+import { SearchRoomsComponent } from './search-rooms/search-rooms.component';
+import { FilterPipe } from './filter.pipe';
 
 @NgModule({
   imports: [
@@ -30,7 +32,10 @@ import { FormsModule } from '@angular/forms';
     RoomComponent,
     BlankComponent,
     AddRoomComponent,
-    RoomInfoComponent
+    RoomInfoComponent,
+    SidebarComponent,
+    SearchRoomsComponent,
+    FilterPipe
   ],
 })
 export class ChatModule {}

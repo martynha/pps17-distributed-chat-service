@@ -10,7 +10,7 @@ drop table if exists messages;
 create table messages (
      username varchar(20) not null,
      `name` varchar(50) not null,
-     `timestamp` timestamp not null,
+     `timestamp` timestamp not null default CURRENT_TIMESTAMP,
      content varchar(1024) not null,
      constraint id_message primary key (username, `name`, `timestamp`));
 
@@ -18,7 +18,7 @@ drop table if exists participations;
 create table participations (
      username varchar(20) not null,
      `name` varchar(50) not null,
-     join_date date not null,
+     join_date date not null default CURRENT_TIMESTAMP,
      constraint id_participation primary key (username, `name`));
 
 drop table if exists rooms;

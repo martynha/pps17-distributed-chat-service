@@ -7,8 +7,7 @@ import { BlankComponent } from './blank/blank.component';
 import { AddRoomComponent } from './add-room/add-room.component';
 import { RoomInfoComponent } from './room-info/room-info.component';
 
-const routes: Routes = [
-  {
+const routes: Routes = [{
     path: '',
     component: ChatComponent,
     children: [
@@ -29,8 +28,7 @@ const routes: Routes = [
         component: RoomInfoComponent
       }
     ]
-  }
-];
+  }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
