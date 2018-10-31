@@ -32,7 +32,7 @@ object Requests {
 
   final case class GetRoomsRequest(username: String, token: String) extends DcsRequest
 
-  final case class CheckTokenRequest(token: String) extends DcsRequest
+  final case class CheckTokenRequest(token: String, username: String) extends DcsRequest
 
   /** It enables implicit conversions in order to clean code that deals with requests. */
   object Implicits {
@@ -46,7 +46,7 @@ object Requests {
     }
 
     implicit def jsonToCheckTokenRequest(json: JsonObject): CheckTokenRequest = {
-      CheckTokenRequest(json.getString(tokenLabel))
+      CheckTokenRequest(json.getString(tokenLabel), json.getString(usernameLabel))
     }
 
     implicit def jsonObjectToRegisterUserRequest(json: JsonObject): RegisterUserRequest = {

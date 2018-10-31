@@ -62,7 +62,7 @@ final class RoomRepositorySpec extends FlatSpec with MockFactory with OneInstanc
   }
 
   it should "Get all the rooms on the data store" in {
-    val request = GetRoomsRequest()
+    val request = GetRoomsRequest(username)
 
     val subscriber = stub[Subscriber[Set[Room]]]
 

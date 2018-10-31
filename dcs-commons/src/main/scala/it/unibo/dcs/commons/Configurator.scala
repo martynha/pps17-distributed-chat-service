@@ -4,7 +4,7 @@ import Configurator.toOp
 
 class Configurator[T] private (private[this] val op: T => T) {
 
-  def andThen(f: T => Unit) = new Configurator[T](op andThen toOp(f))
+  def andThen(f: T => Unit): Configurator[T] = new Configurator[T](op andThen toOp(f))
 
   def apply(t: T): T = op(t)
 

@@ -109,7 +109,7 @@ object RoomDataStoreSpec extends App {
     val selectAsync = context.async(1)
     roomDataStore.createUser(CreateUserRequest(exampleUser))
       .subscribe(_ => roomDataStore.createRoom(CreateRoomRequest(exampleRoom, exampleUser))
-        .subscribe(_ => roomDataStore.getRooms(GetRoomsRequest())
+        .subscribe(_ => roomDataStore.getRooms(GetRoomsRequest(exampleUser))
           .subscribe(result => {
             assert(result.contains(Room(exampleRoom)))
             selectAsync.countDown()

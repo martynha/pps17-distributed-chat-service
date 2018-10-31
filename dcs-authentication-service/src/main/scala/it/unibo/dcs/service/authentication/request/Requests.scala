@@ -4,7 +4,7 @@ package it.unibo.dcs.service.authentication.request
 object Requests {
 
   /** Request to check that the specified jwt token is valid */
-  final case class CheckTokenRequest(token: String)
+  final case class CheckTokenRequest(token: String, username: String)
 
   /** Request to login the user with the specified user credentials */
   final case class LoginUserRequest(username: String, password: String) extends TokenRequest

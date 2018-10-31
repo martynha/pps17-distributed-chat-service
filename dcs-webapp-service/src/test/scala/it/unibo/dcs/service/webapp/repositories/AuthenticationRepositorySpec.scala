@@ -15,7 +15,7 @@ class AuthenticationRepositorySpec extends RepositorySpec {
 
   private val token = "token"
 
-  private val roomCreationRequest = CheckTokenRequest(token)
+  private val roomCreationRequest = CheckTokenRequest(token, user.username)
   private val loginUserRequest = LoginUserRequest(user.username, "password")
   private val logoutUserRequest = LogoutUserRequest(user.username, token)
   private val deleteUserRequest = DeleteUserRequest(user.username, token)

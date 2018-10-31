@@ -25,7 +25,7 @@ final class DeleteRoomUseCase(private[this] val threadExecutor: ThreadExecutor,
 
   override protected[this] def createObservable(request: DeleteRoomRequest): Observable[String] = {
     for {
-      _ <- authRepository.checkToken(CheckTokenRequest(request.token))
+      _ <- authRepository.checkToken(CheckTokenRequest(request.token, request.username))
       name <- roomRepository.deleteRoom(request)
     } yield name
   }

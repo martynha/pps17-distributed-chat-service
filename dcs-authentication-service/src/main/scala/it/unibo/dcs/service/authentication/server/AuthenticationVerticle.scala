@@ -61,15 +61,15 @@ final class AuthenticationVerticle(private[this] val authenticationRepository: A
       .produces(ContentType.APPLICATION_JSON)
       .handler(requestHandler.handleLogin(_))
 
-    router.post("/protected/logout")
+    router.delete("/protected/logout")
       .produces(ContentType.APPLICATION_JSON)
       .handler(requestHandler.handleLogout(_))
 
-    router.get("/protected/tokenValidity")
+    router.get("/protected/verify/:username")
       .produces(ContentType.APPLICATION_JSON)
       .handler(requestHandler.handleTokenCheck(_))
 
-    router.delete("/protected/user/:username")
+    router.delete("/protected/users/:username")
       .produces(ContentType.APPLICATION_JSON)
       .handler(requestHandler.handleUserDeletion(_))
   }

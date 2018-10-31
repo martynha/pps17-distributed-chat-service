@@ -2,7 +2,6 @@ package it.unibo.dcs.service.room
 
 import java.net.InetAddress
 
-import io.vertx.lang.scala.ScalaLogger
 import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.core.{DeploymentOptions, Vertx, VertxOptions}
 import io.vertx.scala.ext.jdbc.JDBCClient
@@ -11,16 +10,14 @@ import io.vertx.servicediscovery.{Record, ServiceDiscovery}
 import it.unibo.dcs.commons.VertxHelper.Implicits._
 import it.unibo.dcs.commons.service.HttpEndpointPublisherImpl
 import it.unibo.dcs.commons.service.codecs.RecordMessageCodec
-import it.unibo.dcs.commons.{IoHelper, VertxHelper}
+import it.unibo.dcs.commons.{IoHelper, Logging, VertxHelper}
 import it.unibo.dcs.service.room.data.RoomDataStore
 import it.unibo.dcs.service.room.data.impl.RoomDataStoreDatabase
 import it.unibo.dcs.service.room.repository.impl.RoomRepositoryImpl
 
 import scala.language.implicitConversions
 
-object Launcher extends App {
-
-  private val logger = ScalaLogger.getLogger(getClass.getName)
+object Launcher extends App with Logging {
 
   VertxHelper.toObservable[Vertx](Vertx.clusteredVertx(VertxOptions(), _))
     .flatMap { vertx =>
@@ -40,6 +37,6 @@ object Launcher extends App {
           .put("host", InetAddress.getLocalHost.getHostAddress)
           .put("port", args(0).toInt)
         vertx.deployVerticle(new RoomVerticle(roomRepository, publisher), DeploymentOptions().setConfig(config))
-    }, cause => logger.error("Could not create Vert.x instance", cause))
+    }, cause => log.error("Could not create Vert.x instance", cause))
 
 }

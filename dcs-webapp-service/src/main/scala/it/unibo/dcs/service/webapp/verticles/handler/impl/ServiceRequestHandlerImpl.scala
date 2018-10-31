@@ -89,7 +89,7 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
   override def handleGetRooms(context: RoutingContext)(implicit ctx: Context): Unit =
     handleRequestParam(context, ParamLabels.userLabel) {
       username => {
-        handleRequestParam(context, ParamLabels.tokenLabel) {
+        handleRequestToken(context) {
           token => {
             val useCase = GetRoomsUseCase(authRepository, roomRepository)
             useCase(Json.obj((usernameLabel, username), (tokenLabel, token)), GetRoomsSubscriber(context.response))

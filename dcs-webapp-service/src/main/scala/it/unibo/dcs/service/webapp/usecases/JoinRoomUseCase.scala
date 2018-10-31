@@ -27,7 +27,7 @@ final class JoinRoomUseCase(private[this] val threadExecutor: ThreadExecutor,
 
   override protected[this] def createObservable(request: RoomJoinRequest): Observable[RoomJoinResult] =
     for {
-      _ <- authRepository.checkToken(CheckTokenRequest(request.token))
+      _ <- authRepository.checkToken(CheckTokenRequest(request.token, request.username))
       participation <- roomRepository.joinRoom(request)
     } yield RoomJoinResult(participation)
 }

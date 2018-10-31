@@ -65,7 +65,8 @@ package object exceptions {
 
   final case object KeyRequiredException {
 
-    def apply(key: String, error: String) = InternalException(s"Key '$key' is required in $error error")
+    def apply(key: String, error: String): InternalException =
+      InternalException(s"Key '$key' is required in $error error")
 
   }
 
@@ -111,7 +112,6 @@ package object exceptions {
   object Implicits {
 
     implicit def throwableToJsonObject(cause: Throwable): JsonObject = {
-      println(cause.getClass)
       val error = new JsonObject()
       cause match {
         case e: DcsException =>

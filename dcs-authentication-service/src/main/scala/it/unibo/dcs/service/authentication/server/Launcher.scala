@@ -2,13 +2,13 @@ package it.unibo.dcs.service.authentication.server
 
 import java.net.InetAddress
 
-import io.vertx.lang.scala.{ScalaLogger, VertxExecutionContext}
+import io.vertx.lang.scala.VertxExecutionContext
 import io.vertx.lang.scala.json.Json
 import io.vertx.scala.core.{DeploymentOptions, Vertx, VertxOptions}
 import io.vertx.scala.ext.jdbc.JDBCClient
 import io.vertx.scala.ext.sql.SQLConnection
 import io.vertx.servicediscovery.{Record, ServiceDiscovery}
-import it.unibo.dcs.commons.IoHelper
+import it.unibo.dcs.commons.{IoHelper, Logging}
 import it.unibo.dcs.commons.VertxHelper.Implicits._
 import it.unibo.dcs.commons.service.HttpEndpointPublisherImpl
 import it.unibo.dcs.commons.service.codecs.RecordMessageCodec
@@ -19,9 +19,7 @@ import scala.util.{Failure, Success}
 
 /** Entry point of the application.
   * It launches the verticle associated with Authentication Service in clustered mode. */
-object Launcher extends App {
-
-  private val logger = ScalaLogger.getLogger(getClass.getName)
+object Launcher extends App with Logging {
 
   Vertx.clusteredVertx(VertxOptions(), ar => {
     if (ar.succeeded) {
@@ -29,7 +27,7 @@ object Launcher extends App {
       val jdbcClient = JDBCClient.createNonShared(vertx, IoHelper.readJsonObject("/db_config.json"))
       jdbcClient.getConnectionFuture().onComplete {
         case Success(connection: SQLConnection) => deployVerticle(vertx, connection)
-        case Failure(cause) => logger.error("", cause)
+        case Failure(cause) => log.error("", cause)
       }(VertxExecutionContext(vertx.getOrCreateContext()))
     }
   })

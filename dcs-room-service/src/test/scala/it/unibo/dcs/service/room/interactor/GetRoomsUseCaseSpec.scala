@@ -16,7 +16,9 @@ final class GetRoomsUseCaseSpec extends FlatSpec with MockFactory with OneInstan
   private val getRoomsUseCase = new GetRoomsUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
 
   private val expectedResult = Set(Room("Room 01"), Room("Room 02"), Room("Room 03"))
-  val request = GetRoomsRequest()
+
+  private val username = "nik"
+  val request = GetRoomsRequest(username)
 
   val subscriber:Subscriber[Set[Room]] = stub[Subscriber[Set[Room]]]
 

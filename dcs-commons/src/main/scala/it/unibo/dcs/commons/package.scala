@@ -32,7 +32,9 @@ package object commons {
 
   sealed trait Sender extends EventBusObject {
 
-    final def send[T <: AnyRef, U: TypeTag](message: T, options: DeliveryOptions = DeliveryOptions(), replyHandler: AsyncResult[Message[U]] => Unit = null): Unit =
+    final def send[T <: AnyRef, U: TypeTag](message: T,
+                                            options: DeliveryOptions = DeliveryOptions(),
+                                            replyHandler: AsyncResult[Message[U]] => Unit = null): Unit =
       eventBus.send(address, message, options, replyHandler)
 
   }

@@ -15,7 +15,7 @@ class GetRoomsUseCaseSpec extends UseCaseSpec {
 
   private val getRoomsRequest = GetRoomsRequest(user.username, token)
 
-  private val checkTokenRequest = CheckTokenRequest(token)
+  private val checkTokenRequest = CheckTokenRequest(token, user.username)
 
   private val getRoomsResult = GetRoomsResult(rooms)
 

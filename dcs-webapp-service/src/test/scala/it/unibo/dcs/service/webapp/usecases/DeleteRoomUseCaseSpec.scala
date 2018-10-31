@@ -26,7 +26,7 @@ class DeleteRoomUseCaseSpec extends UseCaseSpec {
     // Given
     (roomRepository deleteRoom _) expects deleteRoomRequest returns (Observable just roomName)
     // userRepository is called with `registerRequest` as parameter returns an observable that contains only `user`
-    (authRepository checkToken _) expects CheckTokenRequest(token) returns (Observable just roomName)
+    (authRepository checkToken _) expects CheckTokenRequest(token, user.username) returns (Observable just roomName)
 
     // When
     // createUserUseCase is executed with argument `request`

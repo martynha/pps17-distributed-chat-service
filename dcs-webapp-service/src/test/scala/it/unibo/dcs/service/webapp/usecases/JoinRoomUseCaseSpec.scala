@@ -28,7 +28,7 @@ class JoinRoomUseCaseSpec extends UseCaseSpec {
 
   it should "execute the room join use case" in {
     // Given
-    (authRepository checkToken _) expects CheckTokenRequest(token) returns (Observable empty) once()
+    (authRepository checkToken _) expects CheckTokenRequest(token, user.username) returns (Observable empty) once()
     (roomRepository joinRoom _) expects joinRoomRequest returns (Observable just participation) once()
 
     // When

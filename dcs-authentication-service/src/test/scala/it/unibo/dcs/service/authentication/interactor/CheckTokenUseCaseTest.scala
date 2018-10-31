@@ -12,7 +12,8 @@ import scala.language.postfixOps
 class CheckTokenUseCaseTest extends FlatSpec with MockFactory {
 
   private val token = "token"
-  private val request = CheckTokenRequest(token)
+  private val username = "nik"
+  private val request = CheckTokenRequest(token, username)
   private val expectedResult = true
 
   private val subscriber: Subscriber[Boolean] = stub[Subscriber[Boolean]]

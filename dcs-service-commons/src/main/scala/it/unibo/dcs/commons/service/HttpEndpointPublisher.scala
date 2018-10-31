@@ -27,6 +27,6 @@ object HttpEndpointPublisher {
   val DEFAULT_PORT = 80
   val DEFAULT_ROOT = "/"
 
-  def DEFAULT_METADATA = new JsonObject()
+  def DEFAULT_METADATA: JsonObject = new JsonObject()
 
 }

@@ -12,13 +12,13 @@ package object validator {
 
   object LogoutUserValidator {
     def apply(authRepository: AuthenticationRepository): Validator[LogoutUserRequest] = Validator[LogoutUserRequest] {
-      builder => builder.addRule(request => Conditions.stringNotEmpty(request.token), TokenRequiredException)
+      _.addRule(request => Conditions.stringNotEmpty(request.token), TokenRequiredException)
     }
   }
 
   object DeleteUserValidator {
     def apply(authRepository: AuthenticationRepository): Validator[DeleteUserRequest] = Validator[DeleteUserRequest] {
-      builder => builder
+      _
         .addRule(request => Conditions.stringNotEmpty(request.username), UsernameRequiredException)
         .addRule(request => jwtTokenDecoder.getUsernameFromToken(request.token) equals request.username,
           InvalidTokenException)
@@ -27,24 +27,27 @@ package object validator {
 
   object RegistrationValidator {
     def apply(): Validator[RegisterUserRequest] = Validator[RegisterUserRequest] {
-      builder => builder
-          .addRule(request => Conditions.stringNotEmpty(request.username), UsernameRequiredException)
-          .addRule(request => Conditions.stringNotEmpty(request.password), PasswordRequiredException)
+      _
+        .addRule(request => Conditions.stringNotEmpty(request.username), UsernameRequiredException)
+        .addRule(request => Conditions.stringNotEmpty(request.password), PasswordRequiredException)
     }
   }
 
   object LoginValidator {
     def apply(authRepository: AuthenticationRepository): Validator[LoginUserRequest] = Validator[LoginUserRequest] {
-      builder => builder
-          .addRule(request => Conditions.stringNotEmpty(request.username), UsernameRequiredException)
-          .addRule(request => Conditions.stringNotEmpty(request.password), PasswordRequiredException)
-          .addRule(request => authRepository.checkUserExistence(request.username))
+      _
+        .addRule(request => Conditions.stringNotEmpty(request.username), UsernameRequiredException)
+        .addRule(request => Conditions.stringNotEmpty(request.password), PasswordRequiredException)
+        .addRule(request => authRepository.checkUserExistence(request.username))
     }
   }
 
   object CheckTokenValidator {
     def apply: Validator[CheckTokenRequest] = Validator[CheckTokenRequest] {
-      builder => builder.addRule(request => Conditions.stringNotEmpty(request.token), TokenRequiredException)
+      _
+        .addRule(request => Conditions.stringNotEmpty(request.token), TokenRequiredException)
+        .addRule(request => request.username.equals(JwtTokenDecoder().getUsernameFromToken(request.username)),
+          InvalidTokenException)
     }
   }
 

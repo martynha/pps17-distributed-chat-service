@@ -5,19 +5,16 @@ import java.net.InetAddress
 import io.vertx.core.{AsyncResult, Handler}
 import io.vertx.ext.unit.report.ReportOptions
 import io.vertx.ext.unit.{TestContext, TestOptions, TestSuite}
-import io.vertx.lang.scala.ScalaLogger
 import io.vertx.lang.scala.ScalaVerticle._
 import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.core.{DeploymentOptions, Vertx, VertxOptions}
-import it.unibo.dcs.commons.VertxHelper
+import it.unibo.dcs.commons.{Logging, VertxHelper}
 import it.unibo.dcs.commons.VertxHelper.Implicits._
 import it.unibo.dcs.service.webapp.verticles.WebAppVerticle
 
 import scala.language.postfixOps
 
-object WebappServiceSuite extends App {
-
-  private val logger = ScalaLogger.getLogger(getClass.getName)
+object WebappServiceSuite extends App with Logging {
 
   val deploymentOptions = DeploymentOptions().setConfig(new JsonObject()
     .put("host", InetAddress.getLocalHost.getHostAddress))
@@ -29,7 +26,7 @@ object WebappServiceSuite extends App {
         .subscribe(vertx => {
           vertx.deployVerticle(nameForVerticle[WebAppVerticle], deploymentOptions,
             verticleClosingHandler(vertx, context))
-        }, cause => logger.error("", cause))
+        }, cause => log.error("", cause))
     })
     .run(new TestOptions().addReporter(new ReportOptions().setTo("console")))
 

@@ -17,7 +17,7 @@ class AuthenticationDataStoreSpec extends DataStoreSpec {
 
   private val loginUserRequest = LoginUserRequest(user.username, "password")
   private val logoutUserRequest = LogoutUserRequest(user.username, token)
-  private val roomCreationRequest = CheckTokenRequest(token)
+  private val roomCreationRequest = CheckTokenRequest(token, user.username)
   private val deleteUserRequest = DeleteUserRequest(user.username, token)
 
   private val registeredSubscriber: Subscriber[String] = stub[Subscriber[String]]

@@ -25,7 +25,7 @@ final class GetRoomsUseCase(private[this] val threadExecutor: ThreadExecutor,
   extends UseCase[GetRoomsResult, GetRoomsRequest](threadExecutor, postExecutionThread) {
 
   override protected[this] def createObservable(request: GetRoomsRequest): Observable[GetRoomsResult] =
-    authRepository.checkToken(CheckTokenRequest(request.token))
+    authRepository.checkToken(CheckTokenRequest(request.token, request.username))
       .flatMap(_ => roomRepository.getRooms(request))
       .map(rooms => GetRoomsResult(rooms))
 }

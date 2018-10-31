@@ -26,7 +26,7 @@ final class CreateRoomUseCase(private[this] val threadExecutor: ThreadExecutor,
 
   override protected[this] def createObservable(request: CreateRoomRequest): Observable[RoomCreationResult] =
     for {
-      _ <- authRepository.checkToken(CheckTokenRequest(request.token))
+      _ <- authRepository.checkToken(CheckTokenRequest(request.token, request.username))
       room <- roomRepository.createRoom(request)
     } yield RoomCreationResult(room)
 }
