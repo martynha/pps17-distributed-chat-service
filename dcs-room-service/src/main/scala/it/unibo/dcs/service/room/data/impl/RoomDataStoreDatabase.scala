@@ -57,16 +57,8 @@ final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDa
       }
 
   override def sendMessage(request: SendMessageRequest): Observable[Message] = execute(insertMessageQuery, request)
-    .flatMap( _ => getMessageByKey(request))
+    .flatMap(_ => Observable.just(request))
 
-  override def getMessageByKey(request: SendMessageRequest): Observable[Message] =
-    query(selectMessageByKey, request)
-    .map { resultSet =>
-        if (resultSet.getResults.isEmpty) {
-          throw MessageNotFoundExeption(request.username, request.name)
-        }
-
-    }
 }
 
 private[impl] object RoomDataStoreDatabase {
@@ -77,6 +69,8 @@ private[impl] object RoomDataStoreDatabase {
 
   val insertParticipationQuery = "INSERT INTO `participations` (`username`, `name`) VALUES (?, ?)"
 
+  val insertMessageQuery = "INSERT INTO `messages` (`name`, `username`, `content`, `timestamp`) VALUES (?, ?, ?, ?)"
+
   val deleteRoomQuery = "DELETE FROM `rooms` WHERE `name` = ? AND `owner_username` = ?;"
 
   val selectRoomByName = "SELECT * FROM `rooms` WHERE `name` = ? "
@@ -84,8 +78,6 @@ private[impl] object RoomDataStoreDatabase {
   val selectAllRooms = "SELECT * FROM `rooms`"
 
   val selectParticipationByKey = "SELECT * FROM `participations` WHERE `username` = ? AND `name` = ?"
-
-  val insertMessageQuery = "INSERT INTO `messages` (`name`, `username`, `content`) VALUES (?, ?, ?)"
 
   object Implicits {
 
@@ -108,7 +100,7 @@ private[impl] object RoomDataStoreDatabase {
       new JsonArray().add(request.username).add(request.name)
 
     implicit def requestToParams(request: SendMessageRequest): JsonArray =
-      new JsonArray().add(request.name).add(request.username).add(request.content)
+      new JsonArray().add(request.name).add(request.username).add(request.content).add(request.timestamp)
 
     implicit def jsonObjectToRoom(json: JsonObject): Room = gson fromJsonObject[Room] json
 
@@ -118,6 +110,7 @@ private[impl] object RoomDataStoreDatabase {
 
     implicit def jsonObjectToMessage(json: JsonObject): Message = gson fromJsonObject[Message] json
 
+    implicit def requestToMessage(request: SendMessageRequest): Message = Message(Room(request.name), request.username, request.content, request.timestamp)
   }
 
 }

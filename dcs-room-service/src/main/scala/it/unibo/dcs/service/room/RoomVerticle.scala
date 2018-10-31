@@ -1,5 +1,7 @@
 package it.unibo.dcs.service.room
 
+import java.util.Date
+
 import io.vertx.core.{AbstractVerticle, Context, Vertx => JVertx}
 import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.ext.web.Router
@@ -150,7 +152,7 @@ object RoomVerticle {
       gson fromJsonObject[JoinRoomRequest] json
 
     implicit def JsonObjectToSendMessageRequest(json: JsonObject): SendMessageRequest =
-      gson fromJsonObject[SendMessageRequest] json
+      SendMessageRequest(json.getString("name"), json.getString("username"), json.getString("content"), new Date)
   }
 
 }

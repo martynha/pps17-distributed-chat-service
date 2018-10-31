@@ -1,5 +1,7 @@
 package it.unibo.dcs.service.room
 
+import java.util.Date
+
 package object request {
 
   final case class CreateUserRequest(username: String) extends AnyVal
@@ -14,5 +16,5 @@ package object request {
 
   final case class JoinRoomRequest(name: String, username: String)
 
-  final case class SendMessageRequest(name: String, username: String, content: String)
+  final case class SendMessageRequest(name: String, username: String, content: String, timestamp: Date)
 }
