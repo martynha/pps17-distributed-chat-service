@@ -17,6 +17,8 @@ import it.unibo.dcs.service.webapp.verticles.handler.impl.ServiceRequestHandlerI
   * It handles all the incoming request to the service APIs. */
 trait ServiceRequestHandler {
 
+  def handleSendMessage(context: RoutingContext)(implicit ctx: Context): Unit
+
   /** Join a user in a specified room
     *
     * @param context Vertx routing context

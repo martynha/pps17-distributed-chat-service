@@ -3,7 +3,7 @@ package it.unibo.dcs.service.webapp.interaction
 import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
 import it.unibo.dcs.service.webapp.gson
 import it.unibo.dcs.service.webapp.interaction.Labels.JsonLabels.tokenLabel
-import it.unibo.dcs.service.webapp.model.{Participation, Room, User}
+import it.unibo.dcs.service.webapp.model.{Message, Participation, Room, User}
 
 import scala.language.implicitConversions
 
@@ -22,6 +22,8 @@ object Results {
   final case class RoomJoinResult(participation: Participation) extends DcsResult
 
   final case class GetRoomsResult(rooms: List[Room]) extends DcsResult
+
+  final case class SendMessageResult(message: Message) extends DcsResult
 
   /** It enables implicit conversions in order to clean code that deals with results. */
   object Implicits {
@@ -54,6 +56,8 @@ object Results {
     implicit def roomJoinResultToJsonObject(result: RoomJoinResult): JsonObject = {
       Json.fromObjectString(gson.toJson(result.participation))
     }
+
+    implicit def sendMessageResultToJsonObject(result: SendMessageResult): JsonObject = Json.fromObjectString(gson.toJson(result.message))
 
     implicit def getRoomsToJsonArray(result: GetRoomsResult): JsonArray = {
       result.rooms

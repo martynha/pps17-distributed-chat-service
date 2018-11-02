@@ -1,13 +1,15 @@
 package it.unibo.dcs.service.webapp.repositories
 
 import it.unibo.dcs.service.webapp.interaction.Requests.{CreateRoomRequest, DeleteRoomRequest, RegisterUserRequest, RoomJoinRequest, _}
-import it.unibo.dcs.service.webapp.model.{Participation, Room}
+import it.unibo.dcs.service.webapp.model.{Message, Participation, Room}
 import it.unibo.dcs.service.webapp.repositories.datastores.RoomDataStore
 import it.unibo.dcs.service.webapp.repositories.impl.RoomRepositoryImpl
 import rx.lang.scala.Observable
 
 /** Structure that handles Rooms data access and storage. */
 trait RoomRepository {
+
+  def sendMessage(request: SendMessageRequest) : Observable[Message]
 
   /** Store a new user given its information
     *

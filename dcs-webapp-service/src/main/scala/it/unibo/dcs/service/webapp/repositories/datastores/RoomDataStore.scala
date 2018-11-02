@@ -1,13 +1,20 @@
 package it.unibo.dcs.service.webapp.repositories.datastores
 
 import it.unibo.dcs.service.webapp.interaction.Requests._
-import it.unibo.dcs.service.webapp.model.{Participation, Room}
+import it.unibo.dcs.service.webapp.model.{Message, Participation, Room}
 import it.unibo.dcs.service.webapp.repositories.datastores.api.RoomApi
 import it.unibo.dcs.service.webapp.repositories.datastores.impl.RoomDataStoreNetwork
 import rx.lang.scala.Observable
 
 /** Structure that allows access to rooms data by different means (e.g. network, file, database, ecc) */
 trait RoomDataStore {
+
+  /** It sends the user's message to the room
+    *
+    * @param request needed data to send message
+    * @return an Observable stream of the new message
+    */
+  def sendMessage(request: SendMessageRequest): Observable[Message]
 
   /** It adds the user to the list of participants in the room
     *

@@ -7,7 +7,6 @@ object Labels {
     val roomNameLabel = "name"
     val userLabel = "user"
     val tokenLabel = "token"
-
   }
 
   object JsonLabels {
@@ -23,7 +22,8 @@ object Labels {
     val visibleLabel = "visible"
     val lastSeenLabel = "lastSeen"
     val authenticationLabel = "authentication"
-
+    val messageContentLabel = "content"
+    val messageTimestampLabel = "timestamp"
   }
 
 }

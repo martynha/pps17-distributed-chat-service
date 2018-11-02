@@ -8,12 +8,11 @@ import it.unibo.dcs.service.webapp.gson
 import it.unibo.dcs.service.webapp.interaction.Labels.JsonLabels
 import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
 import it.unibo.dcs.service.webapp.interaction.Requests._
-import it.unibo.dcs.service.webapp.model.{Participation, Room}
+import it.unibo.dcs.service.webapp.model.{Message, Participation, Room}
 import it.unibo.dcs.service.webapp.repositories.datastores.api.RoomApi
 import it.unibo.dcs.service.webapp.repositories.datastores.api.impl.RoomRestApi.Implicits._
 import it.unibo.dcs.service.webapp.repositories.datastores.api.impl.RoomRestApi._
 import rx.lang.scala.Observable
-
 import it.unibo.dcs.commons.JsonHelper.Implicits.RichGson
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -55,8 +54,16 @@ class RoomRestApi(private[this] val discovery: HttpEndpointDiscovery)
 
   override def getRooms(request: GetRoomsRequest): Observable[List[Room]] = {
     makeRequest(client =>
-      Observable.from(client.get(s"${RoomRestApi.roomsURI}?user=${request.username}").sendJsonObjectFuture(request)))
+      Observable.from(client.get(getRoomsURI(request.username)).sendJsonObjectFuture(request)))
       .map(bodyAsJsonArray(throw InternalException(emptyBodyErrorMessage)))
+      .mapImplicitly
+  }
+
+  override def sendMessage(request: SendMessageRequest): Observable[Message] = {
+    makeRequest(client =>
+      Observable.from(client.post(sendMessageURI(request.name))
+      .sendJsonObjectFuture(toSendMessageRequest(request))))
+      .map(bodyAsJsonObject(throw InternalException(emptyBodyErrorMessage)))
       .mapImplicitly
   }
 }
@@ -73,6 +80,10 @@ private[impl] object RoomRestApi {
 
   private def deleteRoomURI(roomName: String) = roomsURI + "/" + roomName
 
+  private def getRoomsURI(username: String) = s"$roomsURI?user=$username"
+
+  private def sendMessageURI(roomName: String) = s"$roomsURI/$roomName/messages"
+
   private def toDeleteRoomRequest(deleteRoomRequest: DeleteRoomRequest): JsonObject = {
     Json.obj((JsonLabels.usernameLabel, deleteRoomRequest.username))
   }
@@ -83,6 +94,11 @@ private[impl] object RoomRestApi {
 
   private def toJoinRoomRequest(joinRoomRequest: RoomJoinRequest): JsonObject = {
     Json.obj((JsonLabels.usernameLabel, joinRoomRequest.username))
+  }
+
+  private def toSendMessageRequest(sendMessageRequest: SendMessageRequest): JsonObject = {
+      Json.obj((JsonLabels.usernameLabel, sendMessageRequest.username),
+        (JsonLabels.messageContentLabel, sendMessageRequest.content))
   }
 
   object Implicits {

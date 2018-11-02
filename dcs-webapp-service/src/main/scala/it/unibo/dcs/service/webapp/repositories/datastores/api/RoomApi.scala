@@ -5,12 +5,19 @@ import io.vertx.scala.core.eventbus.EventBus
 import io.vertx.servicediscovery.ServiceDiscovery
 import it.unibo.dcs.commons.service.HttpEndpointDiscoveryImpl
 import it.unibo.dcs.service.webapp.interaction.Requests._
-import it.unibo.dcs.service.webapp.model.{Participation, Room}
+import it.unibo.dcs.service.webapp.model.{Message, Participation, Room}
 import it.unibo.dcs.service.webapp.repositories.datastores.api.impl.RoomRestApi
 import rx.lang.scala.Observable
 
 /** Utility wrapper for making requests to the Room Service via the network */
 trait RoomApi {
+
+  /** It sends a user's message to the room
+    *
+    * @param request needed info to send a message
+    * @return an observable stream of the new message
+    */
+  def sendMessage(request: SendMessageRequest): Observable[Message]
 
   /** It adds the user to the list of participants in the room
     *
