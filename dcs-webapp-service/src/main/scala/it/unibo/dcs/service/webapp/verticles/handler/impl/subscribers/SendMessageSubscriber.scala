@@ -25,5 +25,4 @@ final class SendMessageSubscriber (protected override val response: HttpServerRe
 object SendMessageSubscriber {
   def apply(response: HttpServerResponse, publisher: Publisher): SendMessageSubscriber =
     new SendMessageSubscriber(response, publisher)
-
 }

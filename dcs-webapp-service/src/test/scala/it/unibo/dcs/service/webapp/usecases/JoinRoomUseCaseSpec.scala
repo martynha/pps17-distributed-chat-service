@@ -6,7 +6,6 @@ import it.unibo.dcs.service.webapp.interaction.Requests.{CheckTokenRequest, Room
 import it.unibo.dcs.service.webapp.interaction.Results.RoomJoinResult
 import it.unibo.dcs.service.webapp.model.{Participation, Room}
 import it.unibo.dcs.service.webapp.repositories.RoomRepository
-import it.unibo.dcs.service.webapp.usecases.JoinRoomUseCase
 import rx.lang.scala.{Observable, Subscriber}
 
 import scala.language.postfixOps

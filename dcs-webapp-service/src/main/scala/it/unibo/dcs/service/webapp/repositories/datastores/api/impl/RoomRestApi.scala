@@ -108,6 +108,11 @@ private[impl] object RoomRestApi {
       gson fromJsonObject[Participation] json
     }
 
+    implicit def jsonObjectToMessage(json: JsonObject): Message = {
+      println(json)
+      gson fromJsonObject[Message] json
+    }
+
     implicit def jsonArrayToRooms(json: JsonArray): List[Room] = {
       Stream.range(0, json.size)
         .map(json.getJsonObject)
