@@ -58,19 +58,21 @@ package object subscriber {
 
   class SendMessageSubscriber(protected override val response: HttpServerResponse) extends Subscriber[Message]
     with ErrorSubscriber with Logging {
-    override def onNext(rooms: List[Room]): Unit = response endWith rooms
-
-  }
-
-  class GetUserParticipationsSubscriber(protected override val response: HttpServerResponse) extends Subscriber[List[Room]]
-    with ErrorSubscriber {
 
     override def onNext(message: Message): Unit = {
       val result: JsonObject = message
       log.info(s"Answering with room: $result")
-      response.setStatus(HttpResponseStatus.CREATED).end(result)
+      response.setStatus(HttpResponseStatus.CREATED).endWith(result)
 
     }
+
+  }
+
+  class GetUserParticipationsSubscriber(protected override val response: HttpServerResponse) extends Subscriber[List[Room]]
+    with ErrorSubscriber with Logging {
+
+    override def onNext(rooms: List[Room]): Unit = response endWith rooms
+
   }
 
   object Implicits {

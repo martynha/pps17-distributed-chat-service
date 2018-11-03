@@ -121,7 +121,6 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
         getRoomsUseCase(request, subscriber)
       })
 
-<<<<<<< HEAD
     router.post("/rooms/:name/messages")
       .consumes(ContentType.APPLICATION_JSON)
       .produces(ContentType.APPLICATION_JSON)
@@ -130,7 +129,8 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
         val request = routingContext.getBodyAsJson().head.put("name", roomName)
         val subscriber = new SendMessageSubscriber(routingContext.response())
         sendMessageUseCase(request, subscriber)
-=======
+      })
+
     router.post("/users")
       .consumes(ContentType.APPLICATION_JSON)
       .produces(ContentType.APPLICATION_JSON)
@@ -146,7 +146,6 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
         val username = getParam(routingContext, "username")(UsernameRequiredException)
         val subscriber = new GetUserParticipationsSubscriber(routingContext.response())
         getUserParticipationsUseCase(GetUserParticipationsRequest(username), subscriber)
->>>>>>> c3d2c7abd76b437ab9d855b979758b89ad21c712
       })
   }
 
