@@ -16,6 +16,7 @@ import { FormsModule } from '@angular/forms';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { SearchRoomsComponent } from './search-rooms/search-rooms.component';
 import { FilterPipe } from './filter.pipe';
+import { MessagesComponent } from './messages/messages.component';
 
 @NgModule({
   imports: [
@@ -35,7 +36,8 @@ import { FilterPipe } from './filter.pipe';
     RoomInfoComponent,
     SidebarComponent,
     SearchRoomsComponent,
-    FilterPipe
+    FilterPipe,
+    MessagesComponent
   ],
 })
 export class ChatModule {}

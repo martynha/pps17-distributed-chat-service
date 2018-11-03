@@ -2,8 +2,8 @@ import {Injectable} from '@angular/core';
 import {Observable, Subject} from 'rxjs';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {EventBusService} from './event-bus.service';
-import {Participation, Room} from '../model';
-import {CreateRoomRequest, DeleteRoomRequest, JoinRoomRequest} from '../requests';
+import {Participation, Room, Message} from '../model';
+import {CreateRoomRequest, DeleteRoomRequest, JoinRoomRequest, SendMessageRequest} from '../requests';
 import {AuthService} from './auth.service';
 import {map, tap} from 'rxjs/operators';
 
@@ -19,11 +19,13 @@ export class ChatService {
 
   private static ROOM_DELETED = 'rooms.deleted';
   private static ROOM_JOINED = 'rooms.joined';
+  private static MESSAGE_SENT = 'messages.sent';
 
   private roomCreated = new Subject<Room>();
   private roomDeleted = new Subject<string>();
   private roomSelected = new Subject<Room>();
   private roomJoined = new Subject<Participation>();
+  private messageSent = new Subject<Message>();
 
   constructor(
     private http: HttpClient,
@@ -38,6 +40,10 @@ export class ChatService {
 
     eventBus.registerHandler(ChatService.ROOM_JOINED, (err, msg) => {
       this.roomJoined.next(msg.body);
+    });
+
+    eventBus.registerHandler(ChatService.MESSAGE_SENT, (err, msg) => {
+      this.messageSent.next(msg.body);
     });
   }
 
@@ -87,7 +93,16 @@ export class ChatService {
       ChatService.ROOMS + '/' + name + '/participations',
       body, {
         headers: this.auth.authOptions
-      });
+    });
+  }
+
+  sendMessage(name: string, message: string): Observable<void> {
+    const user = this.auth.user;
+    const body = new SendMessageRequest(user.username, message);
+    return this.http.post<void>(ChatService.ROOMS + '/' + name + '/messages', {
+      body: body, 
+      headers: this.auth.authOptions
+    });
   }
 
   onRoomCreated(): Observable<Room> {
@@ -106,5 +121,9 @@ export class ChatService {
 
   onRoomLeft(): Observable<Participation> {
     return null;
+  }
+
+  onMessageSent() : Observable<Message> {
+    return this.messageSent.asObservable();
   }
 }

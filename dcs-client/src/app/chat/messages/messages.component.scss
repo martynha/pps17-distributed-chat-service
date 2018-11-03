@@ -1,0 +1,24 @@
+.bubble { flex: 1 1 auto; clear: both; } /* clear the floats here on parent */
+.bubble p {
+    border-radius: 5px;
+    padding: 8px; margin: 8px 12px;
+    max-width: 80%;  /* this will make it not exceed 80% and then wrap */
+    position: relative; transition: background-color 0.5s; 
+}
+.left p { background-color: #ccc; float: left; } /* floated left */
+.right p { background-color: #33c; color: #fff; float: right; } /* floated right */
+/* classes below are only for arrows, not relevant */
+.left p::before {
+    content: ''; position: absolute;
+    width: 0; height: 0; left: -8px; top: 8px;
+    border-top: 4px solid transparent;
+    border-right: 8px solid #ccc;
+    border-bottom: 4px solid transparent;
+}
+.right p::after {
+    content: ''; position: absolute;
+    width: 0; height: 0; right: -8px; bottom: 8px;
+    border-top: 4px solid transparent;
+    border-left: 8px solid #33c;
+    border-bottom: 4px solid transparent;
+}
