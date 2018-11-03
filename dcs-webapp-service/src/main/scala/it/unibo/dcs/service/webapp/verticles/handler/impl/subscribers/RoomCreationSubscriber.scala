@@ -1,9 +1,7 @@
 package it.unibo.dcs.service.webapp.verticles.handler.impl.subscribers
 
 import io.netty.handler.codec.http.HttpResponseStatus
-import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.core.http.HttpServerResponse
-import it.unibo.dcs.commons.JsonHelper.Implicits.jsonObjectToString
 import it.unibo.dcs.commons.Logging
 import it.unibo.dcs.commons.VertxWebHelper.Implicits.RichHttpServerResponse
 import it.unibo.dcs.exceptions._
@@ -14,10 +12,7 @@ import rx.lang.scala.Subscriber
 final class RoomCreationSubscriber(protected override val response: HttpServerResponse) extends Subscriber[RoomCreationResult]
   with ErrorSubscriber with Logging {
 
-  override def onNext(result: RoomCreationResult): Unit = {
-    val json: JsonObject = result
-    response.setStatus(HttpResponseStatus.CREATED).end(json)
-  }
+  override def onNext(result: RoomCreationResult): Unit = response setStatus HttpResponseStatus.CREATED endWith result
 
 }
 

@@ -20,6 +20,7 @@ import {LoginComponent} from './login/login.component';
 import {RegisterComponent} from './register/register.component';
 import {FormsModule} from '@angular/forms';
 import {ServerInterceptor} from "./server-interceptor";
+import { WindowRef } from './providers/WindowRef';
 
 export const createTranslateLoader = (http) => {
   // for development
@@ -56,7 +57,8 @@ export const createTranslateLoader = (http) => {
   ],
   providers: [
     EventBusService,
-    ChatService
+    ChatService,
+    WindowRef
     /*{
       provide: HTTP_INTERCEPTORS,
       useClass: ServerInterceptor,

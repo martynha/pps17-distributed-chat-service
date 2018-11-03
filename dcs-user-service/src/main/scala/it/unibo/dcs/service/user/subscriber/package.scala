@@ -3,7 +3,7 @@ package it.unibo.dcs.service.user
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.core.http.HttpServerResponse
-import it.unibo.dcs.commons.JsonHelper.Implicits.{RichGson, jsonObjectToString}
+import it.unibo.dcs.commons.JsonHelper.Implicits.RichGson
 import it.unibo.dcs.commons.Logging
 import it.unibo.dcs.commons.VertxWebHelper.Implicits.RichHttpServerResponse
 import it.unibo.dcs.exceptions.ErrorSubscriber
@@ -19,9 +19,8 @@ package object subscriber {
     with ErrorSubscriber with Logging {
 
     override def onNext(user: User): Unit = {
-      val json: JsonObject = user
-      log.info(s"Answering with user: $json")
-      response.setStatus(HttpResponseStatus.CREATED).end(json)
+      log.debug(s"Answering with user: $user")
+      response setStatus HttpResponseStatus.CREATED endWith user
     }
 
   }
@@ -30,9 +29,8 @@ package object subscriber {
     with ErrorSubscriber with Logging {
 
     override def onNext(user: User): Unit = {
-      val json: JsonObject = user
-      log.info(s"Answering with user: $json")
-      response.end(json)
+      log.debug(s"Answering with user: $user")
+      response endWith user
     }
 
   }

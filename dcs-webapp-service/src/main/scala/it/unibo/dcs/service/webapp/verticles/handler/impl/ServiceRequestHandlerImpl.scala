@@ -112,6 +112,19 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
             }
         }
     }
+    
+  override def handleGetUserParticipations(context: RoutingContext)(implicit ctx: Context): Unit = {
+    handleRequestParam(context, ParamLabels.usernameLabel) {
+      username => {
+        handleRequestToken(context) {
+          token => {
+            val useCase = GetUserParticipationsUseCase(authRepository, roomRepository)
+            useCase(Json.obj((usernameLabel, username), (tokenLabel, token)), GetUserParticipationsSubscriber(context.response))
+          }
+        }
+      }
+    }
+  }
 
   private[this] def handleRequestBody(context: RoutingContext)(handler: JsonObject => Unit): Unit =
     context.getBodyAsJson().fold(throw InternalException("Request body required"))(handler)

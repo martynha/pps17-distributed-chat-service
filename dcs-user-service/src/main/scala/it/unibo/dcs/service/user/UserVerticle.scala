@@ -86,7 +86,7 @@ final class UserVerticle(private[this] val userRepository: UserRepository, priva
       .produces(ContentType.APPLICATION_JSON)
       .handler(routingContext => {
         val request = routingContext.getBodyAsJson().head
-        log.info(s"Received request: $request")
+        log.debug(s"Received request: $request")
         val subscriber = new CreateUserSubscriber(routingContext.response())
         createUserUseCase(request, subscriber)
       })

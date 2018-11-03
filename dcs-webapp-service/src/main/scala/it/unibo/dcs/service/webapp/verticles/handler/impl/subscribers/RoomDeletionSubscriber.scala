@@ -15,7 +15,7 @@ final class RoomDeletionSubscriber(protected override val response: HttpServerRe
   with ErrorSubscriber {
 
   override def onNext(name: String): Unit = {
-    response.setStatus(HttpResponseStatus.NO_CONTENT).end()
+    response setStatus HttpResponseStatus.NO_CONTENT end()
     publisher.publish(Json.obj(("name", name)))
   }
 

@@ -4,7 +4,7 @@ import java.util.Date
 
 package object request {
 
-  final case class CreateUserRequest(username: String) extends AnyVal
+  final case class CreateUserRequest(username: String)
 
   final case class GetRoomRequest(name: String)
 
@@ -17,4 +17,7 @@ package object request {
   final case class JoinRoomRequest(name: String, username: String)
 
   final case class SendMessageRequest(name: String, username: String, content: String, timestamp: Date)
+  
+  final case class GetUserParticipationsRequest(username: String)
+
 }

@@ -4,18 +4,21 @@ import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.http.HttpHeaders
 import io.vertx.core.http.HttpMethod._
-import io.vertx.lang.scala.json.{Json, JsonObject}
+import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
 import io.vertx.scala.core.http.HttpServerResponse
 import io.vertx.scala.ext.web.client.HttpResponse
 import io.vertx.scala.ext.web.handler.CorsHandler
 import io.vertx.scala.ext.web.{Router, RoutingContext}
-import it.unibo.dcs.commons.JsonHelper.Implicits.jsonObjectToString
+import it.unibo.dcs.commons.JsonHelper.Implicits.{jsonArrayToString, jsonObjectToString}
 import it.unibo.dcs.commons.VertxWebHelper.Implicits._
 import org.apache.http.entity.ContentType
 
 import scala.language.implicitConversions
 
 object VertxWebHelper {
+
+  def getParam(context: RoutingContext, paramName: String)(error: => Throwable): String =
+    context.request().getParam(paramName).getOrElse(throw error)
 
   def getContextData(urlParameter: String)(implicit context: RoutingContext): Option[String] =
     context.request.getParam(urlParameter)
@@ -79,8 +82,14 @@ object VertxWebHelper {
     }
 
     implicit class RichHttpServerResponse(response: HttpServerResponse) {
+
       def setStatus(status: HttpResponseStatus): HttpServerResponse =
         response.setStatusCode(status.code).setStatusMessage(status.reasonPhrase)
+
+      def endWith(json: JsonArray): Unit = response end json
+
+      def endWith(json: JsonObject): Unit = response end json
+
     }
 
   }

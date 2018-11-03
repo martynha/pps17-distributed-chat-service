@@ -6,6 +6,7 @@ object Labels {
 
     val roomNameLabel = "name"
     val userLabel = "user"
+    val usernameLabel = "username"
     val tokenLabel = "token"
   }
 

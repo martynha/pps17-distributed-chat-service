@@ -1,12 +1,12 @@
 #!/bin/bash
 
 usage() {
-    echo "$0 <> [port]" >&2
+    echo "$0 <-a|--authentication|-r|--room|-u|--user|-w|--web-app> [port]" >&2
+    exit 1
 }
 
 if [ "$#" -lt 1 ]; then
     usage
-    exit 1
 fi
 
 case $1 in
@@ -23,26 +23,22 @@ case $1 in
         service=webapp
         ;;
     -*|--*)
-        echo "Invalid option: \"$1\"" >& 2
+        echo "Invalid option:'$1'" >& 2
         usage
-        exit 1
         ;;
-    *)    # unknown option
+    *)  # unknown option
         usage
-        exit 1
         ;;
 esac
 
-if [ -n ${PORT+x} ]; then
+if [ -z ${PORT+x} ]; then
     if [ "$#" != 2 ]; then
         usage
-        exit 1
     else
         port=$2
     fi
 else
-    usage
-    exit 1
+    port=$PORT
 fi
 
 java -jar build/dcs-$service-service-1.0.jar $port

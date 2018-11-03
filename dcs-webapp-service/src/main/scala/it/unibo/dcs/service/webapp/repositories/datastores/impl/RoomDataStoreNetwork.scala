@@ -21,4 +21,7 @@ class RoomDataStoreNetwork(private val roomApi: RoomApi) extends RoomDataStore {
   override def joinRoom(request: RoomJoinRequest): Observable[Participation] = roomApi.joinRoom(request)
 
   override def sendMessage(request: SendMessageRequest): Observable[Message] = roomApi.sendMessage(request)
+  
+  override def getUserParticipations(request: GetUserParticipationsRequest): Observable[List[Room]] =
+    roomApi.getUserParticipations(request)
 }

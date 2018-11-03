@@ -4,7 +4,6 @@ import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.lang.scala.json.Json
 import io.vertx.scala.core.http.HttpServerResponse
 import io.vertx.scala.ext.web.RoutingContext
-import it.unibo.dcs.commons.JsonHelper.Implicits.jsonObjectToString
 import it.unibo.dcs.commons.VertxWebHelper.Implicits.RichHttpServerResponse
 import it.unibo.dcs.commons.VertxWebHelper.respond
 import it.unibo.dcs.exceptions.ErrorSubscriber
@@ -18,25 +17,25 @@ package object subscriber {
     extends Subscriber[String] with ErrorSubscriber {
 
     override def onNext(token: String): Unit =
-      response.setStatus(HttpResponseStatus.CREATED).end(Json.obj(("token", token)))
+      response setStatus HttpResponseStatus.CREATED endWith Json.obj(("token", token))
   }
 
   class LoginUserSubscriber(protected override val response: HttpServerResponse)
     extends Subscriber[String] with ErrorSubscriber {
 
-    override def onNext(token: String): Unit = response.end(Json.obj(("token", token)))
+    override def onNext(token: String): Unit = response endWith Json.obj(("token", token))
   }
 
   class DeleteUserSubscriber(protected override val response: HttpServerResponse)
     extends Subscriber[Unit] with ErrorSubscriber {
 
-    override def onCompleted(): Unit = response.setStatus(HttpResponseStatus.NO_CONTENT).end()
+    override def onCompleted(): Unit = response setStatus HttpResponseStatus.NO_CONTENT end()
   }
 
   class OkSubscriber(protected override val response: HttpServerResponse)
     extends Subscriber[Unit] with ErrorSubscriber {
 
-    override def onCompleted(): Unit = response.setStatus(HttpResponseStatus.OK).end()
+    override def onCompleted(): Unit = response setStatus HttpResponseStatus.OK end()
   }
 
   class LogoutValiditySubscriber(protected override val response: HttpServerResponse,
@@ -46,7 +45,7 @@ package object subscriber {
     with ErrorSubscriber {
 
     override def onCompleted(): Unit =
-      logoutUserUseCase(request).subscribe(new OkSubscriber(response))
+      logoutUserUseCase(request, new OkSubscriber(response))
   }
 
   class DeleteUserValiditySubscriber(protected override val response: HttpServerResponse,
@@ -56,7 +55,7 @@ package object subscriber {
     with ErrorSubscriber {
 
     override def onCompleted(): Unit =
-      deleteUserUseCase(request).subscribe(new DeleteUserSubscriber(response))
+      deleteUserUseCase(request, new DeleteUserSubscriber(response))
   }
 
   class LoginValiditySubscriber(protected override val response: HttpServerResponse,
@@ -66,7 +65,7 @@ package object subscriber {
     extends Subscriber[Unit] with ErrorSubscriber {
 
     override def onCompleted(): Unit =
-      loginUserUseCase(request).subscribe(new TokenSubscriber(response))
+      loginUserUseCase(request, new TokenSubscriber(response))
   }
 
   class RegistrationValiditySubscriber(protected override val response: HttpServerResponse,

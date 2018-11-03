@@ -15,7 +15,7 @@ final class ThreadExecutorExecutionContext(vertx: Vertx) extends ThreadExecutor 
   }
 
   override def reportFailure(cause: Throwable): Unit = {
-    log.error("Failed executing on default worker executor", cause)
+    log.error("Failed executing on worker executor", cause)
   }
 
 }

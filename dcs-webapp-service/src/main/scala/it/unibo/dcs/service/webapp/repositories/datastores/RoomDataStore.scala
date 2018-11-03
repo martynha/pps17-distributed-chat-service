@@ -50,6 +50,13 @@ trait RoomDataStore {
     * @return an observable stream of the list of rooms
     */
   def getRooms(request: GetRoomsRequest): Observable[List[Room]]
+
+  /** Get the list of user participations
+    *
+    * @param request needed data to get the participations
+    * @return an observable stream of the list of participations
+    */
+  def getUserParticipations(request: GetUserParticipationsRequest): Observable[List[Room]]
 }
 
 /** Companion object */

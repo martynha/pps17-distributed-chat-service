@@ -2,7 +2,7 @@ package it.unibo.dcs.service.webapp.verticles.handler.impl.subscribers
 
 import io.vertx.lang.scala.json.JsonArray
 import io.vertx.scala.core.http.HttpServerResponse
-import it.unibo.dcs.commons.JsonHelper.Implicits.jsonArrayToString
+import it.unibo.dcs.commons.VertxWebHelper.Implicits.RichHttpServerResponse
 import it.unibo.dcs.commons.Logging
 import it.unibo.dcs.exceptions.ErrorSubscriber
 import it.unibo.dcs.service.webapp.interaction.Results.GetRoomsResult
@@ -13,9 +13,8 @@ final class GetRoomsSubscriber (protected override val response: HttpServerRespo
   extends Subscriber[GetRoomsResult] with ErrorSubscriber with Logging {
 
   override def onNext(result: GetRoomsResult): Unit = {
-    val json: JsonArray = result
-    log.debug(s"Retrieving result: $json")
-    response end json
+    log.debug(s"Retrieving result: $result")
+    response endWith result
   }
 
 }

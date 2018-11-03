@@ -14,9 +14,8 @@ final class RegisterUserSubscriber(protected override val response: HttpServerRe
   with ErrorSubscriber with Logging {
 
   override def onNext(result: RegisterResult): Unit = {
-    val res: JsonObject = result
-    log.info(s"Retrieving result: $res")
-    response.setStatus(HttpResponseStatus.CREATED).end(res.encode())
+    log.debug(s"Retrieving result: $result")
+    response setStatus HttpResponseStatus.CREATED endWith result
   }
 
 }

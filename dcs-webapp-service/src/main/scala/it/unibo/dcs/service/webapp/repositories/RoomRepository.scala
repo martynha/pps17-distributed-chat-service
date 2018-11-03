@@ -39,6 +39,9 @@ trait RoomRepository {
   def getRooms(request: GetRoomsRequest): Observable[List[Room]]
 
   def joinRoom(request: RoomJoinRequest): Observable[Participation]
+
+  def getUserParticipations(request: GetUserParticipationsRequest): Observable[List[Room]]
+
 }
 
 /** Companion object */

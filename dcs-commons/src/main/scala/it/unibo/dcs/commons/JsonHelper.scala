@@ -24,8 +24,8 @@ object JsonHelper {
 
       def toJsonString(src: Iterable[_]): String = gson toJson src.asJava
 
-      def fromJsonArray[T](json: JsonArray)(implicit ct: ClassTag[Array[T]]): List[T] =
-        gson.fromJsonString[Array[T]](json.encode()).toList
+      def fromJsonArray[T](json: JsonArray)(implicit ct: ClassTag[Array[T]]): Seq[T] =
+        gson.fromJsonString[Array[T]](json.encode())
 
       def fromJsonObject[T](json: JsonObject)(implicit ct: ClassTag[T]): T =
         gson.fromJsonString[T](json.encode())

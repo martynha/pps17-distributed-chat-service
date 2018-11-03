@@ -104,7 +104,6 @@ class RoomRepositorySpec extends RepositorySpec {
     (getRoomsSubscriber onNext _) verify rooms once()
     // Verify that `subscriber.onCompleted` has been called once
     (() => getRoomsSubscriber onCompleted) verify() once()
-    //
   }
 
   it should "save a new message" in {
@@ -118,7 +117,24 @@ class RoomRepositorySpec extends RepositorySpec {
     //Verify that 'suscriber.onNext' has been callen once
     (sendMessageSubscriber onNext _) verify message once()
     // Verify that `subscriber.onCompleted` has been called once
-    (() => sendMessageSubscriber onCompleted) verify() once()
-    //
+    (() => sendMessageSubscriber onCompleted) verify() once()  
+  }
+
+  it should "retrieve all the participations for the given user" in {
+    val request = GetUserParticipationsRequest(user.username, token)
+
+    val subscriber = stub[Subscriber[List[Room]]]
+
+    //Given
+    (roomDataStore getUserParticipations  _) expects request returns Observable.just(rooms)
+
+    //When
+    repository getUserParticipations  request subscribe subscriber
+
+    //Then
+    //Verify that 'suscriber.onNext' has been callen once
+    (subscriber onNext _) verify rooms once()
+    // Verify that `subscriber.onCompleted` has been called once
+    (() => subscriber onCompleted) verify() once()
   }
 }

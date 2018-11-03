@@ -1,19 +1,30 @@
 import { Component, OnInit } from '@angular/core';
+import { ChatService } from 'src/app/service/chat.service';
+import { filter } from 'rxjs/operators';
+import { AuthService } from 'src/app/service/auth.service';
 
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss']
 })
-export class SidebarComponent {
-
+export class SidebarComponent implements OnInit {
   query = '';
 
   search = false;
 
   showMenu = '';
 
-  constructor() {}
+  constructor(private chat: ChatService, private auth: AuthService) {}
+
+  ngOnInit() {
+    this.chat.onRoomJoined()
+      .pipe(filter(p => this.search && p.username === this.auth.user.username))
+      .subscribe(p => {
+        this.query = '';
+        this.search = false;
+      });
+  }
 
   addExpandClass(element) {
     if (element === this.showMenu) {
