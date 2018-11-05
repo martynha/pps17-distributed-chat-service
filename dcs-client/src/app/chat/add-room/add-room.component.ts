@@ -1,8 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { ChatService } from '../../service/chat.service';
-
-import { CreateRoomRequest } from '../../requests';
+import {Component, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
+import {ChatService} from '../../service/chat.service';
 
 @Component({
   selector: 'app-add-room',
@@ -13,7 +11,8 @@ export class AddRoomComponent implements OnInit {
 
   name = '';
 
-  constructor(private router: Router, private chat: ChatService) {}
+  constructor(private router: Router, private chat: ChatService) {
+  }
 
   ngOnInit() {
     this.chat.selectRoom({
@@ -25,6 +24,7 @@ export class AddRoomComponent implements OnInit {
     this.chat.createRoom(this.name)
       .subscribe(
         name => {
+          this.chat.selectRoom({name: name});
           this.router.navigate(['/rooms', name]);
         },
         err => console.error(err)

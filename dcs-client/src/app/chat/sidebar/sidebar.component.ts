@@ -9,6 +9,7 @@ import { AuthService } from 'src/app/service/auth.service';
   styleUrls: ['./sidebar.component.scss']
 })
 export class SidebarComponent implements OnInit {
+
   query = '';
 
   search = false;

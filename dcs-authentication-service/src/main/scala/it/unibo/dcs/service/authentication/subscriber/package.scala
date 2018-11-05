@@ -13,17 +13,11 @@ import rx.lang.scala.Subscriber
 
 package object subscriber {
 
-  class TokenSubscriber(protected override val response: HttpServerResponse)
+  class TokenSubscriber(protected override val response: HttpServerResponse, resultStatus: HttpResponseStatus)
     extends Subscriber[String] with ErrorSubscriber {
 
     override def onNext(token: String): Unit =
-      response setStatus HttpResponseStatus.CREATED endWith Json.obj(("token", token))
-  }
-
-  class LoginUserSubscriber(protected override val response: HttpServerResponse)
-    extends Subscriber[String] with ErrorSubscriber {
-
-    override def onNext(token: String): Unit = response endWith Json.obj(("token", token))
+      response.setStatus(resultStatus).end(Json.obj(("token", token)).encode())
   }
 
   class DeleteUserSubscriber(protected override val response: HttpServerResponse)
@@ -65,7 +59,7 @@ package object subscriber {
     extends Subscriber[Unit] with ErrorSubscriber {
 
     override def onCompleted(): Unit =
-      loginUserUseCase(request, new TokenSubscriber(response))
+      loginUserUseCase(request, new TokenSubscriber(response, HttpResponseStatus.OK))
   }
 
   class RegistrationValiditySubscriber(protected override val response: HttpServerResponse,
@@ -75,9 +69,8 @@ package object subscriber {
     extends Subscriber[Unit] with ErrorSubscriber {
 
     override def onCompleted(): Unit =
-      registerUserUseCase(request, new TokenSubscriber(response))
+      registerUserUseCase(request, new TokenSubscriber(response, HttpResponseStatus.CREATED))
   }
-
 
   class TokenCheckSubscriber(protected override val response: HttpServerResponse)
                             (implicit routingContext: RoutingContext)

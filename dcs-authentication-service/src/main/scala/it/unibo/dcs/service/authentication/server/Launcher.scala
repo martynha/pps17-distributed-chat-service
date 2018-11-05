@@ -8,8 +8,9 @@ import io.vertx.scala.core.{DeploymentOptions, Vertx, VertxOptions}
 import io.vertx.scala.ext.jdbc.JDBCClient
 import io.vertx.scala.ext.sql.SQLConnection
 import io.vertx.servicediscovery.{Record, ServiceDiscovery}
-import it.unibo.dcs.commons.{IoHelper, Logging}
+import it.unibo.dcs.commons.IoHelper
 import it.unibo.dcs.commons.VertxHelper.Implicits._
+import it.unibo.dcs.commons.logging.Logging
 import it.unibo.dcs.commons.service.HttpEndpointPublisherImpl
 import it.unibo.dcs.commons.service.codecs.RecordMessageCodec
 import it.unibo.dcs.service.authentication.data.AuthenticationDataStoreDatabase

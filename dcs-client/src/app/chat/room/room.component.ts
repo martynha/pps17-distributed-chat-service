@@ -39,5 +39,12 @@ export class RoomComponent implements OnInit {
       err => console.error(err)
     );
   }
+  
+  leaveRoom(){
+    this.chat.leaveRoom(this.name)
+      .subscribe(() => {
+        this.router.navigate(['/']);
+      }, err => console.error(err));
+  }
 
 }

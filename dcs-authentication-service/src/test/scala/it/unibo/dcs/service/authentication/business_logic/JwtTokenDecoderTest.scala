@@ -7,7 +7,6 @@ class JwtTokenDecoderTest extends FlatSpec with MockFactory {
 
   private  val username = "ale"
   private  val token = "header.eyJzdWIiOiAiYWxlIn0=.signature"
-  private  val expectedResult = true
 
   private  val tokenDecoder = JwtTokenDecoder()
 

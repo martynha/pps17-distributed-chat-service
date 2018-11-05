@@ -1,9 +1,8 @@
 package it.unibo.dcs.service.authentication
 
 import it.unibo.dcs.commons.validation.{Conditions, Validator}
-import it.unibo.dcs.exceptions.{InvalidTokenException, PasswordRequiredException, TokenRequiredException, UsernameRequiredException}
+import it.unibo.dcs.exceptions._
 import it.unibo.dcs.service.authentication.business_logic.JwtTokenDecoder
-import it.unibo.dcs.service.authentication.repository.AuthenticationRepository
 import it.unibo.dcs.service.authentication.request.Requests._
 
 package object validator {
@@ -11,21 +10,22 @@ package object validator {
   val jwtTokenDecoder = JwtTokenDecoder()
 
   object LogoutUserValidator {
-    def apply(authRepository: AuthenticationRepository): Validator[LogoutUserRequest] = Validator[LogoutUserRequest] {
-      _.addRule(request => Conditions.stringNotEmpty(request.token), TokenRequiredException)
+    def apply(): Validator[LogoutUserRequest] = Validator[LogoutUserRequest] {
+      _
+        .addRule(request => Conditions.stringNotEmpty(request.token), TokenRequiredException)
+        .addRule(request => checkUsernameInToken(request.token, request.username), InvalidTokenException)
     }
   }
 
   object DeleteUserValidator {
-    def apply(authRepository: AuthenticationRepository): Validator[DeleteUserRequest] = Validator[DeleteUserRequest] {
+    def apply(): Validator[DeleteUserRequest] = Validator[DeleteUserRequest] {
       _
         .addRule(request => Conditions.stringNotEmpty(request.username), UsernameRequiredException)
-        .addRule(request => jwtTokenDecoder.getUsernameFromToken(request.token) equals request.username,
-          InvalidTokenException)
+        .addRule(request => checkUsernameInToken(request.token, request.username), InvalidTokenException)
     }
   }
 
-  object RegistrationValidator {
+  object RegisterUserValidator {
     def apply(): Validator[RegisterUserRequest] = Validator[RegisterUserRequest] {
       _
         .addRule(request => Conditions.stringNotEmpty(request.username), UsernameRequiredException)
@@ -33,12 +33,11 @@ package object validator {
     }
   }
 
-  object LoginValidator {
-    def apply(authRepository: AuthenticationRepository): Validator[LoginUserRequest] = Validator[LoginUserRequest] {
+  object LoginUserValidator {
+    def apply(): Validator[LoginUserRequest] = Validator[LoginUserRequest] {
       _
         .addRule(request => Conditions.stringNotEmpty(request.username), UsernameRequiredException)
         .addRule(request => Conditions.stringNotEmpty(request.password), PasswordRequiredException)
-        .addRule(request => authRepository.checkUserExistence(request.username))
     }
   }
 
@@ -46,10 +45,13 @@ package object validator {
     def apply: Validator[CheckTokenRequest] = Validator[CheckTokenRequest] {
       _
         .addRule(request => Conditions.stringNotEmpty(request.token), TokenRequiredException)
-        .addRule(request => request.username.equals(JwtTokenDecoder().getUsernameFromToken(request.username)),
+        .addRule(request => checkUsernameInToken(request.token, request.username),
           InvalidTokenException)
     }
   }
+
+  private def checkUsernameInToken(token: String, username: String): Boolean =
+    jwtTokenDecoder.getUsernameFromToken(token) equals username
 
 }
 

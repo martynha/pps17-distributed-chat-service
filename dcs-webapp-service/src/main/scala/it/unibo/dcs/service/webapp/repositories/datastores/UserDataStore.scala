@@ -1,7 +1,7 @@
 package it.unibo.dcs.service.webapp.repositories.datastores
 
 
-import it.unibo.dcs.service.webapp.interaction.Requests.RegisterUserRequest
+import it.unibo.dcs.service.webapp.interaction.Requests.{EditUserRequest, RegisterUserRequest}
 import it.unibo.dcs.service.webapp.model.User
 import it.unibo.dcs.service.webapp.repositories.datastores.api.UserApi
 import it.unibo.dcs.service.webapp.repositories.datastores.impl.UserDataStoreNetwork
@@ -13,10 +13,16 @@ trait UserDataStore {
   /** Delete a user given its username
     *
     * @param username username of the user to delete
-    * @return
+    * @return an observable stream of the deleted user
     */
   def deleteUser(username: String): Observable[String]
 
+  /** Edit a user given its username
+    *
+    * @param request the user editing request
+    * @return an observable stream of the edited user
+    */
+  def editUser(request: EditUserRequest): Observable[User]
 
   /** Fetch the user with the given username
     *

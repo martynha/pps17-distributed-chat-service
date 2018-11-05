@@ -1,20 +1,15 @@
 package it.unibo.dcs.service.webapp.usecases
 
 import it.unibo.dcs.service.webapp.interaction.Requests.{CheckTokenRequest, DeleteRoomRequest}
-import it.unibo.dcs.service.webapp.model.Room
-import it.unibo.dcs.service.webapp.repositories.RoomRepository
-import it.unibo.dcs.service.webapp.usecases.DeleteRoomUseCase
+import it.unibo.dcs.service.webapp.usecases.commons.Mocks._
+import it.unibo.dcs.service.webapp.usecases.commons.UseCaseSpec
 import rx.lang.scala.{Observable, Subscriber}
 
 import scala.language.postfixOps
 
 class DeleteRoomUseCaseSpec extends UseCaseSpec {
 
-  private val roomName = "Room 1"
-  private val room = Room(roomName)
   private val deleteRoomRequest = DeleteRoomRequest(room.name, user.username, token)
-
-  private val roomRepository: RoomRepository = mock[RoomRepository]
 
   private val roomDeletionSubscriber = stub[Subscriber[String]]
 

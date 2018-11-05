@@ -54,5 +54,10 @@ export class SendMessageRequest {
 
   }
   
+export class GetRoomParticipationsRequest {
+
+  constructor(public username: string) {
+  }
+
 }
 

@@ -4,8 +4,8 @@ import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
 import io.vertx.scala.core.http.HttpServerResponse
 import it.unibo.dcs.commons.JsonHelper.Implicits.RichGson
-import it.unibo.dcs.commons.Logging
 import it.unibo.dcs.commons.VertxWebHelper.Implicits.RichHttpServerResponse
+import it.unibo.dcs.commons.logging.Logging
 import it.unibo.dcs.exceptions.ErrorSubscriber
 import it.unibo.dcs.service.room.model.{Message, Participation, Room}
 import it.unibo.dcs.service.room.subscriber.Implicits._
@@ -34,11 +34,30 @@ package object subscriber {
     }
   }
 
+  final class LeaveRoomSubscriber(protected override val response: HttpServerResponse) extends Subscriber[Participation]
+    with ErrorSubscriber with Logging {
+
+    override def onNext(participation: Participation): Unit = {
+      val json = Json.obj(("name", participation.room.name), ("username", participation.username))
+      log.info(s"Answering with : $json")
+      response.setStatus(HttpResponseStatus.OK).end(json.encode())
+    }
+  }
+
   final class CreateUserSubscriber(protected override val response: HttpServerResponse) extends Subscriber[Unit]
     with ErrorSubscriber with Logging {
 
     override def onCompleted(): Unit = response setStatus HttpResponseStatus.CREATED end()
 
+  }
+
+  final class RoomParticipationsSubscriber(protected override val response: HttpServerResponse)
+    extends Subscriber[Set[Participation]] with ErrorSubscriber with Logging {
+
+    override def onNext(participations: Set[Participation]): Unit = {
+      val results = Json.arr(participations.map(participationToJsonObject).toArray)
+      response.end(results.encodePrettily())
+    }
   }
 
   class DeleteRoomSubscriber(protected override val response: HttpServerResponse) extends Subscriber[String]

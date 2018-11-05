@@ -1,9 +1,9 @@
-import {Component, OnInit} from '@angular/core';
-import {ChatService} from '../../service/chat.service';
-import {Router} from '@angular/router';
-import {remove} from 'lodash';
+import { Component, OnInit } from '@angular/core';
+import { ChatService } from '../../service/chat.service';
+import { Router } from '@angular/router';
+import { remove } from 'lodash';
 
-import {Room, Participation} from '../../model';
+import { Room, Participation } from '../../model';
 import { AuthService } from '../../service/auth.service';
 
 import { filter } from 'rxjs/operators';
@@ -21,7 +21,7 @@ export class RoomsComponent implements OnInit {
     private chat: ChatService,
     private auth: AuthService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit() {
     console.log('Getting user rooms...');
@@ -31,6 +31,7 @@ export class RoomsComponent implements OnInit {
     this.chat.onRoomJoined()
       .pipe(participationFilter)
       .subscribe(participation => {
+        console.log("received participation for room: " + participation.room.name);
         this.rooms.unshift(participation.room);
       });
 
@@ -55,7 +56,7 @@ export class RoomsComponent implements OnInit {
   deleteRoom(room: Room) {
     console.log(room);
     this.chat.deleteRoom(room.name)
-      .subscribe(() => {},
+      .subscribe(() => { },
         err => console.error(err));
   }
 

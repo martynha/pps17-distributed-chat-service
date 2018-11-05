@@ -77,10 +77,32 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
         val subscriber = new CreateUserSubscriber(routingContext.response())
         createUserUseCase(request, subscriber)
       })
+
+    val leaveRoomUseCase = {
+      val validation = new LeaveRoomValidation(threadExecutor, postExecutionThread, LeaveRoomValidator())
+      new LeaveRoomUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
+    }
+
+    val getRoomParticipationsUseCase = {
+      val validation = new GetRoomParticipationsValidation(threadExecutor, postExecutionThread,
+        GetRoomParticipationsValidator())
+      new GetRoomParticipationsUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
+    }
+    
     val getUserParticipationsUseCase = {
       val validation = new GetUserParticipationsValidation(threadExecutor, postExecutionThread, GetUserParticipationsValidator())
       new GetUserParticipationsUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
     }
+
+    router.post("/users")
+      .consumes(ContentType.APPLICATION_JSON)
+      .consumes(ContentType.APPLICATION_JSON)
+      .handler(routingContext => {
+        val request = routingContext.getBodyAsJson.head
+        val subscriber = new CreateUserSubscriber(routingContext.response())
+        createUserUseCase(request, subscriber)
+      })
+    
 
     router.post("/rooms")
       .consumes(ContentType.APPLICATION_JSON)
@@ -110,6 +132,24 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
         val request = routingContext.getBodyAsJson.head.put("name", roomName)
         val subscriber = new JoinRoomSubscriber(routingContext.response())
         joinRoomUseCase(request, subscriber)
+      })
+
+    router.delete("/rooms/:name/participations/:username")
+      .produces(ContentType.APPLICATION_JSON)
+      .handler(routingContext => {
+        val roomName = routingContext.request().getParam("name").head
+        val userName = routingContext.request().getParam("username").head
+        val request = LeaveRoomRequest(roomName, userName)
+        val subscriber = new LeaveRoomSubscriber(routingContext.response())
+        leaveRoomUseCase(request, subscriber)
+      })
+        
+    router.get("/rooms/:name/participations")
+      .produces(ContentType.APPLICATION_JSON)
+      .handler(routingContext => {
+        val roomName = routingContext.request().getParam("name").head
+        val subscriber = new RoomParticipationsSubscriber(routingContext.response())
+        getRoomParticipationsUseCase(GetRoomParticipationsRequest(roomName), subscriber)
       })
 
     router.get("/rooms")
@@ -177,6 +217,9 @@ object RoomVerticle {
 
     implicit def JsonObjectToSendMessageRequest(json: JsonObject): SendMessageRequest =
       SendMessageRequest(json.getString("name"), json.getString("username"), json.getString("content"), new Date)
+      
+    implicit def jsonObjectToLeaveRoomRequest(json: JsonObject): LeaveRoomRequest =
+      gson fromJsonObject[LeaveRoomRequest] json
   }
 
 }

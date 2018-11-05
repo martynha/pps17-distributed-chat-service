@@ -7,6 +7,8 @@ import rx.lang.scala.Observable
 trait RoomRepository {
 
   def sendMessage(request: SendMessageRequest): Observable[Message]
+ 
+  def getRoomParticipations(request: GetRoomParticipationsRequest): Observable[Set[Participation]]
 
   def createUser(request: CreateUserRequest): Observable[Unit]
 
@@ -19,6 +21,8 @@ trait RoomRepository {
   def getRooms(request: GetRoomsRequest): Observable[List[Room]]
   
   def joinRoom(request: JoinRoomRequest): Observable[Participation]
+
+  def leaveRoom(request: LeaveRoomRequest): Observable[Participation]
 
   def getParticipationByKey(request: JoinRoomRequest): Observable[Participation]
 

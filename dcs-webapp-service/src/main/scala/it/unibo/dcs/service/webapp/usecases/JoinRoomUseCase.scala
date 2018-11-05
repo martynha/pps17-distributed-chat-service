@@ -18,7 +18,7 @@ import rx.lang.scala.Observable
   * @param postExecutionThread thread that will be notified of the subscription result
   * @param authRepository      authentication repository reference
   * @param roomRepository      room repository reference
-  * @usecase user join a room */
+  * @usecase user joins a room */
 final class JoinRoomUseCase(private[this] val threadExecutor: ThreadExecutor,
                             private[this] val postExecutionThread: PostExecutionThread,
                             private[this] val authRepository: AuthenticationRepository,

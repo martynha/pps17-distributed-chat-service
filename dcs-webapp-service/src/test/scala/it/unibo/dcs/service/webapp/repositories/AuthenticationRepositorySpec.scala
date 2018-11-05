@@ -1,7 +1,7 @@
 package it.unibo.dcs.service.webapp.repositories
 
 import it.unibo.dcs.service.webapp.interaction.Requests._
-import it.unibo.dcs.service.webapp.repositories.AuthenticationRepository
+import it.unibo.dcs.service.webapp.repositories.commons.RepositorySpec
 import it.unibo.dcs.service.webapp.repositories.datastores.AuthenticationDataStore
 import it.unibo.dcs.service.webapp.repositories.impl.AuthenticationRepositoryImpl
 import rx.lang.scala.{Observable, Subscriber}
@@ -12,8 +12,6 @@ class AuthenticationRepositorySpec extends RepositorySpec {
 
   private val dataStore: AuthenticationDataStore = mock[AuthenticationDataStore]
   private val repository: AuthenticationRepository = new AuthenticationRepositoryImpl(dataStore)
-
-  private val token = "token"
 
   private val roomCreationRequest = CheckTokenRequest(token, user.username)
   private val loginUserRequest = LoginUserRequest(user.username, "password")

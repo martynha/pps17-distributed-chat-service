@@ -342,6 +342,16 @@ paths:
           description: The name of the room.
           required: true
           type: "string"
+        - name: message
+          in: body
+          description: The Message to create.
+          schema:
+            required:
+              - username
+            properties:
+              username:
+                type: string
+          required: true
       responses:
         200:
           description: A list of all the participations for the given room.

@@ -4,7 +4,8 @@ import java.util.Date
 
 import it.unibo.dcs.commons.interactor.UseCase
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
-import it.unibo.dcs.service.authentication.business_logic.JwtTokenDecoder
+import it.unibo.dcs.service.authentication.interactor.usecases.helpers.ValidationHandler.validateAndContinue
+import it.unibo.dcs.service.authentication.interactor.validations.LogoutUserValidation
 import it.unibo.dcs.service.authentication.repository.AuthenticationRepository
 import it.unibo.dcs.service.authentication.request.Requests.LogoutUserRequest
 import rx.lang.scala.Observable
@@ -18,13 +19,13 @@ import rx.lang.scala.Observable
   * @usecase logout of a user */
 final class LogoutUserUseCase(private[this] val threadExecutor: ThreadExecutor,
                               private[this] val postExecutionThread: PostExecutionThread,
-                              private[this] val authRepository: AuthenticationRepository)
+                              private[this] val authRepository: AuthenticationRepository,
+                              private[this] val logoutUserValidation: LogoutUserValidation)
   extends UseCase[Unit, LogoutUserRequest](threadExecutor, postExecutionThread) {
 
-  val tokenDecoder = JwtTokenDecoder()
-
   override protected[this] def createObservable(request: LogoutUserRequest): Observable[Unit] =
-    authRepository.invalidToken(request.token, new Date())
+    validateAndContinue(logoutUserValidation, request, _ => authRepository.invalidToken(request.token, new Date()))
+
 }
 
 object LogoutUserUseCase {
@@ -36,6 +37,6 @@ object LogoutUserUseCase {
     * @param authRepository      authentication repository reference
     * @return the use case object */
   def apply(threadExecutor: ThreadExecutor, postExecutionThread: PostExecutionThread,
-            authRepository: AuthenticationRepository): LogoutUserUseCase =
-    new LogoutUserUseCase(threadExecutor, postExecutionThread, authRepository)
+            authRepository: AuthenticationRepository, logoutUserValidation: LogoutUserValidation): LogoutUserUseCase =
+    new LogoutUserUseCase(threadExecutor, postExecutionThread, authRepository, logoutUserValidation)
 }

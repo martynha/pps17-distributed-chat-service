@@ -1,8 +1,12 @@
 package it.unibo.dcs.service.authentication.interactor.usecases
 
 import io.vertx.scala.ext.auth.jwt.JWTAuth
+import it.unibo.dcs.commons.interactor.UseCase
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
+import it.unibo.dcs.service.authentication.interactor.usecases.helpers.ValidationHandler.validateAndContinue
+import it.unibo.dcs.service.authentication.interactor.validations.RegisterUserValidation
 import it.unibo.dcs.service.authentication.repository.AuthenticationRepository
+import it.unibo.dcs.service.authentication.request.Requests.RegisterUserRequest
 import rx.lang.scala.Observable
 
 /** It represents the use case to use to register a user.
@@ -16,13 +20,14 @@ import rx.lang.scala.Observable
 final class RegisterUserUseCase(private[this] val threadExecutor: ThreadExecutor,
                                 private[this] val postExecutionThread: PostExecutionThread,
                                 private[this] val authRepository: AuthenticationRepository,
-                                private[this] val jwtAuth: JWTAuth)
-  extends ReturningTokenUseCase(threadExecutor, postExecutionThread, authRepository, jwtAuth) {
+                                private[this] val jwtAuth: JWTAuth,
+                                private[this] val registerUserValidation: RegisterUserValidation)
+  extends UseCase[String, RegisterUserRequest](threadExecutor, postExecutionThread) with ReturningTokenUseCase {
 
-  protected def getMainObservable(username: String, password: String): Observable[Unit] = {
-    authRepository.createUser(username, password)
-  }
-
+  override protected[this] def createObservable(request: RegisterUserRequest): Observable[String] =
+    validateAndContinue(registerUserValidation, request,
+      _ => authRepository.createUser(request.username, request.password))
+      .map(_ => createToken(request.username, jwtAuth))
 }
 
 object RegisterUserUseCase {
@@ -35,6 +40,7 @@ object RegisterUserUseCase {
     * @param jwtAuth             jwt authentication provider
     * @return the use case object */
   def apply(threadExecutor: ThreadExecutor, postExecutionThread: PostExecutionThread,
-            authRepository: AuthenticationRepository, jwtAuth: JWTAuth): RegisterUserUseCase =
-    new RegisterUserUseCase(threadExecutor, postExecutionThread, authRepository, jwtAuth)
+            authRepository: AuthenticationRepository, jwtAuth: JWTAuth,
+            registerUserValidation: RegisterUserValidation): RegisterUserUseCase =
+    new RegisterUserUseCase(threadExecutor, postExecutionThread, authRepository, jwtAuth, registerUserValidation)
 }

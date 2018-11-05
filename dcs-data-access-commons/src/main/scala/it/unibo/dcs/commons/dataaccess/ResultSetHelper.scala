@@ -6,6 +6,7 @@ import io.vertx.scala.ext.sql.ResultSet
 import scala.collection.mutable
 
 object ResultSetHelper {
+
   def getRows(resultSet: ResultSet): mutable.Buffer[JsonObject] = {
     resultSet.getResults
       .map(result => Stream.range(0, result.size)
@@ -14,4 +15,5 @@ object ResultSetHelper {
           (result, value) => result.put(value._1, value._2)
         })
   }
+
 }

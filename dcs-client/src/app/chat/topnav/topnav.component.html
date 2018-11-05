@@ -1,36 +1,39 @@
 <mat-toolbar color="default" class="fix-nav">
-    <button type="button" mat-icon-button class="visible-md" (click)="toggleSidebar()">
-        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
-    </button>
-    <div class="nav-brand" fxLayout="row" fxLayoutAlign="center">
-        <div fxFlex="15%" fxFlexAlign="center">
-            <button type="button" mat-icon-button [matMenuTriggerFor]="settings">
-                <mat-icon>settings</mat-icon>
-            </button>
-            <mat-menu #settings="matMenu">
-                <button mat-menu-item (click)="logout()">
-                    <mat-icon>exit_to_app</mat-icon>
-                    <span>{{ 'Log out' | translate }}</span>
-                </button>
-            </mat-menu>
-        </div>
-        <div fxFlex fxFlexAlign="center">
-            Distributed Chat
-        </div>
-        <div fxFlex="15%" fxFlexAlign="center">
-            <button type="button" mat-icon-button (click)="createRoom();">
-                <mat-icon>people</mat-icon>
-            </button>
-        </div>
+  <button type="button" mat-icon-button class="visible-md" (click)="toggleSidebar()">
+    <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+  </button>
+  <div class="nav-brand" fxLayout="row" fxLayoutAlign="center">
+    <div fxFlex="15%" fxFlexAlign="center">
+      <button type="button" mat-icon-button [matMenuTriggerFor]="settings">
+        <mat-icon>settings</mat-icon>
+      </button>
+      <mat-menu #settings="matMenu">
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>exit_to_app</mat-icon>
+          <span>{{ 'Log out' | translate }}</span>
+        </button>
+      </mat-menu>
     </div>
-    <div class="hidden-sm chat-name" style="margin-left: 25px; margin-top: 5px;">
-        {{ selectedRoom }}
+    <div fxFlex fxFlexAlign="center" id="app-title">
+      Distributed Chat
     </div>
-    <span class="nav-spacer"></span>
-    <button mat-icon-button (click)="roomInfo()">
-        <mat-icon>info</mat-icon>
-    </button>
-    <!-- <button mat-icon-button (click)="logout()">
-      <mat-icon>exit_to_app</mat-icon>
-  </button> -->
+    <div fxFlex="15%" fxFlexAlign="center">
+      <button type="button" mat-icon-button (click)="createRoom();">
+        <mat-icon>people</mat-icon>
+      </button>
+    </div>
+  </div>
+  <div class="hidden-sm chat-name" style="margin-left: 25px; margin-top: 5px;">
+    {{ selectedRoom }}
+  </div>
+  <span class="nav-spacer"></span>
+  <button *ngIf="infoButtonCondition" mat-icon-button (click)="roomInfo()">
+    <mat-icon>info</mat-icon>
+  </button>
+  <button *ngIf="roomInfoOpened" mat-icon-button (click)="roomInfo()">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <!-- <button mat-icon-button (click)="logout()">
+    <mat-icon>exit_to_app</mat-icon>
+</button> -->
 </mat-toolbar>

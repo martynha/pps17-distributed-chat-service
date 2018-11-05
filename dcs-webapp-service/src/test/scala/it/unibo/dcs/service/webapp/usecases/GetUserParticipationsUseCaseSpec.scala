@@ -1,22 +1,18 @@
 package it.unibo.dcs.service.webapp.usecases
 
-import it.unibo.dcs.service.webapp.interaction.Requests.{CheckTokenRequest, GetUserParticipationsRequest}
+import it.unibo.dcs.service.webapp.interaction.Requests.GetUserParticipationsRequest
 import it.unibo.dcs.service.webapp.interaction.Results.GetUserParticipationsResult
-import it.unibo.dcs.service.webapp.model.Room
-import it.unibo.dcs.service.webapp.repositories.RoomRepository
+import it.unibo.dcs.service.webapp.usecases.commons.Mocks._
+import it.unibo.dcs.service.webapp.usecases.commons.UseCaseSpec
 import rx.lang.scala.{Observable, Subscriber}
+
+import scala.language.postfixOps
 
 class GetUserParticipationsUseCaseSpec extends UseCaseSpec {
 
-  private val rooms = List(Room("Room1"), Room("Room2"), Room("Room3"))
-
   private val getUserParticipationsRequest = GetUserParticipationsRequest(user.username, token)
 
-  private val checkTokenRequest = CheckTokenRequest(token, user.username)
-
   private val result = GetUserParticipationsResult(rooms)
-
-  private val roomRepository = mock[RoomRepository]
 
   private val useCase = new GetUserParticipationsUseCase(threadExecutor, postExecutionThread, authRepository, roomRepository)
 

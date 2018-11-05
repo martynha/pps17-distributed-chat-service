@@ -8,9 +8,10 @@ import io.vertx.scala.ext.jdbc.JDBCClient
 import io.vertx.scala.ext.sql.SQLConnection
 import io.vertx.servicediscovery.{Record, ServiceDiscovery}
 import it.unibo.dcs.commons.VertxHelper.Implicits._
+import it.unibo.dcs.commons.logging.Logging
 import it.unibo.dcs.commons.service.HttpEndpointPublisherImpl
 import it.unibo.dcs.commons.service.codecs.RecordMessageCodec
-import it.unibo.dcs.commons.{IoHelper, Logging, VertxHelper}
+import it.unibo.dcs.commons.{IoHelper, VertxHelper}
 import it.unibo.dcs.service.room.data.RoomDataStore
 import it.unibo.dcs.service.room.data.impl.RoomDataStoreDatabase
 import it.unibo.dcs.service.room.repository.impl.RoomRepositoryImpl

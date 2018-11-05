@@ -5,7 +5,7 @@ import it.unibo.dcs.commons.RxHelper.Implicits.RichObservable
 import it.unibo.dcs.commons.service.{AbstractApi, HttpEndpointDiscovery}
 import it.unibo.dcs.exceptions.{AuthServiceErrorException, InternalException, bodyAsJsonObject}
 import it.unibo.dcs.service.webapp.interaction.Labels.JsonLabels
-import it.unibo.dcs.service.webapp.interaction.Requests.Implicits.requestToJson
+import it.unibo.dcs.service.webapp.interaction.Requests.Implicits.requestToJsonObject
 import it.unibo.dcs.service.webapp.interaction.Requests._
 import it.unibo.dcs.service.webapp.repositories.datastores.api.AuthenticationApi
 import it.unibo.dcs.service.webapp.repositories.datastores.api.impl.AuthenticationRestApi._

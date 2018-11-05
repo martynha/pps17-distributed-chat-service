@@ -4,7 +4,7 @@ import io.vertx.core.Vertx
 import io.vertx.scala.core.eventbus.EventBus
 import io.vertx.servicediscovery.ServiceDiscovery
 import it.unibo.dcs.commons.service.HttpEndpointDiscoveryImpl
-import it.unibo.dcs.service.webapp.interaction.Requests.RegisterUserRequest
+import it.unibo.dcs.service.webapp.interaction.Requests.{EditUserRequest, RegisterUserRequest}
 import it.unibo.dcs.service.webapp.model.User
 import it.unibo.dcs.service.webapp.repositories.datastores.api.impl.UserRestApi
 import rx.lang.scala.Observable
@@ -25,6 +25,12 @@ trait UserApi {
     * @param request user information needed to perform a registration
     * @return an observable stream of just the created user */
   def createUser(request: RegisterUserRequest): Observable[User]
+
+  /** It tells user service to edit the specified user and returns it as an Observable
+    *
+    * @param request user information needed to perform the user editing
+    * @return an observable stream of just the edited user */
+  def editUser(request: EditUserRequest): Observable[User]
 
   /** It request the user service to retrieve a user given its username
     *

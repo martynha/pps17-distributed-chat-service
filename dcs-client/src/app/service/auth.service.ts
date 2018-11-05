@@ -26,12 +26,15 @@ export class AuthService {
     return this._user;
   }
 
-  get authOptions(): HttpHeaders {
-    return new HttpHeaders({ Authorization: this.user.token });
+  get authOptions() {
+    return new HttpHeaders({
+        'Authorization' : 'Bearer ' + this.user.token
+      });
   }
 
   constructor(private http: HttpClient) {
   }
+
 
   isAuthenticated(): boolean {
     return !(!this._user);
@@ -39,7 +42,10 @@ export class AuthService {
 
   login(request: LoginRequest): Observable<User> {
     return this.http.post<User>(AuthService.LOGIN, request)
-      .pipe(tap(user => this._user = user));
+      .pipe(tap(user => {
+        console.log(user);
+        this._user = user;
+      }));
   }
 
   register(request: RegisterRequest): Observable<User> {
@@ -52,9 +58,9 @@ export class AuthService {
       body: new LogoutRequest(this.user.username),
       headers: this.authOptions
     }).pipe(tap(
-        _ => {},
-        _ => {},
-        () => this._user = undefined));
+      _ => {},
+      _ => {},
+      () => this._user = undefined));
   }
 
 }

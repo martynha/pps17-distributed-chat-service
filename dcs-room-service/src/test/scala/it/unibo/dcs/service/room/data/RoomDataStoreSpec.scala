@@ -8,8 +8,9 @@ import io.vertx.scala.ext.jdbc.JDBCClient
 import io.vertx.scala.ext.sql.SQLConnection
 import it.unibo.dcs.commons.IoHelper
 import it.unibo.dcs.service.room.data.impl.RoomDataStoreDatabase
+import it.unibo.dcs.service.room.model
 import it.unibo.dcs.service.room.model.Room
-import it.unibo.dcs.service.room.request.{CreateRoomRequest, CreateUserRequest, DeleteRoomRequest, GetRoomsRequest}
+import it.unibo.dcs.service.room.request._
 
 object RoomDataStoreSpec extends App {
 
@@ -19,6 +20,9 @@ object RoomDataStoreSpec extends App {
   private var connection: SQLConnection = _
 
   private var roomDataStore: RoomDataStore = _
+
+  val exampleRoom = "TestExampleRoom1"
+  val exampleUser = "TestExampleUser1"
 
   TestSuite.create("RoomDataStoreSpec")
     .before(context => {
@@ -67,15 +71,18 @@ object RoomDataStoreSpec extends App {
       insertAsync.await()
     })
     .test("Get all the rooms", testGetRoomsMethod _)
+    .test("Join a room", testRoomLeaveMethod _)
+    .test("Get all the participations for a given room", testGetRoomParticipationsMethod _)
     .test("Delete a room", context => {
       val insertAsync = context.async(2)
       connection.execute("INSERT INTO `users` (`username`) VALUES ('mvandi')", context.asyncAssertSuccess(_ => {
         insertAsync.countDown()
       }))
 
-      connection.execute("INSERT INTO `rooms` (`name`, `owner_username`) VALUES ('Test room', 'mvandi')", context.asyncAssertSuccess(_ => {
-        insertAsync.countDown()
-      }))
+      connection.execute("INSERT INTO `rooms` (`name`, `owner_username`) VALUES ('Test room', 'mvandi')",
+        context.asyncAssertSuccess(_ => {
+          insertAsync.countDown()
+        }))
       insertAsync.await()
 
       val verifyInsertionAsync = context.async(1)
@@ -104,14 +111,43 @@ object RoomDataStoreSpec extends App {
     .run(new TestOptions().addReporter(new ReportOptions().setTo("console")))
 
   private def testGetRoomsMethod(context: TestContext): Unit = {
+    val selectAsync = context.async(1)
+    roomDataStore.createUser(CreateUserRequest(exampleUser))
+      .map(_ => roomDataStore.createRoom(CreateRoomRequest(exampleRoom, exampleUser))
+        .map(_ => roomDataStore.getRooms(GetRoomsRequest(exampleUser))
+          .subscribe(result => {
+            assert(result.contains(Room(exampleRoom)))
+            selectAsync.countDown()
+          }, context.fail)))
+    selectAsync.await()
+  }
+
+  private def testRoomLeaveMethod(context: TestContext): Unit = {
+    val selectAsync = context.async(1)
+    roomDataStore.createUser(CreateUserRequest(exampleUser))
+      .map(_ => roomDataStore.createRoom(CreateRoomRequest(exampleRoom, exampleUser))
+        .map(_ => roomDataStore.joinRoom(JoinRoomRequest(exampleRoom, exampleUser))
+          .map(_ => roomDataStore.leaveRoom(LeaveRoomRequest(exampleRoom, exampleUser))
+            .subscribe(result => {
+              assert((result.username equals exampleUser) && (result.room.name equals exampleRoom))
+              selectAsync.countDown()
+            }))))
+  }
+  
+  private def testGetRoomParticipationsMethod(context: TestContext): Unit = {
     val exampleRoom = "TestExampleRoom1"
     val exampleUser = "TestExampleUser1"
     val selectAsync = context.async(1)
+
+    def resultContainsParticipation(result: Set[model.Participation]) = {
+      result.head.room.name.equals(exampleRoom) && result.head.username.equals(exampleUser)
+    }
+
     roomDataStore.createUser(CreateUserRequest(exampleUser))
       .subscribe(_ => roomDataStore.createRoom(CreateRoomRequest(exampleRoom, exampleUser))
-        .subscribe(_ => roomDataStore.getRooms(GetRoomsRequest(exampleUser))
+        .subscribe(_ => roomDataStore.getRoomParticipations(GetRoomParticipationsRequest(exampleUser))
           .subscribe(result => {
-            assert(result.contains(Room(exampleRoom)))
+            assert(resultContainsParticipation(result))
             selectAsync.countDown()
           }, context.fail)))
     selectAsync.await()

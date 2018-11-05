@@ -1,9 +1,10 @@
 package it.unibo.dcs.service.webapp.usecases
 
 import io.vertx.scala.core.Context
-import it.unibo.dcs.commons.{Logging, RxHelper}
+import it.unibo.dcs.commons.RxHelper
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
 import it.unibo.dcs.commons.interactor.{ThreadExecutorExecutionContext, UseCase}
+import it.unibo.dcs.commons.logging.Logging
 import it.unibo.dcs.exceptions.{RoomServiceErrorException, UserServiceErrorException}
 import it.unibo.dcs.service.webapp.interaction.Requests.{DeleteUserRequest, RegisterUserRequest}
 import it.unibo.dcs.service.webapp.interaction.Results.RegisterResult

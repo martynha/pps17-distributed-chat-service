@@ -15,6 +15,7 @@ class AuthenticationDataStoreDatabase(private[this] val connection: SQLConnectio
   private val insertUser = "INSERT INTO `users` (`username`, `password`) VALUES (?, ?);"
   private val deleteUser = "DELETE FROM `users` WHERE `username`=?"
   private val insertInvalidToken = "INSERT INTO `invalid_tokens` (`token`, `expiration_date`) VALUES (?, ?);"
+  private val apostrophe = "'"
 
   override def createUser(username: String, password: String): Observable[Unit] =
     execute(insertUser, Json.arr(username, password))
@@ -32,11 +33,11 @@ class AuthenticationDataStoreDatabase(private[this] val connection: SQLConnectio
     execute(insertInvalidToken, Json.arr(token, dateToString(expirationDate)))
 
   override def isTokenValid(token: String): Observable[Boolean] =
-    checkResultSetSize("SELECT * FROM invalid_tokens WHERE token = '" + token + "'", 0)
+    checkResultSetSize("SELECT * FROM invalid_tokens WHERE token = '" + token + apostrophe, 0)
 
   private def checkRecordPresence(table: String, parameters: (String, String)*): Observable[Unit] =
     VertxHelper.toObservable[Unit] { handler => {
-      val clauses = parameters.map(param => param._1 + " = " + "'" + param._2 + "'")
+      val clauses = parameters.map(param => param._1 + " = " + apostrophe + param._2 + apostrophe)
         .fold("")((param1, param2) => param1 + " AND " + param2)
       val query = ("SELECT * FROM " + table + " WHERE " + clauses).replaceFirst("AND", "")
       connection.query(query, handleQueryResult(_, handler))

@@ -1,9 +1,8 @@
 package it.unibo.dcs.service.room.repository.impl
 
 import it.unibo.dcs.service.room.data.RoomDataStore
-import it.unibo.dcs.service.room.model.Room
+import it.unibo.dcs.service.room.model.{Room, _}
 import it.unibo.dcs.service.room.repository.RoomRepository
-import it.unibo.dcs.service.room.model._
 import it.unibo.dcs.service.room.request._
 import rx.lang.scala.Observable
 
@@ -21,10 +20,16 @@ final class RoomRepositoryImpl(private[this] val roomDataStore: RoomDataStore) e
   
   override def joinRoom(request: JoinRoomRequest): Observable[Participation] = roomDataStore.joinRoom(request)
 
-  override def getParticipationByKey(request: JoinRoomRequest): Observable[Participation] = roomDataStore.getParticipationByKey(request)
+  override def leaveRoom(request: LeaveRoomRequest): Observable[Participation] = roomDataStore.leaveRoom(request)
 
   override def sendMessage(request: SendMessageRequest): Observable[Message] = roomDataStore.sendMessage(request)
   
-  def getParticipationsByUsername(request: GetUserParticipationsRequest): Observable[List[Room]] = roomDataStore.getParticipationsByUsername(request)
+  override def getParticipationByKey(request: JoinRoomRequest): Observable[Participation] =
+    roomDataStore.getParticipationByKey(request)
+
+  override def getRoomParticipations(request: GetRoomParticipationsRequest): Observable[Set[Participation]] =
+    roomDataStore.getRoomParticipations(request)
+
+  override def getParticipationsByUsername(request: GetUserParticipationsRequest): Observable[List[Room]] = roomDataStore.getParticipationsByUsername(request)
 
 }

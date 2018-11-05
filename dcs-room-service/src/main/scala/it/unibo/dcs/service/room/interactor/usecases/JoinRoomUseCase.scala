@@ -8,11 +8,11 @@ import it.unibo.dcs.service.room.repository.RoomRepository
 import it.unibo.dcs.service.room.request.JoinRoomRequest
 import rx.lang.scala.Observable
 
-class JoinRoomUseCase (threadExecutor: ThreadExecutor,
-                       postExecutionThread: PostExecutionThread,
-                       private[this] val roomRepository: RoomRepository,
-                       private[this] val validation: JoinRoomValidation)
-  extends UseCase[Participation, JoinRoomRequest](threadExecutor, postExecutionThread){
+class JoinRoomUseCase(threadExecutor: ThreadExecutor,
+                      postExecutionThread: PostExecutionThread,
+                      private[this] val roomRepository: RoomRepository,
+                      private[this] val validation: JoinRoomValidation)
+  extends UseCase[Participation, JoinRoomRequest](threadExecutor, postExecutionThread) {
 
   override protected[this] def createObservable(request: JoinRoomRequest): Observable[Participation] =
     validation(request).flatMap(_ => roomRepository.joinRoom(request))

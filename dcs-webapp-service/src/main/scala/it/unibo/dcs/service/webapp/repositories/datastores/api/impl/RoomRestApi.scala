@@ -16,6 +16,7 @@ import rx.lang.scala.Observable
 import it.unibo.dcs.commons.JsonHelper.Implicits.RichGson
 
 import scala.concurrent.ExecutionContext.Implicits.global
+
 import scala.language.implicitConversions
 
 class RoomRestApi(private[this] val discovery: HttpEndpointDiscovery)
@@ -52,6 +53,14 @@ class RoomRestApi(private[this] val discovery: HttpEndpointDiscovery)
       .mapImplicitly
   }
 
+  override def leaveRoom(request: RoomLeaveRequest): Observable[Participation] = {
+    makeRequest(client =>
+      Observable.from(client.delete(leaveRoomURI(request.name, request.username))
+        .sendFuture()))
+      .map(bodyAsJsonObject(throw InternalException(emptyBodyErrorMessage)))
+      .mapImplicitly
+  }
+
   override def getRooms(request: GetRoomsRequest): Observable[List[Room]] = {
     makeRequest(client =>
       Observable.from(client.get(s"${RoomRestApi.roomsURI}?user=${request.username}").sendFuture()))
@@ -67,6 +76,13 @@ class RoomRestApi(private[this] val discovery: HttpEndpointDiscovery)
       .mapImplicitly
   }
   
+  override def getRoomParticipations(request: GetRoomParticipationsRequest): Observable[Set[Participation]] = {
+    makeRequest(client =>
+      Observable.from(client.get(RoomRestApi.roomParticipationsURI(request.name)).sendFuture()))
+      .map(bodyAsJsonArray(throw InternalException(emptyBodyErrorMessage)))
+      .mapImplicitly
+  }
+  
   override def getUserParticipations(request: GetUserParticipationsRequest): Observable[List[Room]] =
     makeRequest(client =>
       Observable.from(client.get(userParticipationsURI(request.username)).sendFuture()))
@@ -76,6 +92,8 @@ class RoomRestApi(private[this] val discovery: HttpEndpointDiscovery)
 
 private[impl] object RoomRestApi {
 
+  private val uriSeparator = "/"
+
   private val roomsURI = "/rooms"
 
   private val usersURI = "/users"
@@ -84,9 +102,15 @@ private[impl] object RoomRestApi {
 
   private val emptyBodyErrorMessage = "Room service returned an empty body"
 
+  private def roomParticipationsURI(roomName: String) = roomsURI + uriSeparator + roomName + "/participations"
+
   private def joinRoomURI(roomName: String) = s"$roomsURI/$roomName/participations"
 
-  private def deleteRoomURI(roomName: String) = roomsURI + "/" + roomName
+  private def leaveRoomURI(roomName: String, username: String) = {
+    joinRoomURI(roomName) + "/" + username
+  }
+
+  private def deleteRoomURI(roomName: String) = roomsURI + uriSeparator + roomName
 
   private def getRoomsURI(username: String) = s"$roomsURI?user=$username"
 

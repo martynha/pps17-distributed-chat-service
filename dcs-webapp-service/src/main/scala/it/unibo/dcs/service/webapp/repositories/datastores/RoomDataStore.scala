@@ -15,6 +15,12 @@ trait RoomDataStore {
     * @return an Observable stream of the new message
     */
   def sendMessage(request: SendMessageRequest): Observable[Message]
+  /** It retrieves all the participations for a given room
+    *
+    * @param request needed data to retrieve all the participations for a given room
+    * @return an observable stream of all the participations
+    */
+  def getRoomParticipations(request: GetRoomParticipationsRequest): Observable[Set[Participation]]
 
   /** It adds the user to the list of participants in the room
     *
@@ -23,6 +29,12 @@ trait RoomDataStore {
     */
   def joinRoom(request: RoomJoinRequest): Observable[Participation]
 
+  /** It removes the user from the list of participants in the room
+    *
+    * @param request needed data to leave the room
+    * @return an observable stream of the old participation
+    */
+  def leaveRoom(request: RoomLeaveRequest): Observable[Participation]
 
   /** Register a new user given its info
     *

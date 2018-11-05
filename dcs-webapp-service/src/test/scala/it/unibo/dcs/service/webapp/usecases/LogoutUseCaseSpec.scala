@@ -1,6 +1,8 @@
 package it.unibo.dcs.service.webapp.usecases
 
 import it.unibo.dcs.service.webapp.interaction.Requests.LogoutUserRequest
+import it.unibo.dcs.service.webapp.usecases.commons.Mocks._
+import it.unibo.dcs.service.webapp.usecases.commons.UseCaseSpec
 import rx.lang.scala.{Observable, Subscriber}
 
 import scala.language.postfixOps

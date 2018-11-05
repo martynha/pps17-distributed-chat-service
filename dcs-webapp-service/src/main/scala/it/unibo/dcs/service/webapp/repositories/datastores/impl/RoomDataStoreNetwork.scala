@@ -9,8 +9,7 @@ import rx.lang.scala.Observable
 
 class RoomDataStoreNetwork(private val roomApi: RoomApi) extends RoomDataStore {
 
-  override def deleteRoom(request: DeleteRoomRequest): Observable[String] =
-    roomApi.deleteRoom(request)
+  override def deleteRoom(request: DeleteRoomRequest): Observable[String] = roomApi.deleteRoom(request)
 
   override def createRoom(request: CreateRoomRequest): Observable[Room] = roomApi.createRoom(request)
 
@@ -22,6 +21,11 @@ class RoomDataStoreNetwork(private val roomApi: RoomApi) extends RoomDataStore {
 
   override def sendMessage(request: SendMessageRequest): Observable[Message] = roomApi.sendMessage(request)
   
+  override def leaveRoom(request: RoomLeaveRequest): Observable[Participation] = roomApi.leaveRoom(request)
+  
+  override def getRoomParticipations(request: GetRoomParticipationsRequest): Observable[Set[Participation]] =
+    roomApi.getRoomParticipations(request)
+    
   override def getUserParticipations(request: GetUserParticipationsRequest): Observable[List[Room]] =
     roomApi.getUserParticipations(request)
 }

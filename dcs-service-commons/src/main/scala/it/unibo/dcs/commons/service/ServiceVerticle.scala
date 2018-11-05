@@ -7,7 +7,8 @@ import io.vertx.scala.core.http.{HttpServer, HttpServerOptions}
 import io.vertx.scala.ext.web.Router
 import it.unibo.dcs.commons.VertxHelper.Implicits._
 import it.unibo.dcs.commons.service.ServiceVerticle._
-import it.unibo.dcs.commons.{Logging, VertxHelper}
+import it.unibo.dcs.commons.VertxHelper
+import it.unibo.dcs.commons.logging.Logging
 import rx.lang.scala.Observable
 
 abstract class ServiceVerticle extends ScalaVerticle with Logging {
@@ -25,7 +26,7 @@ abstract class ServiceVerticle extends ScalaVerticle with Logging {
 
   protected[this] final def startHttpServer(host: String,
                                             port: Int,
-                                            options: HttpServerOptions = DEFAULT_OPTIONS): Observable[HttpServer] =
+                                            options: HttpServerOptions = defaultOptions): Observable[HttpServer] =
     VertxHelper.toObservable[HttpServer] {
       vertx.createHttpServer(options)
         .requestHandler(_router accept _)
@@ -40,6 +41,6 @@ abstract class ServiceVerticle extends ScalaVerticle with Logging {
 
 object ServiceVerticle {
 
-  def DEFAULT_OPTIONS: HttpServerOptions = HttpServerOptions()
+  def defaultOptions: HttpServerOptions = HttpServerOptions()
 
 }

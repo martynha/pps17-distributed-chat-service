@@ -24,10 +24,12 @@ class AuthenticationRepositoryImpl(private[this] val authDataStore: Authenticati
   override def invalidToken(token: String, tokenExpirationDate: Date): Observable[Unit] =
     authDataStore.invalidToken(token, tokenExpirationDate)
 
-  override def isTokenValid(token: String): Observable[Boolean] = authDataStore.isTokenValid(token)
+  override def isTokenValid(token: String): Observable[Boolean] =
+    authDataStore.isTokenValid(token)
     .onErrorResumeNext(_ => Observable.error(InvalidTokenException))
 
-  override def deleteUser(username: String, token: String): Observable[Unit] = authDataStore.deleteUser(username, token)
+  override def deleteUser(username: String, token: String): Observable[Unit] =
+    authDataStore.deleteUser(username, token)
     .onErrorResumeNext(_ => Observable.error(UserNotFoundException(username)))
 }
 

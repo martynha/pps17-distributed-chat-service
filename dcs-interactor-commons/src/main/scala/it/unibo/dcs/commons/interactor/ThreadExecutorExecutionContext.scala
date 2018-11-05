@@ -1,8 +1,8 @@
 package it.unibo.dcs.commons.interactor
 
 import io.vertx.scala.core.Vertx
-import it.unibo.dcs.commons.Logging
 import it.unibo.dcs.commons.interactor.executor.ThreadExecutor
+import it.unibo.dcs.commons.logging.Logging
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success}

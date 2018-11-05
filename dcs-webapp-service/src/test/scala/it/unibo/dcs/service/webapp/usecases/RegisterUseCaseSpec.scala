@@ -3,7 +3,8 @@ package it.unibo.dcs.service.webapp.usecases
 import it.unibo.dcs.service.webapp.interaction.Requests.RegisterUserRequest
 import it.unibo.dcs.service.webapp.interaction.Results.RegisterResult
 import it.unibo.dcs.service.webapp.repositories.{RoomRepository, UserRepository}
-import it.unibo.dcs.service.webapp.usecases.RegisterUserUseCase
+import it.unibo.dcs.service.webapp.usecases.commons.Mocks._
+import it.unibo.dcs.service.webapp.usecases.commons.UseCaseSpec
 import rx.lang.scala.{Observable, Subscriber}
 
 import scala.language.postfixOps
@@ -11,9 +12,6 @@ import scala.language.postfixOps
 class RegisterUseCaseSpec extends UseCaseSpec {
 
   private val registerRequest = RegisterUserRequest(user.username, user.firstName, user.lastName, "password", "password")
-
-  private val userRepository: UserRepository = mock[UserRepository]
-  private val roomRepository: RoomRepository = mock[RoomRepository]
 
   private val registerResult: RegisterResult = RegisterResult(user, token)
 
@@ -28,7 +26,7 @@ class RegisterUseCaseSpec extends UseCaseSpec {
     (authRepository registerUser _) expects registerRequest returns (Observable just token)
     // userRepository is called with `registerRequest` as parameter returns an observable that contains only `user`
     (userRepository registerUser _) expects registerRequest returns (Observable just user)
-    (roomRepository registerUser _) expects registerRequest returns (Observable empty)
+    (roomRepository registerUser _) expects registerRequest returns (Observable just Unit)
 
     // When
     // createUserUseCase is executed with argument `request`

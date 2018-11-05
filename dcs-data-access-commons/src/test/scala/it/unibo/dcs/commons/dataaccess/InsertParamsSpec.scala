@@ -5,12 +5,14 @@ import org.scalatest.FlatSpec
 
 final class InsertParamsSpec extends FlatSpec {
 
+  val paramNumber = 5
+
   val params = InsertParams(new JsonObject()
     .put("username", "mvandi")
     .put("first_name", "Mattia")
     .put("last_name", "Vandi")
     .put("visible", true)
-    .put("count", 5)
+    .put("count", paramNumber)
   )
 
   assertResult("`username`, `first_name`, `last_name`, `visible`, `count`")(params.columnNames)

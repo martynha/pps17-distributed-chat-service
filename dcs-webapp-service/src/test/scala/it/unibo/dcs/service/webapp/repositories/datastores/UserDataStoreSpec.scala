@@ -1,8 +1,8 @@
 package it.unibo.dcs.service.webapp.repositories.datastores
 
 import it.unibo.dcs.service.webapp.model.User
-import it.unibo.dcs.service.webapp.repositories.datastores.UserDataStore
 import it.unibo.dcs.service.webapp.repositories.datastores.api.UserApi
+import it.unibo.dcs.service.webapp.repositories.datastores.commons.DataStoreSpec
 import it.unibo.dcs.service.webapp.repositories.datastores.impl.UserDataStoreNetwork
 import rx.lang.scala.{Observable, Subscriber}
 
@@ -16,6 +16,7 @@ class UserDataStoreSpec extends DataStoreSpec {
   private val createUserSubscriber = stub[Subscriber[User]]
   private val getUserSubscriber = stub[Subscriber[User]]
   private val deleteUserSubscriber = stub[Subscriber[String]]
+  private val editUserSubscriber = stub[Subscriber[User]]
 
   it should "create a new user" in {
     // Given
@@ -60,5 +61,19 @@ class UserDataStoreSpec extends DataStoreSpec {
     (deleteUserSubscriber onNext _) verify user.username once()
     // Verify that `subscriber.onCompleted` has been called once
     (() => deleteUserSubscriber onCompleted) verify() once()
+  }
+
+  it should "edit an existing user" in {
+    // Given
+    (userApi editUser _) expects editUserRequest returns Observable.just(user) once()
+
+    // When
+    dataStore.editUser(editUserRequest).subscribe(editUserSubscriber)
+
+    // Then
+    // Verify that `subscriber.onNext` has been called once with `token` as argument
+    (editUserSubscriber onNext _) verify user once()
+    // Verify that `subscriber.onCompleted` has been called once
+    (() => editUserSubscriber onCompleted) verify() once()
   }
 }

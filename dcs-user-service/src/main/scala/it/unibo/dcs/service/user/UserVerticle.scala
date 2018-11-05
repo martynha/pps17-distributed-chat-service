@@ -12,12 +12,13 @@ import it.unibo.dcs.commons.interactor.ThreadExecutorExecutionContext
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
 import it.unibo.dcs.commons.service.{HttpEndpointPublisher, ServiceVerticle}
 import it.unibo.dcs.commons.validation.Validator
-import it.unibo.dcs.service.user.interactor.usecases.{CreateUserUseCase, GetUserUseCase}
-import it.unibo.dcs.service.user.interactor.validations.ValidateUserCreation
+import it.unibo.dcs.service.user.UserVerticle.Implicits._
+import it.unibo.dcs.service.user.interactor.usecases._
+import it.unibo.dcs.service.user.interactor.validations.{ValidateUserCreation, ValidateUserEditing}
 import it.unibo.dcs.service.user.repository.UserRepository
-import it.unibo.dcs.service.user.request.{CreateUserRequest, GetUserRequest}
+import it.unibo.dcs.service.user.request.{CreateUserRequest, EditUserRequest, GetUserRequest}
 import it.unibo.dcs.service.user.subscriber._
-import it.unibo.dcs.service.user.validator.UserCreationValidator
+import it.unibo.dcs.service.user.validator.{UserCreationValidator, UserEditingValidator}
 import org.apache.http.entity.ContentType
 
 import scala.language.implicitConversions
@@ -72,6 +73,12 @@ final class UserVerticle(private[this] val userRepository: UserRepository, priva
       new CreateUserUseCase(threadExecutor, postExecutionThread, userRepository, validation)
     }
 
+    val editUserUseCase = {
+      val validator: Validator[EditUserRequest] = UserEditingValidator(userRepository)
+      val validation = new ValidateUserEditing(threadExecutor, postExecutionThread, validator)
+      new EditUserUseCase(threadExecutor, postExecutionThread, userRepository, validation)
+    }
+
     router.get("/users/:username")
       .produces(ContentType.APPLICATION_JSON)
       .handler(routingContext => {
@@ -79,6 +86,21 @@ final class UserVerticle(private[this] val userRepository: UserRepository, priva
         val request = Json.obj(("username", username))
         val subscriber = new GetUserSubscriber(routingContext.response())
         getUserUseCase(request, subscriber)
+      })
+
+    router.put("/users/:username")
+      .consumes(ContentType.APPLICATION_JSON)
+      .produces(ContentType.APPLICATION_JSON)
+      .handler(routingContext => {
+        val body = routingContext.getBodyAsJson().head
+        val username = routingContext.request().getParam("username").head
+        val firstName = body.getString("firstName")
+        val lastName = body.getString("lastName")
+        val bio = body.getString("bio")
+        val visible = body.getBoolean("visible")
+        val request = EditUserRequest(username, firstName, lastName, bio, visible)
+        val subscriber = new EditUserSubscriber(routingContext.response())
+        editUserUseCase(request, subscriber)
       })
 
     router.post("/users")

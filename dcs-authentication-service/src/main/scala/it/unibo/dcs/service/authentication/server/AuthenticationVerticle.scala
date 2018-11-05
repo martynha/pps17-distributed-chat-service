@@ -78,8 +78,8 @@ final class AuthenticationVerticle(private[this] val authenticationRepository: A
     val threadExecutor = ThreadExecutorExecutionContext(vertx)
     val postExecutionThread = PostExecutionThread(RxHelper.scheduler(this.ctx))
 
-    val useCases = createUseCases(threadExecutor, postExecutionThread, authenticationRepository, jwtAuth)
     val validations = createValidations(threadExecutor, postExecutionThread, authenticationRepository)
+    val useCases = createUseCases(threadExecutor, postExecutionThread, authenticationRepository, jwtAuth, validations)
     ServiceRequestHandlerImpl(useCases, validations)
   }
 

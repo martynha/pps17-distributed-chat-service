@@ -3,9 +3,8 @@ package it.unibo.dcs.service.webapp.repositories
 import java.util.Date
 
 import it.unibo.dcs.service.webapp.interaction.Requests._
-import it.unibo.dcs.service.webapp.interaction.Results.SendMessageResult
 import it.unibo.dcs.service.webapp.model.{Message, Participation, Room}
-import it.unibo.dcs.service.webapp.repositories.RoomRepository
+import it.unibo.dcs.service.webapp.repositories.commons.RepositorySpec
 import it.unibo.dcs.service.webapp.repositories.datastores.RoomDataStore
 import it.unibo.dcs.service.webapp.repositories.impl.RoomRepositoryImpl
 import rx.lang.scala.{Observable, Subscriber}
@@ -17,10 +16,6 @@ class RoomRepositorySpec extends RepositorySpec {
   private val roomDataStore: RoomDataStore = mock[RoomDataStore]
   private val repository: RoomRepository = new RoomRepositoryImpl(roomDataStore)
 
-  private val room = Room("Room 1")
-  private val rooms: List[Room] = List(room, room, room)
-  private val token = "token"
-  private val participation = Participation(new Date(), room, user.username)
   private val messageContent = "Message content"
   private val messageTimestamp = new Date
   private val message = Message(room, user.username, messageContent, messageTimestamp)
@@ -30,13 +25,33 @@ class RoomRepositorySpec extends RepositorySpec {
   private val getRoomsRequest = GetRoomsRequest("martynha", token)
   private val joinRoomRequest = RoomJoinRequest(room.name, user.username, token)
   private val sendMessageRequest = SendMessageRequest(room.name, user.username, messageContent, messageTimestamp, token)
+  private val leaveRoomRequest = RoomLeaveRequest(room.name, user.username, token)
+  private val getRoomParticipationsRequest = GetRoomParticipationsRequest(room.name, user.username, token)
 
   private val joinRoomSubscriber = stub[Subscriber[Participation]]
+  private val leaveRoomSubscriber = stub[Subscriber[Participation]]
   private val createRoomSubscriber: Subscriber[Room] = stub[Subscriber[Room]]
   private val deleteRoomSubscriber: Subscriber[String] = stub[Subscriber[String]]
   private val registerUserSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
   private val getRoomsSubscriber: Subscriber[List[Room]] = stub[Subscriber[List[Room]]]
   private val sendMessageSubscriber = stub[Subscriber[Message]]
+  private val getRoomParticipationsSubscriber: Subscriber[Set[Participation]] = stub[Subscriber[Set[Participation]]]
+
+
+  it should "get all the participations for a given room" in {
+    //Given
+    (roomDataStore getRoomParticipations _) expects getRoomParticipationsRequest returns
+      Observable.just(participations)
+
+    //When
+    repository getRoomParticipations getRoomParticipationsRequest subscribe getRoomParticipationsSubscriber
+
+    //Then
+    //Verify that 'suscriber.onNext' has been callen once
+    (getRoomParticipationsSubscriber onNext _) verify participations once()
+    // Verify that `subscriber.onCompleted` has been called once
+    (() => getRoomParticipationsSubscriber onCompleted) verify() once()
+  }
 
   it should "create a new room" in {
     // Given
@@ -64,6 +79,20 @@ class RoomRepositorySpec extends RepositorySpec {
     (joinRoomSubscriber onNext _) verify participation once()
     // Verify that `subscriber.onCompleted` has been called once
     (() => joinRoomSubscriber onCompleted) verify() once()
+  }
+
+  it should "return the old participation when a user leaves a room" in {
+    // Given
+    (roomDataStore leaveRoom _) expects leaveRoomRequest returns Observable.just(participation) once()
+
+    // When
+    repository leaveRoom leaveRoomRequest subscribe leaveRoomSubscriber
+
+    // Then
+    // Verify that `subscriber.onNext` has been called once with `token` as argument
+    (leaveRoomSubscriber onNext _) verify participation once()
+    // Verify that `subscriber.onCompleted` has been called once
+    (() => leaveRoomSubscriber onCompleted) verify() once()
   }
 
   it should "delete an existing room" in {
@@ -126,10 +155,10 @@ class RoomRepositorySpec extends RepositorySpec {
     val subscriber = stub[Subscriber[List[Room]]]
 
     //Given
-    (roomDataStore getUserParticipations  _) expects request returns Observable.just(rooms)
+    (roomDataStore getUserParticipations _) expects request returns Observable.just(rooms)
 
     //When
-    repository getUserParticipations  request subscribe subscriber
+    repository getUserParticipations request subscribe subscriber
 
     //Then
     //Verify that 'suscriber.onNext' has been callen once
@@ -137,4 +166,5 @@ class RoomRepositorySpec extends RepositorySpec {
     // Verify that `subscriber.onCompleted` has been called once
     (() => subscriber onCompleted) verify() once()
   }
+
 }

@@ -14,9 +14,9 @@ class JwtTokenGenerator(jwtAuth: JWTAuth) {
     * @param username the username of the user
     * @return a jwt token */
   def generateToken(username: String): String = {
-    val MAXIMUM_TOKEN_AGE = 1440 // in minutes, it is equal to one day
+    val MAXIMUM_TOKEN_AGE = 300 // in minutes, it is equal to 5 hours
     jwtAuth.generateToken(Json.obj(("sub", username), ("iat", new Date().toInstant.toEpochMilli / 1000)),
-      JWTOptions().setExpiresInMinutes(MAXIMUM_TOKEN_AGE)) //expires after one day
+      JWTOptions().setExpiresInMinutes(MAXIMUM_TOKEN_AGE)) //expires after 5 hours
   }
 
 }

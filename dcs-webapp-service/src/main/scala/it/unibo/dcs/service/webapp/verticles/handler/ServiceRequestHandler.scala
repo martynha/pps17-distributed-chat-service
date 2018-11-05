@@ -19,12 +19,26 @@ trait ServiceRequestHandler {
 
   def handleSendMessage(context: RoutingContext)(implicit ctx: Context): Unit
 
+  /** It retrieves to the client all the participations for a given room
+    *
+    * @param context Vertx routing context
+    * @param ctx     Vertx context passed implicitly
+    */
+  def handleGetRoomParticipations(context: RoutingContext)(implicit ctx: Context): Unit
+
   /** Join a user in a specified room
     *
     * @param context Vertx routing context
     * @param ctx     Vertx context passed implicitly
     */
   def handleJoinRoom(context: RoutingContext)(implicit ctx: Context): Unit
+
+  /** User leaves the specified room
+    *
+    * @param context Vertx routing context
+    * @param ctx     Vertx context passed implicitly
+    */
+  def handleLeaveRoom(context: RoutingContext)(implicit ctx: Context): Unit
 
   /** Login request handler
     *
@@ -43,6 +57,12 @@ trait ServiceRequestHandler {
     * @param context Vertx routing context
     * @param ctx     Vertx context passed implicitly */
   def handleLogout(context: RoutingContext)(implicit ctx: Context): Unit
+
+  /** Login request handler
+    *
+    * @param context Vertx routing context
+    * @param ctx     Vertx context passed implicitly */
+  def handleUserEditing(context: RoutingContext)(implicit ctx: Context): Unit
 
   def handleRoomDeletion(context: RoutingContext)(implicit ctx: Context): Unit
 

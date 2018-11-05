@@ -11,6 +11,7 @@ final class ValidatorTest extends FlatSpec {
   }
 
   it should "throw a NullPointerException" in {
+    //noinspection ScalaStyle
     validator.validate(null).subscribe(_ => (), ex => assert(ex.isInstanceOf[NullPointerException]))
   }
 

@@ -4,6 +4,7 @@ import java.util.Date
 
 package object model {
 
-  final case class User(username: String, firstName: String, lastName: String, bio: String, visible: Boolean, lastSeen: Date)
+  final case class User(username: String, firstName: String, lastName: String, bio: String,
+                        visible: Boolean, lastSeen: Date)
 
 }

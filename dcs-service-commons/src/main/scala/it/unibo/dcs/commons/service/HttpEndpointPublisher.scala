@@ -12,7 +12,7 @@ trait HttpEndpointPublisher {
               host: String = DEFAULT_HOST,
               port: Int = DEFAULT_PORT,
               root: String = DEFAULT_ROOT,
-              metadata: JsonObject = DEFAULT_METADATA): Observable[Record]
+              metadata: JsonObject = defaultMetadata): Observable[Record]
 
   def unpublish(record: Record): Observable[Record]
 
@@ -27,6 +27,6 @@ object HttpEndpointPublisher {
   val DEFAULT_PORT = 80
   val DEFAULT_ROOT = "/"
 
-  def DEFAULT_METADATA: JsonObject = new JsonObject()
+  def defaultMetadata: JsonObject = new JsonObject()
 
 }

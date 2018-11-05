@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
-import { ChatService } from '../../service/chat.service';
-import { AuthService } from '../../service/auth.service';
+import {Component, OnInit} from '@angular/core';
+import {NavigationEnd, Router} from '@angular/router';
+import {TranslateService} from '@ngx-translate/core';
+import {ChatService} from '../../service/chat.service';
+import {AuthService} from '../../service/auth.service';
 
 @Component({
   selector: 'app-topnav',
@@ -15,12 +15,16 @@ export class TopnavComponent implements OnInit {
 
   selectedRoom: string;
 
-  constructor(
+  roomInfoOpened: boolean;
+
+ constructor(
     private router: Router,
     private auth: AuthService,
     private chat: ChatService,
     private translate: TranslateService
-  ) {}
+  ) {
+    this.roomInfoOpened = false;
+  }
 
   ngOnInit() {
     this.router.events.subscribe(val => {
@@ -35,6 +39,13 @@ export class TopnavComponent implements OnInit {
 
     this.chat.onRoomSelected()
       .subscribe(room => (this.selectedRoom = room.name));
+
+    this.chat.onRoomDeleted().subscribe(name => {
+      if (name === this.selectedRoom) {
+        this.selectedRoom = '';
+        this.router.navigateByUrl('/')
+      }
+    });
   }
 
   isToggled(): boolean {
@@ -63,7 +74,16 @@ export class TopnavComponent implements OnInit {
   }
 
   roomInfo() {
-    this.router.navigate(['/rooms', this.selectedRoom, 'info']);
+    if (!this.roomInfoOpened){
+      this.router.navigate(['/rooms', this.selectedRoom, 'info']);
+      this.roomInfoOpened = true;
+    }else {
+      this.router.navigate(['/rooms', this.selectedRoom]);
+      this.roomInfoOpened = false;
+    }
   }
 
+  get infoButtonCondition(): boolean {
+    return this.selectedRoom != undefined && this.selectedRoom != '' && !this.roomInfoOpened
+  }
 }
