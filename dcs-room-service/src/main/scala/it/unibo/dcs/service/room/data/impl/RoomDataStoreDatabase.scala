@@ -14,6 +14,8 @@ import it.unibo.dcs.service.room.model._
 import it.unibo.dcs.service.room.request._
 import rx.lang.scala.Observable
 
+import it.unibo.dcs.commons.dataaccess.Implicits.{dateToString}
+
 import scala.language.implicitConversions
 
 final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDatabase(connection) with RoomDataStore {
@@ -110,8 +112,12 @@ private[impl] object RoomDataStoreDatabase {
     implicit def requestToParams(request: JoinRoomRequest): JsonArray =
       new JsonArray().add(request.username).add(request.name)
 
-    implicit def requestToParams(request: SendMessageRequest): JsonArray =
-      new JsonArray().add(request.name).add(request.username).add(request.content).add(request.timestamp)
+    implicit def requestToParams(request: SendMessageRequest): JsonArray = {
+      val timestamp: String = request.timestamp
+      new JsonArray().add(request.name).add(request.username)
+        .add(request.content).add(timestamp)
+    }
+
     implicit def requestToParams(request: GetUserParticipationsRequest): JsonArray =
       new JsonArray().add(request.username)
 

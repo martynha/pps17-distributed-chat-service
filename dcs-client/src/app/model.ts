@@ -4,7 +4,9 @@ export interface Message {
 
     timestamp: Date;
 
-    participation: Participation;
+    username: string;
+
+    room: Room;
 
 }
 

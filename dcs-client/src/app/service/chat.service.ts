@@ -46,6 +46,7 @@ export class ChatService {
     });
 
     eventBus.registerHandler(ChatService.MESSAGE_SENT, (err, msg) => {
+      console.log(msg.body);
       this.messageSent.next(msg.body);
     });
   }
@@ -109,8 +110,8 @@ export class ChatService {
   sendMessage(name: string, message: string): Observable<void> {
     const user = this.auth.user;
     const body = new SendMessageRequest(user.username, message);
-    return this.http.post<void>(ChatService.ROOMS + '/' + name + '/messages', {
-      body: body, 
+    return this.http.post<void>(ChatService.ROOMS + '/' + name + '/messages',
+      body, {
       headers: this.auth.authOptions
     });
   }

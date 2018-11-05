@@ -1,19 +1,10 @@
 <div class="wrap">
     <div id="chatWindow" class="container">
-        <div class="bubble left"><p>msg</p></div>
-        <div class="bubble left"><p>long message</p></div>
-        <div class="bubble right"><p>ultra long message which can wrap at eighty percent </p></div>
-        <div class="bubble left"><p>lorem ipsum</p></div>
-        <div class="bubble right"><p>very long message</p></div>    
-        <div class="bubble right"><p>one more message</p></div>    
-        <div class="bubble left"><p>lorem ipsum</p></div>
-        <div class="bubble right"><p>another message</p></div>    
-        <div class="bubble left"><p>lorem ipsum</p></div>
-        <div class="bubble right"><p>yet another message</p></div>    
-        <div class="bubble left"><p>lorem ipsum</p></div>
-    </div>
-    <div id="inputWindow" class="form">
-        <input id="inp" type="text" />
-        <input id="btn" type="button" value="Send" />
+        <mat-nav-list>
+            <div mat-list-item *ngFor="let message of messages" class="bubble" [ngClass]="isUserMessage(message)? 'right' : 'left'">
+                <p>{{message.content}}</p>
+            </div>
+        </mat-nav-list>
     </div>
 </div>
+

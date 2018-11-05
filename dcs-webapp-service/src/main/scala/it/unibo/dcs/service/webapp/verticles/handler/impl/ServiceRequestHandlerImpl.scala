@@ -1,5 +1,7 @@
 package it.unibo.dcs.service.webapp.verticles.handler.impl
 
+import java.util.Date
+
 import io.vertx.core.http.HttpHeaders
 import io.vertx.lang.scala.json.{Json, JsonObject}
 import io.vertx.scala.core.Context
@@ -16,6 +18,8 @@ import it.unibo.dcs.service.webapp.verticles.Addresses._
 import it.unibo.dcs.service.webapp.verticles.handler.ServiceRequestHandler
 import it.unibo.dcs.service.webapp.verticles.handler.impl.subscribers._
 
+import it.unibo.dcs.commons.dataaccess.Implicits.dateToString
+
 import scala.language.postfixOps
 
 final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
@@ -25,7 +29,7 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
 
   private[this] lazy val roomDeleted = eventBus.address(Rooms.deleted)
   private[this] lazy val roomJoined = eventBus.address(Rooms.joined)
-  private[this] lazy val messageSent = eventBus.address(Message.sent)
+  private[this] lazy val messageSent = eventBus.address(Messages.sent)
 
   override def handleRegistration(context: RoutingContext)(implicit ctx: Context): Unit =
     handleRequestBody(context) {
@@ -107,11 +111,12 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
             handleRequestBody(context) {
               request =>
                 val useCase = SendMessageUseCase(authRepository, roomRepository)
-                useCase(request.put(JsonLabels.roomNameLabel, roomName).put(JsonLabels.tokenLabel, token),
+                val timestamp: String = new Date
+                useCase(request.put(JsonLabels.roomNameLabel, roomName).put(JsonLabels.tokenLabel, token).put(JsonLabels.messageTimestampLabel, timestamp),
                   SendMessageSubscriber(context.response(), messageSent))
             }
         }
-    }
+  }
     
   override def handleGetUserParticipations(context: RoutingContext)(implicit ctx: Context): Unit = {
     handleRequestParam(context, ParamLabels.usernameLabel) {

@@ -10,5 +10,5 @@ package object model {
 
   final case class User(username: String)
 
-  final case class Message(room: Room, username: String, content: String, joinDate: Date)
+  final case class Message(room: Room, username: String, content: String, timestamp: Date)
 }

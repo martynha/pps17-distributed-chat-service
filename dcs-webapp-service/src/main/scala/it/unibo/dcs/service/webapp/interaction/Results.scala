@@ -60,7 +60,8 @@ object Results {
       Json.fromObjectString(gson.toJson(result.participation))
     }
 
-    implicit def sendMessageResultToJsonObject(result: SendMessageResult): JsonObject = Json.fromObjectString(gson.toJson(result.message))
+    implicit def sendMessageResultToJsonObject(result: SendMessageResult): JsonObject =
+      Json.fromObjectString(gson.toJson(result.message))
 
     implicit def getRoomsToJsonArray(result: GetRoomsResult): JsonArray = {
       result.rooms

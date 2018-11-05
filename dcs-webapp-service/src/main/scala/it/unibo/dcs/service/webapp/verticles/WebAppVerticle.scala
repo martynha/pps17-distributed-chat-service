@@ -11,7 +11,7 @@ import io.vertx.servicediscovery.ServiceDiscovery
 import it.unibo.dcs.commons.VertxWebHelper.Implicits.contentTypeToString
 import it.unibo.dcs.commons.service.{HttpEndpointPublisher, HttpEndpointPublisherImpl, ServiceVerticle}
 import it.unibo.dcs.service.webapp.interaction.Labels._
-import it.unibo.dcs.service.webapp.verticles.Addresses.Rooms
+import it.unibo.dcs.service.webapp.verticles.Addresses.{Messages, Rooms}
 import it.unibo.dcs.service.webapp.verticles.handler.ServiceRequestHandler
 import org.apache.http.entity.ContentType
 import org.apache.http.entity.ContentType._
@@ -145,6 +145,7 @@ final class WebAppVerticle extends ServiceVerticle {
     val options = BridgeOptions()
       .addOutboundPermitted(PermittedOptions().setAddress(Rooms.deleted))
       .addOutboundPermitted(PermittedOptions().setAddress(Rooms.joined))
+      .addOutboundPermitted(PermittedOptions().setAddress(Messages.sent))
 
     SockJSHandler.create(vertx).bridge(options)
   }

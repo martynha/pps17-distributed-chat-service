@@ -16,6 +16,7 @@ final class SendMessageSubscriber (protected override val response: HttpServerRe
 
   override def onNext(result: SendMessageResult): Unit = {
     val res: JsonObject = result
+    System.out.println(res)
     response.setStatus(HttpResponseStatus.CREATED).end(res.encode())
     publisher.publish(res)
   }
