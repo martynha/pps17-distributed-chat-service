@@ -1,6 +1,5 @@
 package it.unibo.dcs.exceptions
 
-import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.core.http.HttpServerResponse
 import it.unibo.dcs.commons.VertxWebHelper.Implicits.RichHttpServerResponse
 import it.unibo.dcs.exceptions.Implicits.{throwableToHttpResponseStatus, throwableToJsonObject}

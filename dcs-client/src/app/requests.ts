@@ -29,8 +29,8 @@ export class LogoutRequest {
 
 export class CreateRoomRequest {
 
-    constructor(public name: string, public username: string) {
-    }
+  constructor(public name: string, public username: string) {
+  }
 
 }
 
@@ -49,11 +49,12 @@ export class JoinRoomRequest {
 }
 
 export class SendMessageRequest {
-  
-  constructor(public username:string, public content:string) {
+
+  constructor(public username: string, public content: string) {
 
   }
-  
+}
+
 export class GetRoomParticipationsRequest {
 
   constructor(public username: string) {
