@@ -16,10 +16,6 @@ class RoomRepositorySpec extends RepositorySpec {
   private val roomDataStore: RoomDataStore = mock[RoomDataStore]
   private val repository: RoomRepository = new RoomRepositoryImpl(roomDataStore)
 
-  private val messageContent = "Message content"
-  private val messageTimestamp = new Date
-  private val message = Message(room, user.username, messageContent, messageTimestamp)
-
   private val roomCreationRequest = CreateRoomRequest("Room 1", user.username, token)
   private val deleteRoomRequest = DeleteRoomRequest(room.name, user.username, token)
   private val getRoomsRequest = GetRoomsRequest("martynha", token)
@@ -27,6 +23,7 @@ class RoomRepositorySpec extends RepositorySpec {
   private val sendMessageRequest = SendMessageRequest(room.name, user.username, messageContent, messageTimestamp, token)
   private val leaveRoomRequest = RoomLeaveRequest(room.name, user.username, token)
   private val getRoomParticipationsRequest = GetRoomParticipationsRequest(room.name, user.username, token)
+  private val getMessagesRequest = GetMessagesRequest(user.username, room.name, token)
 
   private val joinRoomSubscriber = stub[Subscriber[Participation]]
   private val leaveRoomSubscriber = stub[Subscriber[Participation]]
@@ -36,7 +33,7 @@ class RoomRepositorySpec extends RepositorySpec {
   private val getRoomsSubscriber: Subscriber[List[Room]] = stub[Subscriber[List[Room]]]
   private val sendMessageSubscriber = stub[Subscriber[Message]]
   private val getRoomParticipationsSubscriber: Subscriber[Set[Participation]] = stub[Subscriber[Set[Participation]]]
-
+  private val getMessagesSubscriber: Subscriber[List[Message]] = stub[Subscriber[List[Message]]]
 
   it should "get all the participations for a given room" in {
     //Given
@@ -135,7 +132,7 @@ class RoomRepositorySpec extends RepositorySpec {
     (() => getRoomsSubscriber onCompleted) verify() once()
   }
 
-  it should "save a new message" in {
+  it should "save a new message in a given room" in {
     //Given
     (roomDataStore sendMessage _) expects sendMessageRequest returns Observable.just(message)
 
@@ -165,6 +162,20 @@ class RoomRepositorySpec extends RepositorySpec {
     (subscriber onNext _) verify rooms once()
     // Verify that `subscriber.onCompleted` has been called once
     (() => subscriber onCompleted) verify() once()
+  }
+
+  it should "retrieve all the messages for the given room" in {
+    //Given
+    (roomDataStore getMessages _) expects getMessagesRequest returns Observable.just(messages)
+
+    //When
+    repository getMessages getMessagesRequest subscribe getMessagesSubscriber
+
+    //Then
+    //Verify that 'suscriber.onNext' has been callen once
+    (getMessagesSubscriber onNext _) verify messages once()
+    // Verify that `subscriber.onCompleted` has been called once
+    (() => getMessagesSubscriber onCompleted) verify() once()
   }
 
 }

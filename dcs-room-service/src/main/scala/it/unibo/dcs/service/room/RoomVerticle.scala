@@ -170,7 +170,7 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
       .produces(ContentType.APPLICATION_JSON)
       .handler(routingContext => {
         val roomName = routingContext.request().getParam("name").head
-        val request = routingContext.getBodyAsJson().head.put("name", roomName)
+        val request = GetMessagesRequest(roomName)
         val subscriber = new GetMessagesSubscriber(routingContext.response())
         getMessagesUseCase(request, subscriber)
       })
@@ -235,8 +235,6 @@ object RoomVerticle {
     implicit def jsonObjectToLeaveRoomRequest(json: JsonObject): LeaveRoomRequest =
       gson fromJsonObject[LeaveRoomRequest] json
 
-    implicit def jsonObjectToGetMessagesRequest(json: JsonObject): GetMessagesRequest =
-      gson fromJsonObject[GetMessagesRequest] json
   }
 
 }

@@ -84,6 +84,13 @@ final class WebAppVerticle extends ServiceVerticle {
     getRoomParticipationsRoute(apiRouter)
     getUserParticipationsRoute(apiRouter)
     getUserRoute(apiRouter)
+    getMessagesRoute(apiRouter)
+  }
+
+  private def getMessagesRoute(apiRouter: Router)(implicit ctx: core.Context) = {
+    apiRouter.get(roomsURI + pathParamSeparator + ParamLabels.roomNameLabel + "/messages")
+      .produces(APPLICATION_JSON)
+      .handler(context => requestHandler handleGetMessages context)
   }
 
   private def getUserRoute(apiRouter: Router)(implicit ctx: core.Context) = {

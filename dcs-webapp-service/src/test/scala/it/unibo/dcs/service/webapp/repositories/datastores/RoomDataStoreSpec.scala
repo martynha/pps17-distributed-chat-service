@@ -17,10 +17,6 @@ class RoomDataStoreSpec extends DataStoreSpec {
   private val roomApi: RoomApi = mock[RoomApi]
   private val dataStore: RoomDataStore = new RoomDataStoreNetwork(roomApi)
 
-  private val messageContent = "Message content"
-  private val messageTimestamp = new Date
-  private val message = Message(room, user.username, messageContent, messageTimestamp)
-
   private val roomCreationRequest = CreateRoomRequest("Room 1", user.username, token)
   private val roomDeletionRequest = DeleteRoomRequest(room.name, user.username, token)
   private val getRoomsRequest = GetRoomsRequest("martynha", token)
@@ -28,6 +24,7 @@ class RoomDataStoreSpec extends DataStoreSpec {
   private val sendMessageRequest = SendMessageRequest(room.name, user.username, messageContent, messageTimestamp, token)
   private val leaveRoomRequest = RoomLeaveRequest(room.name, user.username, token)
   private val getRoomParticipationsRequest = GetRoomParticipationsRequest(room.name, user.username, token)
+  private val getMessagesRequest = GetMessagesRequest(user.username, room.name, token)
 
   private val deleteRoomSubscriber = stub[Subscriber[String]]
   private val createRoomSubscriber = stub[Subscriber[Room]]
@@ -37,6 +34,7 @@ class RoomDataStoreSpec extends DataStoreSpec {
   private val sendMessageSubscriber = stub[Subscriber[Message]]
   private val leaveRoomSubscriber = stub[Subscriber[Participation]]
   private val getRoomParticipationsSubscriber: Subscriber[Set[Participation]] = stub[Subscriber[Set[Participation]]]
+  private val getMessagesSubscriber: Subscriber[List[Message]] = stub[Subscriber[List[Message]]]
 
   it should "gets a set of participations for a given room" in {
     //Given
@@ -137,7 +135,7 @@ class RoomDataStoreSpec extends DataStoreSpec {
     //
   }
 
-  it should "save a new message" in {
+  it should "save a new message in a given room" in {
     //Given
     (roomApi sendMessage _) expects sendMessageRequest returns Observable.just(message)
 
@@ -150,5 +148,19 @@ class RoomDataStoreSpec extends DataStoreSpec {
     // Verify that `subscriber.onCompleted` has been called once
     (() => sendMessageSubscriber onCompleted) verify() once()
     //
+  }
+
+  it should "retrieve all the messages for the given room" in {
+    //Given
+    (roomApi getMessages _) expects getMessagesRequest returns Observable.just(messages)
+
+    //When
+    dataStore getMessages getMessagesRequest subscribe getMessagesSubscriber
+
+    //Then
+    //Verify that 'suscriber.onNext' has been callen once
+    (getMessagesSubscriber onNext _) verify messages once()
+    // Verify that `subscriber.onCompleted` has been called once
+    (() => getMessagesSubscriber onCompleted) verify() once()
   }
 }

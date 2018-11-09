@@ -1,5 +1,7 @@
 package it.unibo.dcs.service.webapp.repositories.datastores.api.impl
 
+import java.util.Date
+
 import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
 import it.unibo.dcs.commons.RxHelper.Implicits.RichObservable
 import it.unibo.dcs.commons.service.{AbstractApi, HttpEndpointDiscovery}
@@ -14,9 +16,9 @@ import it.unibo.dcs.service.webapp.repositories.datastores.api.impl.RoomRestApi.
 import it.unibo.dcs.service.webapp.repositories.datastores.api.impl.RoomRestApi._
 import rx.lang.scala.Observable
 import it.unibo.dcs.commons.JsonHelper.Implicits.RichGson
+import it.unibo.dcs.commons.dataaccess.Implicits._
 
 import scala.concurrent.ExecutionContext.Implicits.global
-
 import scala.language.implicitConversions
 
 class RoomRestApi(private[this] val discovery: HttpEndpointDiscovery)
@@ -63,7 +65,7 @@ class RoomRestApi(private[this] val discovery: HttpEndpointDiscovery)
 
   override def getRooms(request: GetRoomsRequest): Observable[List[Room]] = {
     makeRequest(client =>
-      Observable.from(client.get(s"${RoomRestApi.roomsURI}?user=${request.username}").sendFuture()))
+      Observable.from(client.get(getRoomsURI(request.username)).sendFuture()))
       .map(bodyAsJsonArray(throw InternalException(emptyBodyErrorMessage)))
       .mapImplicitly
   }
@@ -88,6 +90,12 @@ class RoomRestApi(private[this] val discovery: HttpEndpointDiscovery)
       Observable.from(client.get(userParticipationsURI(request.username)).sendFuture()))
       .map(bodyAsJsonArray(throw InternalException(emptyBodyErrorMessage)))
       .mapImplicitly
+
+  override def getMessages(request: GetMessagesRequest): Observable[List[Message]] =
+    makeRequest(client =>
+      Observable.from(client.get(getMessagesURI(request.name)).sendFuture()))
+      .map(bodyAsJsonArray(throw InternalException(emptyBodyErrorMessage)))
+      .mapImplicitly
 }
 
 private[impl] object RoomRestApi {
@@ -100,19 +108,21 @@ private[impl] object RoomRestApi {
 
   private def userParticipationsURI(username: String): String = s"$usersURI/$username/participations"
 
-  private val emptyBodyErrorMessage = "Room service returned an empty body"
-
   private def roomParticipationsURI(roomName: String) = roomsURI + uriSeparator + roomName + "/participations"
 
   private def joinRoomURI(roomName: String) = s"$roomsURI/$roomName/participations"
 
-  private def leaveRoomURI(roomName: String, username: String) = {
-    joinRoomURI(roomName) + "/" + username
-  }
+  private def leaveRoomURI(roomName: String, username: String) = joinRoomURI(roomName) + "/" + username
 
   private def deleteRoomURI(roomName: String) = roomsURI + uriSeparator + roomName
 
   private def sendMessageURI(roomName: String) = s"$roomsURI/$roomName/messages"
+
+  private def getMessagesURI(roomName: String) = s"$roomsURI/$roomName/messages"
+
+  private def getRoomsURI(username: String) = s"${RoomRestApi.roomsURI}?user=$username"
+
+  private val emptyBodyErrorMessage = "Room service returned an empty body"
 
   private def toDeleteRoomRequest(deleteRoomRequest: DeleteRoomRequest): JsonObject = {
     Json.obj((JsonLabels.usernameLabel, deleteRoomRequest.username))
@@ -151,6 +161,17 @@ private[impl] object RoomRestApi {
         .toList
     }
 
+    implicit def jsonArrayToMessages(json: JsonArray): List[Message] = {
+      println(json)
+      Stream.range(0, json.size)
+        .map(json.getJsonObject)
+        .map(json => {
+          val timestamp: Date = json.getString("timestamp")
+          Message(Room(json.getString("name")), json.getString("username"),
+            json.getString("content"), timestamp)
+        })
+        .toList
+    }
   }
 
 }

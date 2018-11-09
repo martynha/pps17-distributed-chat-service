@@ -9,6 +9,13 @@ import rx.lang.scala.Observable
 /** Structure that allows access to rooms data by different means (e.g. network, file, database, ecc) */
 trait RoomDataStore {
 
+  /** It retrieves all the messages for a given room
+    *
+    * @param request needed data to retrieve all the participations for a given room
+    * @return an observable stream of all the participations
+    */
+  def getMessages(request: GetMessagesRequest): Observable[List[Message]]
+
   /** It sends the user's message to the room
     *
     * @param request needed data to send message

@@ -14,12 +14,6 @@ import scala.language.postfixOps
 import it.unibo.dcs.service.webapp.usecases.commons.Mocks._
 
 class SendMessageUseCaseSpec extends UseCaseSpec {
-  private val roomRepository: RoomRepository = mock[RoomRepository]
-
-  private val content = "Message content"
-  private val timestamp = new Date
-  private val message = Message(room, user.username, content, timestamp)
-
   private val sendMessageRequest = SendMessageRequest(room.name, user.username, content, timestamp, token)
 
   private val sendMessageResult = SendMessageResult(message)

@@ -19,6 +19,18 @@ trait ServiceRequestHandler {
 
   def handleGetUser(context: RoutingContext)(implicit ctx: Context): Unit
 
+  /** It allows you to send a message in a room
+    *
+    * @param context Vertx routing context
+    * @param ctx     Vertx context passed implicitly
+   */
+  def handleGetMessages(context: RoutingContext)(implicit ctx: Context): Unit
+
+  /**
+    *
+    * @param context Vertx routing context
+    * @param ctx     Vertx context passed implicitly
+   */
   def handleSendMessage(context: RoutingContext)(implicit ctx: Context): Unit
 
   /** It retrieves to the client all the participations for a given room
