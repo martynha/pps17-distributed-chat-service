@@ -23,10 +23,13 @@ final class GetRoomsUseCaseSpec extends FlatSpec with MockFactory with OneInstan
   val subscriber:Subscriber[List[Room]] = stub[Subscriber[List[Room]]]
 
   it should "Get all the rooms" in {
+    //Given
     (roomRepository getRooms _) expects request returns Observable.just(expectedResult)
 
+    //When
     getRoomsUseCase(request).subscribe(subscriber)
 
+    //Then
     subscriber.onNext _ verify expectedResult
   }
 

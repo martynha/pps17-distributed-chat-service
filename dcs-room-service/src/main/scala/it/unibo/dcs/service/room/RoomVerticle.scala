@@ -69,6 +69,11 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
       new SendMessageUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
     }
 
+    val getMessagesUseCase = {
+      val validation = new GetMessagesValidation(threadExecutor, postExecutionThread, GetMessagesValidator())
+      new GetMessagesUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
+    }
+
     router.post("/users")
       .consumes(ContentType.APPLICATION_JSON)
       .consumes(ContentType.APPLICATION_JSON)
@@ -161,6 +166,15 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
         getRoomsUseCase(request, subscriber)
       })
 
+    router.get("/rooms/:name/messages")
+      .produces(ContentType.APPLICATION_JSON)
+      .handler(routingContext => {
+        val roomName = routingContext.request().getParam("name").head
+        val request = routingContext.getBodyAsJson().head.put("name", roomName)
+        val subscriber = new GetMessagesSubscriber(routingContext.response())
+        getMessagesUseCase(request, subscriber)
+      })
+
     router.post("/rooms/:name/messages")
       .consumes(ContentType.APPLICATION_JSON)
       .produces(ContentType.APPLICATION_JSON)
@@ -215,11 +229,14 @@ object RoomVerticle {
     implicit def jsonObjectToJoinRoomRequest(json: JsonObject): JoinRoomRequest =
       gson fromJsonObject[JoinRoomRequest] json
 
-    implicit def JsonObjectToSendMessageRequest(json: JsonObject): SendMessageRequest =
+    implicit def jsonObjectToSendMessageRequest(json: JsonObject): SendMessageRequest =
       SendMessageRequest(json.getString("name"), json.getString("username"), json.getString("content"), new Date)
       
     implicit def jsonObjectToLeaveRoomRequest(json: JsonObject): LeaveRoomRequest =
       gson fromJsonObject[LeaveRoomRequest] json
+
+    implicit def jsonObjectToGetMessagesRequest(json: JsonObject): GetMessagesRequest =
+      gson fromJsonObject[GetMessagesRequest] json
   }
 
 }

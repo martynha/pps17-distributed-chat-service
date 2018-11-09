@@ -32,4 +32,5 @@ final class RoomRepositoryImpl(private[this] val roomDataStore: RoomDataStore) e
 
   override def getParticipationsByUsername(request: GetUserParticipationsRequest): Observable[List[Room]] = roomDataStore.getParticipationsByUsername(request)
 
+  override def getMessages(request: GetMessagesRequest): Observable[List[Message]] = roomDataStore.getMessages(request)
 }

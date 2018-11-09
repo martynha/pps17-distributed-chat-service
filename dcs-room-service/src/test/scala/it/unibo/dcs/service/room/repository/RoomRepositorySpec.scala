@@ -24,6 +24,11 @@ final class RoomRepositorySpec extends FlatSpec with MockFactory with OneInstanc
   private val secondParticipation = Participation(rooms.head, secondUsername , new Date())
   private val participations = Set(firstParticipation, secondParticipation)
 
+  val timestamp = new Date
+  val content = "Contenuto del messaggio"
+  val message = Message(Room(roomName), username, content, timestamp)
+  val messages = List(message, message, message)
+
   it should "get all the participations from the data store for a given room" in {
     val request = GetRoomParticipationsRequest(username)
     val subscriber = stub[Subscriber[Set[Participation]]]
@@ -97,10 +102,8 @@ final class RoomRepositorySpec extends FlatSpec with MockFactory with OneInstanc
   }
 
   it should "Send a message to room on the data store" in {
-    val timestamp = new Date
-    val content = "Contenuto del messaggio"
     val request = SendMessageRequest(roomName, username, content , timestamp)
-    val expectedResponse = Message(Room(roomName), username, content, timestamp)
+    val expectedResponse = message
 
     val subscriber = stub[Subscriber[Message]]
 
@@ -153,6 +156,21 @@ final class RoomRepositorySpec extends FlatSpec with MockFactory with OneInstanc
     roomRepository.getParticipationsByUsername(request).subscribe(subscriber)
 
     subscriber.onNext _ verify rooms once()
+    (() => subscriber onCompleted) verify() once()
+  }
+
+  it should "Get all the messages for a given room" in {
+    //Given
+    val request = GetMessagesRequest(roomName)
+    val subscriber = stub[Subscriber[List[Message]]]
+
+    (roomDataStore getMessages _) expects request returns Observable.just(messages)
+
+    //When
+    roomRepository.getMessages(request).subscribe(subscriber)
+
+    //Then
+    subscriber.onNext _ verify messages once()
     (() => subscriber onCompleted) verify() once()
   }
 

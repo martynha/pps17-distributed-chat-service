@@ -18,6 +18,8 @@ package object request {
 
   final case class SendMessageRequest(name: String, username: String, content: String, timestamp: Date)
 
+  final case class GetMessagesRequest(name: String)
+
   final case class LeaveRoomRequest(name: String, username: String) extends JoinOrLeaveRoomRequest
 
   final case class GetRoomParticipationsRequest(name: String)

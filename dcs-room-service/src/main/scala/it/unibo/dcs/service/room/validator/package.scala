@@ -83,7 +83,7 @@ package object validator {
       builder => builder
         .addRule(request =>
           Conditions.stringNotEmpty(request.name),
-            RoomNameRequiredException)
+          RoomNameRequiredException)
         .addRule(request =>
           Conditions.stringNotEmpty(request.username),
           UsernameRequiredException
@@ -91,6 +91,15 @@ package object validator {
         .addRule(request =>
           Conditions.stringNotEmpty(request.content),
           MessageContentRequiredExpection)
+    }
+  }
+
+  object GetMessagesValidator {
+    def apply(): Validator[GetMessagesRequest] = Validator[GetMessagesRequest] {
+      builder => builder
+          .addRule(request =>
+            Conditions.stringNotEmpty(request.name),
+            RoomNameRequiredException)
     }
   }
 

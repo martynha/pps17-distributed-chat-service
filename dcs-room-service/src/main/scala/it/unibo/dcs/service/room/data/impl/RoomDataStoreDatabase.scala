@@ -95,6 +95,16 @@ final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDa
         }
       }
 
+  override def getMessages(request: GetMessagesRequest): Observable[List[Message]] =
+    query(selectMessagesByRoomName, request)
+    .map { resultSet =>
+      if (resultSet.getResults.isEmpty) {
+        List()
+      } else {
+        ResultSetHelper.getRows(resultSet).foreach(row => println(row.encodePrettily()))
+        ResultSetHelper.getRows(resultSet).map(jsonObjectToMessage).toList
+      }
+    }
 }
 
 private[impl] object RoomDataStoreDatabase {
@@ -120,6 +130,8 @@ private[impl] object RoomDataStoreDatabase {
   val selectParticipationByKey = "SELECT * FROM `participations` WHERE `username` = ? AND `name` = ?"
 
   val selectParticipationsByRoomName = "SELECT * FROM `participations` WHERE `name` = ?"
+
+  val selectMessagesByRoomName = "SELECT * FROM `messages` WHERE `name` = ?"
 
   object Implicits {
 
@@ -155,6 +167,9 @@ private[impl] object RoomDataStoreDatabase {
 
     implicit def requestToParams(request: GetUserParticipationsRequest): JsonArray =
       new JsonArray().add(request.username)
+
+    implicit def requestToParams(request: GetMessagesRequest): JsonArray =
+      new JsonArray().add(request.name)
 
     implicit def jsonObjectToRoom(json: JsonObject): Room = gson fromJsonObject[Room] json
 
