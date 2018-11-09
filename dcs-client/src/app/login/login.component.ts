@@ -20,6 +20,8 @@ export class LoginComponent implements OnInit {
     this.auth.login(this.request).subscribe(
       user => console.log(user),
       err => {
+        const error = err.error.error;
+        alert("Login failed! \n" + error.type);
         this.request.password = '';
         console.error(err);
       },

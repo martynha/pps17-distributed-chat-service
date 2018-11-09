@@ -17,7 +17,7 @@ export class TopnavComponent implements OnInit {
 
   roomInfoOpened: boolean;
 
- constructor(
+  constructor(
     private router: Router,
     private auth: AuthService,
     private chat: ChatService,
@@ -42,10 +42,14 @@ export class TopnavComponent implements OnInit {
 
     this.chat.onRoomDeleted().subscribe(name => {
       if (name === this.selectedRoom) {
-        this.selectedRoom = '';
+        this.resetSelectedRoomName();
         this.router.navigateByUrl('/')
       }
     });
+  }
+
+  private resetSelectedRoomName() {
+    this.selectedRoom = '';
   }
 
   isToggled(): boolean {
@@ -60,9 +64,14 @@ export class TopnavComponent implements OnInit {
 
   logout() {
     this.auth.logout().subscribe(
-      _ => {},
+      _ => {
+      },
       err => console.error(err),
       () => this.router.navigateByUrl('/login'));
+  }
+
+  editProfile() {
+    this.router.navigate(['/users', this.auth.user.username, 'edit']);
   }
 
   changeLang(language: string) {
@@ -74,16 +83,45 @@ export class TopnavComponent implements OnInit {
   }
 
   roomInfo() {
-    if (!this.roomInfoOpened){
+    if (!this.roomInfoOpened) {
       this.router.navigate(['/rooms', this.selectedRoom, 'info']);
       this.roomInfoOpened = true;
-    }else {
+    } else {
       this.router.navigate(['/rooms', this.selectedRoom]);
       this.roomInfoOpened = false;
     }
   }
 
   get infoButtonCondition(): boolean {
-    return this.selectedRoom != undefined && this.selectedRoom != '' && !this.roomInfoOpened
+    return this.selectedRoom != undefined && this.selectedRoom != '' &&
+      !this.roomInfoOpened && !this.inProfileEditPage()
+  }
+
+  goBack(): void {
+    if (this.selectedRoom == undefined) {
+      this.router.navigate(['/']);
+    } else {
+      this.router.navigate(['/rooms', this.selectedRoom]);
+    }
+  }
+
+  leaveRoom() {
+    this.chat.leaveRoom(this.selectedRoom)
+      .subscribe(() => {
+        this.router.navigate(['/']).then(succeded => {
+          if (succeded) {
+            this.resetSelectedRoomName();
+          }
+        })
+      }, err => console.error(err));
+  }
+
+  inProfileEditPage(): boolean {
+    return this.router.url.match('.*\\/users\\/.*\\/edit') != null
+  }
+
+  leaveRoomButtonVisible(): boolean {
+    return this.selectedRoom != undefined && this.selectedRoom != ''
+      && (!this.inProfileEditPage()) && !this.roomInfoOpened
   }
 }

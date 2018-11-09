@@ -5,7 +5,7 @@ import {EventBusService} from './event-bus.service';
 import {Participation, Room, Message} from '../model';
 import {CreateRoomRequest, DeleteRoomRequest, JoinRoomRequest, SendMessageRequest} from '../requests';
 import {AuthService} from './auth.service';
-import {map, tap} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -24,11 +24,13 @@ export class ChatService {
   private static ROOM_JOINED = 'rooms.joined';
   private static MESSAGE_SENT = 'messages.sent';
   private static ROOM_CREATED = 'rooms.created';
+  private static ROOM_LEFT = 'rooms.leaved';
 
   private roomCreated = new Subject<Room>();
   private roomDeleted = new Subject<string>();
   private roomSelected = new Subject<Room>();
   private roomJoined = new Subject<Participation>();
+  private roomLeft = new Subject<Participation>();
   private messageSent = new Subject<Message>();
 
   constructor(
@@ -46,11 +48,15 @@ export class ChatService {
       this.roomJoined.next(msg.body);
     });
 
+    eventBus.registerHandler(ChatService.ROOM_LEFT, (err, msg) => {
+      this.roomLeft.next(msg.body);
+    });
+
     eventBus.registerHandler(ChatService.MESSAGE_SENT, (err, msg) => {
       console.log(msg.body);
       this.messageSent.next(msg.body);
     });
-    
+
     eventBus.registerHandler(ChatService.ROOM_CREATED, (err, msg) => {
       this.roomCreated.next(msg.body);
     });
@@ -87,7 +93,6 @@ export class ChatService {
       .post<Room>(ChatService.ROOMS, new CreateRoomRequest(name, user.username), {
         headers: this.auth.authOptions
       })
-      // .pipe(tap(room => this.roomCreated.next(room)))
       .pipe(map(room => room.name));
   }
 
@@ -134,7 +139,6 @@ export class ChatService {
 
   onRoomCreated(): Observable<Room> {
     return this.roomCreated.asObservable();
-      // .pipe(tap(room => this.selectRoom(room)));
   }
 
   onRoomDeleted(): Observable<string> {
@@ -146,7 +150,7 @@ export class ChatService {
   }
 
   onRoomLeft(): Observable<Participation> {
-    return null;
+    return this.roomLeft.asObservable();
   }
 
   onMessageSent() : Observable<Message> {

@@ -20,6 +20,8 @@ export class RegisterComponent implements OnInit {
     this.auth.register(this.request).subscribe(
       user => {},
       err => {
+        const error = err.error.error;
+        alert("Registration failed! \n" + error.type + " error");
         console.error(err);
         this.request.password = '';
         this.request.passwordConfirm = '';

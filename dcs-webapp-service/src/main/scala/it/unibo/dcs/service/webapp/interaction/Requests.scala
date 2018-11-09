@@ -3,9 +3,7 @@ package it.unibo.dcs.service.webapp.interaction
 import java.util.Date
 
 import com.google.gson.Gson
-import io.vertx.lang.scala.json.JsonArray
-import io.vertx.lang.scala.json.{Json, JsonObject}
-
+import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
 import it.unibo.dcs.commons.JsonHelper.Implicits.RichGson
 import it.unibo.dcs.commons.dataaccess.Implicits.stringToDate
 import it.unibo.dcs.service.webapp.interaction.Labels.JsonLabels._
@@ -49,8 +47,10 @@ object Requests {
   final case class CheckTokenRequest(token: String, username: String) extends DcsRequest
 
   final case class SendMessageRequest(name: String, username: String, content: String, timestamp: Date, token: String) extends DcsRequest
-  
+
   final case class GetUserParticipationsRequest(username: String, token: String) extends DcsRequest
+
+  final case class GetUserRequest(username: String, token: String) extends DcsRequest
 
   /** It enables implicit conversions in order to clean code that deals with requests. */
   object Implicits {

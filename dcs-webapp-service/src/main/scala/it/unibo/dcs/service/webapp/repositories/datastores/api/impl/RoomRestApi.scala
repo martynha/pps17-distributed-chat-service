@@ -112,8 +112,6 @@ private[impl] object RoomRestApi {
 
   private def deleteRoomURI(roomName: String) = roomsURI + uriSeparator + roomName
 
-  private def getRoomsURI(username: String) = s"$roomsURI?user=$username"
-
   private def sendMessageURI(roomName: String) = s"$roomsURI/$roomName/messages"
 
   private def toDeleteRoomRequest(deleteRoomRequest: DeleteRoomRequest): JsonObject = {

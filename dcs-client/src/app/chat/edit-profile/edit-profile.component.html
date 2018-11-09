@@ -1,0 +1,52 @@
+<div class="x_panel">
+  <div class="x_title">
+    <h2>Edit your Profile
+    </h2>
+    <div class="clearfix"></div>
+  </div>
+  <div class="x_content">
+
+    <div class="row">
+
+      <form class="login-form" fxLayout="column" (submit)="$event.preventDefault();">
+        <div fxFlex>
+          <div fxFlexFill>
+            <mat-form-field class="w-100">
+              <input matInput type="text" placeholder="First name" id="firstName" name="firstName"
+                     [(ngModel)]="request.firstName">
+            </mat-form-field>
+          </div>
+        </div>
+        <div fxFlex>
+          <div fxFlexFill>
+            <mat-form-field class="w-100">
+              <input matInput type="text" placeholder="Last name" id="lastName" name="lastName"
+                     [(ngModel)]="request.lastName">
+            </mat-form-field>
+          </div>
+        </div>
+        <div fxFlex>
+          <div fxFlexFill>
+            <mat-form-field class="w-100">
+              <textarea matInput rows="10" maxlength="1024" placeholder="Biography" id="bio" name="bio"
+                        [(ngModel)]="request.bio"></textarea>
+            </mat-form-field>
+          </div>
+        </div>
+        <div fxFlex>
+          <div fxFlexFill id="visible-checkbox-div">
+            <label id="visible-checkbox-label" for="visible">Visible</label>
+            <mat-checkbox class="w-100" id="visible" name="visible"
+                          [(ngModel)]="request.visible">
+            </mat-checkbox>
+          </div>
+        </div>
+        <div fxFlex>
+          <div fxFlexFill>
+            <button mat-raised-button id="editButton" color="primary" class="w-100" (click)="editProfile()">Edit</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

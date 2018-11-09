@@ -1,0 +1,29 @@
+<div _ngcontent-c13="" fxflex="" ng-reflect-flex="" class="ng-star-inserted"
+     style="flex: 1 1 auto; box-sizing: border-box; margin-bottom: 20px;">
+  <mat-card _ngcontent-c13="" class="mat-card"><img _ngcontent-c13="" class="mat-card-image" mat-card-image=""
+                                                    src="../../../assets/images/default-avatar.jpg" height="550">
+    <mat-card-header _ngcontent-c13="" class="mat-card-header" style="justify-content: center">
+      <div class="mat-card-header-text">
+        <mat-card-title _ngcontent-c13="" class="mat-card-title">
+          <h3 _ngcontent-c13="" class="m-0" style="font-weight: bold"> {{user.username}} </h3> <br>
+          <h4 _ngcontent-c13="" class="m-0"> {{user.firstName + " " + user.lastName}} </h4>
+        </mat-card-title>
+      </div>
+    </mat-card-header>
+    <mat-card-content _ngcontent-c13="" class="mat-card-content"><p _ngcontent-c13=""> {{user.bio}} </p>
+    </mat-card-content>
+    <mat-card-actions _ngcontent-c13="" class="mat-card-actions">
+      <button _ngcontent-c13="" mat-button="" class="mat-button">
+        <span class="mat-button-wrapper">
+        <mat-icon _ngcontent-c13="" class="nav-icon mat-icon material-icons" role="img" aria-hidden="true">
+          access_time
+        </mat-icon>
+          Last seen on {{user.lastSeen | date: "MM/dd/yyyy 'at' h:mma"}}
+        </span>
+        <div class="mat-button-ripple mat-ripple" matripple="" ng-reflect-centered="false" ng-reflect-disabled="false"
+             ng-reflect-trigger="[object HTMLButtonElement]"></div>
+        <div class="mat-button-focus-overlay"></div>
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

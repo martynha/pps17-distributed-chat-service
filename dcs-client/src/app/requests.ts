@@ -20,6 +20,20 @@ export class RegisterRequest {
 
 }
 
+export class EditProfileRequest {
+
+  username: string;
+
+  firstName: string;
+
+  lastName: string;
+
+  bio: string;
+
+  visible: boolean;
+
+}
+
 export class LogoutRequest {
 
   constructor(public username: string) {

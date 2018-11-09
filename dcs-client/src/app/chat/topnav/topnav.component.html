@@ -12,6 +12,10 @@
           <mat-icon>exit_to_app</mat-icon>
           <span>{{ 'Log out' | translate }}</span>
         </button>
+        <button mat-menu-item (click)="editProfile()">
+          <mat-icon>edit</mat-icon>
+          <span>{{ 'Edit Profile' | translate }}</span>
+        </button>
       </mat-menu>
     </div>
     <div fxFlex fxFlexAlign="center" id="app-title">
@@ -23,14 +27,21 @@
       </button>
     </div>
   </div>
-  <div class="hidden-sm chat-name" style="margin-left: 25px; margin-top: 5px;">
+  <div *ngIf="!inProfileEditPage()" class="hidden-sm chat-name" style="font-weight:bold; margin-left: 25px; margin-top: 5px;">
     {{ selectedRoom }}
   </div>
   <span class="nav-spacer"></span>
+  <button id="leave-room-button" type="button" title="Leave the Room" *ngIf="leaveRoomButtonVisible()"
+          mat-icon-button (click)="leaveRoom();">
+    <mat-icon>remove_circle</mat-icon>
+  </button>
   <button *ngIf="infoButtonCondition" mat-icon-button (click)="roomInfo()">
     <mat-icon>info</mat-icon>
   </button>
   <button *ngIf="roomInfoOpened" mat-icon-button (click)="roomInfo()">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <button *ngIf="inProfileEditPage()" mat-icon-button (click)="goBack()">
     <mat-icon>arrow_back</mat-icon>
   </button>
   <!-- <button mat-icon-button (click)="logout()">

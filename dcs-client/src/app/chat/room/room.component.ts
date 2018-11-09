@@ -1,6 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Route } from '@angular/compiler/src/core';
 import { ChatService } from 'src/app/service/chat.service';
 import { filter } from 'rxjs/operators';
 
@@ -38,13 +37,6 @@ export class RoomComponent implements OnInit {
       _ => this.message = '',
       err => console.error(err)
     );
-  }
-  
-  leaveRoom(){
-    this.chat.leaveRoom(this.name)
-      .subscribe(() => {
-        this.router.navigate(['/']);
-      }, err => console.error(err));
   }
 
 }
