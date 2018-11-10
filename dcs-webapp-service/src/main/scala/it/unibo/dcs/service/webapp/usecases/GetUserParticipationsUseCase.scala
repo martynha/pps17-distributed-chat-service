@@ -2,9 +2,9 @@ package it.unibo.dcs.service.webapp.usecases
 
 import io.vertx.scala.core.Context
 import it.unibo.dcs.commons.RxHelper
-import it.unibo.dcs.commons.interactor.{ThreadExecutorExecutionContext, UseCase}
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
-import it.unibo.dcs.service.webapp.interaction.Requests.{CheckTokenRequest, GetUserParticipationsRequest, LogoutUserRequest}
+import it.unibo.dcs.commons.interactor.{ThreadExecutorExecutionContext, UseCase}
+import it.unibo.dcs.service.webapp.interaction.Requests.{CheckTokenRequest, GetUserParticipationsRequest}
 import it.unibo.dcs.service.webapp.interaction.Results.GetUserParticipationsResult
 import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, RoomRepository}
 import rx.lang.scala.Observable
@@ -22,11 +22,11 @@ final class GetUserParticipationsUseCase(private[this] val threadExecutor: Threa
                                          private[this] val roomRepository: RoomRepository)
   extends UseCase[GetUserParticipationsResult, GetUserParticipationsRequest](threadExecutor, postExecutionThread) {
 
-  override protected[this] def createObservable(request: GetUserParticipationsRequest): Observable[GetUserParticipationsResult] = {
-    authRepository.checkToken(CheckTokenRequest(request.token, request.username))
-      .flatMap(_ => roomRepository.getUserParticipations(request))
-      .map(GetUserParticipationsResult)
-  }
+  override protected[this] def createObservable(request: GetUserParticipationsRequest): Observable[GetUserParticipationsResult] =
+    for {
+      _ <- authRepository.checkToken(CheckTokenRequest(request.token, request.username))
+      participations <- roomRepository.getUserParticipations(request)
+    } yield GetUserParticipationsResult(participations)
 }
 
 object GetUserParticipationsUseCase {

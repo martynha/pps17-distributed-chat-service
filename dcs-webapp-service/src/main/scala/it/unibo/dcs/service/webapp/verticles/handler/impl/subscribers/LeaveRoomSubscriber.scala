@@ -16,7 +16,7 @@ final class LeaveRoomSubscriber(protected override val response: HttpServerRespo
 
   override def onNext(result: RoomLeaveResult): Unit = {
     val res: JsonObject = result
-    response.setStatus(HttpResponseStatus.NO_CONTENT).end(res.encode())
+    response.setStatus(HttpResponseStatus.NO_CONTENT).end()
     publisher.publish(res)
   }
 }

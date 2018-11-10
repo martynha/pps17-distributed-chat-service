@@ -10,7 +10,7 @@ import {EditProfileRequest} from "../requests";
 })
 export class UserService {
 
-  private static API_PREFIX = '/api';
+  private static API_PREFIX = 'http://192.168.1.70:8080/api';
 
   private static USERS = UserService.API_PREFIX + '/users';
 

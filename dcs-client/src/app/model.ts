@@ -18,6 +18,7 @@ export interface Participation {
 
     username: string;
 
+    name?: string;
 }
 
 export interface Room {

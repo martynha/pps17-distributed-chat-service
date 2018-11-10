@@ -12,7 +12,7 @@ import {map} from 'rxjs/operators';
 })
 export class ChatService {
 
-  private static API_PREFIX = '/api';
+  private static API_PREFIX = 'http://192.168.1.70:8080/api';
 
   private static EVENTS = ChatService.API_PREFIX + '/events';
 

@@ -11,7 +11,7 @@ import {tap} from 'rxjs/operators';
 })
 export class AuthService {
 
-  private static PREFIX = '/api';
+  private static PREFIX = 'http://192.168.1.70:8080/api';
 
   private static LOGIN = AuthService.PREFIX + '/login';
   private static REGISTER = AuthService.PREFIX + '/register';

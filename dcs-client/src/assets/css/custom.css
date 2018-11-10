@@ -17,6 +17,10 @@ html, body {
   }
 }
 
+.person-add-icon {
+  margin-left: auto;
+}
+
 .mat-toolbar-row, .mat-toolbar-single-row {
   height: 80px !important;
 }

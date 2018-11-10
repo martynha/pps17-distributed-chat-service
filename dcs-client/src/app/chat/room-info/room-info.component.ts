@@ -36,8 +36,9 @@ export class RoomInfoComponent implements OnInit {
 
     this.service.onRoomLeft()
       .subscribe(participation => {
-        if (participation.room.name === this.name) remove(this.participations,
-            participation => participation.room.name === this.name)
+        console.log(participation);
+        if (participation.name === this.name) remove(this.participations,
+            part => part.username === participation.username)
       });
   }
 

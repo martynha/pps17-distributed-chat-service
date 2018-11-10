@@ -26,7 +26,6 @@ final class GetUserUseCase(private[this] val threadExecutor: ThreadExecutor,
 
   override protected[this] def createObservable(request: GetUserRequest): Observable[GetUserResult] =
     for {
-      //_ <- authRepository.checkToken(CheckTokenRequest(request.token, request.username))
       user <- userRepository.getUserByUsername(request.username)
     } yield GetUserResult(user)
 }

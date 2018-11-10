@@ -1,7 +1,7 @@
 <a mat-list-item *ngFor="let room of rooms | filter:'name':query" [routerLinkActive]="'active'" (click)="joinRoom(room); $event.stopPropagation();">
   <mat-icon class="sidenav-icon">dashboard</mat-icon>
   {{ room.name }}
-  <i class="material-icons">
+  <i class="material-icons person-add-icon">
      person_add
   </i>
 </a>

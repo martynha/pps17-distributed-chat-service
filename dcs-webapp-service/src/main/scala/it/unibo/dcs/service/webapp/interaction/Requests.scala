@@ -6,6 +6,7 @@ import com.google.gson.Gson
 import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
 import it.unibo.dcs.commons.JsonHelper.Implicits.RichGson
 import it.unibo.dcs.commons.dataaccess.Implicits.stringToDate
+import it.unibo.dcs.exceptions.InternalException
 import it.unibo.dcs.service.webapp.interaction.Labels.JsonLabels._
 import it.unibo.dcs.service.webapp.model.{Participation, Room, User}
 import net.liftweb.json._
@@ -103,7 +104,8 @@ object Requests {
 
     implicit def jsonArrayToParticipationSet(array: JsonArray): Set[Participation] = {
       implicit val formats: DefaultFormats.type = DefaultFormats
-      val participations = parse(array.encode()).children.head.children
+      val participations = parse(array.encode()).children.headOption
+        .fold(throw InternalException("Empty participations JsonArray"))(_.children)
       participations.map(_.extract[Participation]).toSet
     }
 
