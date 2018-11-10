@@ -12,7 +12,7 @@ import { AuthService } from 'src/app/service/auth.service';
 })
 export class MessagesComponent implements OnInit {
 
-  name: string;
+  roomName: string;
   messages: Message[] = [];
 
   constructor(
@@ -22,13 +22,19 @@ export class MessagesComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    console.log('Getting user rooms...');
+
     this.route.params.subscribe(params => {
-      this.name = params['name'];
+      this.roomName = params['name'];
     });
 
     this.chat
+    .getMessagesOnRoom(this.roomName)
+    .subscribe(messages => this.messages = messages);
+
+    this.chat
       .onMessageSent()
-      .pipe(filter(message => this.name === message.room.name))
+      .pipe(filter(message => this.roomName === message.room.name))
       .subscribe(message => this.addMessage(message));
   }
 

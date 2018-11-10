@@ -79,6 +79,12 @@ export class ChatService {
     });
   }
 
+  getMessagesOnRoom(name: string): Observable<Message[]> {
+    return this.http.get<Message[]>(ChatService.ROOMS + '/' + name + '/messages', {
+      headers: this.auth.authOptions
+    });
+  }
+
   selectRoom(room: Room) {
     this.roomSelected.next(room);
   }
