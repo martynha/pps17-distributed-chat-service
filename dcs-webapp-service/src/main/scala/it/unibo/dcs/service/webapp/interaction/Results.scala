@@ -84,12 +84,7 @@ object Results {
 
     implicit def sendMessageResultToJsonObject(result: SendMessageResult): JsonObject =
       gson toJsonObject result.message
-
-    implicit def getRoomsToJsonArray(result: GetRoomsResult): JsonArray = {
-      result.rooms
-        .map(x => Json.fromObjectString(gson.toJson(x)))
-        .foldLeft(new JsonArray)(_ add _)
-    }
+    
     implicit def roomLeaveResultToJsonObject(result: RoomLeaveResult): JsonObject =
       gson toJsonObject result.participation
 

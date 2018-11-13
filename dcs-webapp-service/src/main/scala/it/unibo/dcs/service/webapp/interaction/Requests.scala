@@ -114,11 +114,11 @@ object Requests {
 
     implicit def jsonObjectToGetUserParticipationsRequest(json: JsonObject): GetUserParticipationsRequest =
       gson fromJsonObject[GetUserParticipationsRequest] json
-    }
 
-    implicit def jsonObjectToGetMessagesRequest(json: JsonObject): GetMessagesRequest = {
+
+    implicit def jsonObjectToGetMessagesRequest(json: JsonObject): GetMessagesRequest =
       gson fromJsonObject[GetMessagesRequest] json
-    }
+
 
     implicit def jsonObjectToGetUserRequest(json: JsonObject): GetUserRequest =
       gson fromJsonObject[GetUserRequest] json
