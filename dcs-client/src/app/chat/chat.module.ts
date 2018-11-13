@@ -16,7 +16,6 @@ import { FormsModule } from '@angular/forms';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { SearchRoomsComponent } from './search-rooms/search-rooms.component';
 import { FilterPipe } from './filter.pipe';
-import { MessagesComponent } from './messages/messages.component';
 import { EditProfileComponent } from './edit-profile/edit-profile.component';
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import { UserProfileComponent } from './user-profile/user-profile.component';
@@ -58,7 +57,6 @@ import {
     SidebarComponent,
     SearchRoomsComponent,
     FilterPipe,
-    MessagesComponent,
     EditProfileComponent,
     UserProfileComponent
   ],

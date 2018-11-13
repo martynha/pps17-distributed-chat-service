@@ -1,5 +1,15 @@
 <div class="main-content">
-  <app-messages></app-messages>
+  <div class="wrap">
+    <div id="chatWindow" class="container">
+      <mat-nav-list>
+        <div mat-list-item *ngFor="let message of messages" class="bubble"
+             [ngClass]="isUserMessage(message)? 'right' : 'left'">
+          <p><span style="font-weight: bold; font-size: 15px">{{message.username}}</span> <br> {{message.content}}</p>
+        </div>
+      </mat-nav-list>
+    </div>
+  </div>
+  <br/>
 </div>
 
 <footer class="send">
