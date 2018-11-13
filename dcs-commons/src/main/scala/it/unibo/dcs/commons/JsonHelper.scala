@@ -20,7 +20,7 @@ object JsonHelper {
 
       def toJsonArray(src: Iterable[_]): JsonArray = Json.fromArrayString(gson toJsonString src)
 
-      def toJsonObject(src: AnyRef): JsonObject = Json.fromObjectString(gson toJson src)
+      def toJsonObject(src: Any): JsonObject = Json.fromObjectString(gson toJson src)
 
       def toJsonString(src: Iterable[_]): String = gson toJson src.asJava
 

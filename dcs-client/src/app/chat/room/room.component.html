@@ -7,6 +7,7 @@
     <form class="w-100" fxLayout="row" (submit)="$event.preventDefault();">
       <div fxFlex>
         <div fxFlexFill>
+          <p id="writing-users" *ngIf="typingUsers.length > 0">Typing: {{typingUsersWithoutDuplicates()}}</p>
           <mat-form-field class="w-100">
             <input matInput type="text" placeholder="Type a message" name="message" id="message" [(ngModel)]="message" (keyup.enter)="sendMessage();">
           </mat-form-field>

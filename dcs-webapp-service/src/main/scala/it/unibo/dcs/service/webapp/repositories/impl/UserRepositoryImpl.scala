@@ -15,4 +15,6 @@ class UserRepositoryImpl(userDataStore: UserDataStore) extends UserRepository {
   override def deleteUser(username: String): Observable[String] = userDataStore.deleteUser(username)
 
   override def editUser(request: EditUserRequest): Observable[User] = userDataStore.editUser(request)
+
+  override def updateAccess(username: String): Observable[Unit] = userDataStore.updateAccess(username)
 }

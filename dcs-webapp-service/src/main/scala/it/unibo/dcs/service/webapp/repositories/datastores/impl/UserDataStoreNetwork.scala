@@ -17,4 +17,6 @@ class UserDataStoreNetwork(private val userApi: UserApi) extends UserDataStore {
   override def deleteUser(username: String): Observable[String] = userApi.deleteUser(username)
 
   override def editUser(request: EditUserRequest): Observable[User] = userApi.editUser(request)
+
+  override def updateAccess(username: String): Observable[Unit] = userApi.updateAccess(username)
 }

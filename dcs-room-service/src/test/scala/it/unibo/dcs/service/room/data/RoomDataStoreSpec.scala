@@ -139,7 +139,7 @@ object RoomDataStoreSpec extends App {
     val exampleUser = "TestExampleUser1"
     val selectAsync = context.async(1)
 
-    def resultContainsParticipation(result: Set[model.Participation]) = {
+    def resultContainsParticipation(result: Seq[model.Participation]) = {
       result.head.room.name.equals(exampleRoom) && result.head.username.equals(exampleUser)
     }
 

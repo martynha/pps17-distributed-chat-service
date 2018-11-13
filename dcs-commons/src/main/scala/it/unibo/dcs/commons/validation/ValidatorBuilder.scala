@@ -38,5 +38,4 @@ object ValidatorBuilder {
 
   private[validation] val EXCEPTION = new IllegalStateException("ValidatorBuilder has already been built")
 
-
 }

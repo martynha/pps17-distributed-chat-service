@@ -25,6 +25,7 @@ class LoginUseCaseSpec extends UseCaseSpec {
     (authRepository loginUser _) expects loginRequest returns (Observable just token)
     // userRepository is called with `request` as parameter returns an observable that contains only `user`
     (userRepository getUserByUsername _) expects loginRequest.username returns (Observable just user)
+    (userRepository updateAccess _) expects loginRequest.username returns (Observable just Unit)
 
     // When
     // createUserUseCase is executed with argument `request`

@@ -12,8 +12,7 @@ export class UserProfileComponent implements OnInit {
 
   user: User;
 
-  constructor(private userService: UserService, private route: ActivatedRoute, private router: Router) {
-  }
+  constructor(private userService: UserService, private route: ActivatedRoute) { }
 
   ngOnInit() {
     this.route.params.subscribe(params => {

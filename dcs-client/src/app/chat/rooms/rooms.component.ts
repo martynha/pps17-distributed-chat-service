@@ -56,8 +56,7 @@ export class RoomsComponent implements OnInit {
   deleteRoom(room: Room) {
     console.log(room);
     this.chat.deleteRoom(room.name)
-      .subscribe(() => { },
-        err => console.error(err));
+      .subscribe(() => this.router.navigate(['/']), err => console.error(err));
   }
 
   private removeRoom(name: String) {

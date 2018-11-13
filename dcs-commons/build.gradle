@@ -19,5 +19,4 @@ dependencies {
     compile group: 'org.slf4j', name: 'slf4j-api', version: slf4jVersion
     compile group: 'ch.qos.logback', name: 'logback-classic', version: logbackVersion
     compile group: 'ch.qos.logback', name: 'logback-core', version: logbackVersion
-    compile group: 'net.liftweb', name: 'lift-json_2.12', version: '3.3.0'
 }

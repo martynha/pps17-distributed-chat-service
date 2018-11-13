@@ -26,9 +26,9 @@ object RxHelper {
 
     implicit class RichObservable[+A](observable: Observable[A]) {
 
-      def mapImplicitly[B](implicit f: A => B): Observable[B] = observable.map(f)
+      def mapImplicitly[B](implicit f: A => B): Observable[B] = observable map f
 
-      def toCompletable: Observable[Unit] = observable.toList.map(_ =>())
+      def toCompletable: Observable[Unit] = observable.toList.map(_ => ())
 
     }
 

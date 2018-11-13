@@ -43,4 +43,5 @@ export interface User {
 
     token: string;
 
+    status: boolean;
 }

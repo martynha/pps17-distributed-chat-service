@@ -23,9 +23,8 @@ import org.apache.http.entity.ContentType
 
 import scala.language.implicitConversions
 
-import it.unibo.dcs.service.user.UserVerticle.Implicits._
-
-final class UserVerticle(private[this] val userRepository: UserRepository, private[this] val publisher: HttpEndpointPublisher) extends ServiceVerticle {
+final class UserVerticle(private[this] val userRepository: UserRepository,
+                         private[this] val publisher: HttpEndpointPublisher) extends ServiceVerticle {
 
   private var host: String = _
   private var port: Int = _
@@ -79,6 +78,8 @@ final class UserVerticle(private[this] val userRepository: UserRepository, priva
       new EditUserUseCase(threadExecutor, postExecutionThread, userRepository, validation)
     }
 
+    val updateUserAccessUseCase = new UpdateUserAccessUseCase(threadExecutor, postExecutionThread, userRepository)
+
     router.get("/users/:username")
       .produces(ContentType.APPLICATION_JSON)
       .handler(routingContext => {
@@ -111,6 +112,13 @@ final class UserVerticle(private[this] val userRepository: UserRepository, priva
         log.debug(s"Received request: $request")
         val subscriber = new CreateUserSubscriber(routingContext.response())
         createUserUseCase(request, subscriber)
+      })
+
+    router.put("/users/:username/access")
+      .handler(routingContext => {
+        val username = routingContext.request().getParam("username").head
+        val subscriber = new UpdateUserAccessSubscriber(routingContext.response())
+        updateUserAccessUseCase(username, subscriber)
       })
   }
 

@@ -21,6 +21,7 @@ import {RegisterComponent} from './register/register.component';
 import {FormsModule} from '@angular/forms';
 import {ServerInterceptor} from "./server-interceptor";
 import { WindowRef } from './providers/WindowRef';
+import { UserService } from './service/user.service';
 
 export const createTranslateLoader = (http) => {
   // for development
@@ -33,11 +34,7 @@ export const createTranslateLoader = (http) => {
 };
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    LoginComponent,
-    RegisterComponent
-  ],
+  declarations: [AppComponent, LoginComponent, RegisterComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -58,6 +55,7 @@ export const createTranslateLoader = (http) => {
   providers: [
     EventBusService,
     ChatService,
+    UserService,
     WindowRef
     /*{
       provide: HTTP_INTERCEPTORS,
@@ -67,5 +65,4 @@ export const createTranslateLoader = (http) => {
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule {
-}
+export class AppModule {}

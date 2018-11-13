@@ -10,6 +10,9 @@ import rx.lang.scala.Observable
 /** Structure that allows access to user data by different means (e.g. network, file, database, ecc) */
 trait UserDataStore {
 
+  def updateAccess(username: String): Observable[Unit]
+
+
   /** Delete a user given its username
     *
     * @param username username of the user to delete

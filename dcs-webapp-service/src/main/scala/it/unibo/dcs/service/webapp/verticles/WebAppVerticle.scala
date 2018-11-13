@@ -2,16 +2,18 @@ package it.unibo.dcs.service.webapp.verticles
 
 import io.vertx.core.http.HttpMethod._
 import io.vertx.core.{AbstractVerticle, Context, Vertx}
+import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.core
 import io.vertx.scala.ext.bridge.PermittedOptions
 import io.vertx.scala.ext.web.Router
 import io.vertx.scala.ext.web.handler.sockjs.{BridgeOptions, SockJSHandler}
 import io.vertx.scala.ext.web.handler.{BodyHandler, CorsHandler, StaticHandler}
 import io.vertx.servicediscovery.ServiceDiscovery
+import it.unibo.dcs.commons.VertxHelper.Implicits.RichEventBus
 import it.unibo.dcs.commons.VertxWebHelper.Implicits.contentTypeToString
 import it.unibo.dcs.commons.service.{HttpEndpointPublisher, HttpEndpointPublisherImpl, ServiceVerticle}
 import it.unibo.dcs.service.webapp.interaction.Labels._
-import it.unibo.dcs.service.webapp.verticles.Addresses.{Messages, Rooms}
+import it.unibo.dcs.service.webapp.verticles.Addresses.{internal, messages, rooms, users}
 import it.unibo.dcs.service.webapp.verticles.WebAppVerticle.{pathParamSeparator, roomsURI}
 import it.unibo.dcs.service.webapp.verticles.handler.ServiceRequestHandler
 import org.apache.http.entity.ContentType._
@@ -70,6 +72,9 @@ final class WebAppVerticle extends ServiceVerticle {
 
   private def defineServiceApi(apiRouter: Router): Unit = {
     implicit val ctx: core.Context = this.ctx
+
+    eventBus.address(internal.userOffline).handle[JsonObject](requestHandler handleUserOffline _)
+    eventBus.consumer[JsonObject](users.typing).handler(requestHandler.handleTypingUser(_))
 
     userRegistrationRoute(apiRouter)
     loginRoute(apiRouter)
@@ -205,11 +210,17 @@ final class WebAppVerticle extends ServiceVerticle {
 
   private lazy val sockJSHandler: SockJSHandler = {
     val options = BridgeOptions()
-      .addOutboundPermitted(PermittedOptions().setAddress(Rooms.deleted))
-      .addOutboundPermitted(PermittedOptions().setAddress(Rooms.joined))
-      .addOutboundPermitted(PermittedOptions().setAddress(Messages.sent))
-      .addOutboundPermitted(PermittedOptions().setAddress(Rooms.left))
-      .addOutboundPermitted(PermittedOptions().setAddress(Rooms.created))
+      .addOutboundPermitted(PermittedOptions().setAddress(rooms.created))
+      .addOutboundPermitted(PermittedOptions().setAddress(rooms.deleted))
+      .addOutboundPermitted(PermittedOptions().setAddress(rooms.joined))
+      .addOutboundPermitted(PermittedOptions().setAddress(rooms.left))
+      .addOutboundPermitted(PermittedOptions().setAddress(messages.sent))
+      .addOutboundPermitted(PermittedOptions().setAddress(users.online))
+      .addOutboundPermitted(PermittedOptions().setAddress(users.offline))
+      .addOutboundPermitted(PermittedOptions().setAddress(users.hearthbeat.request))
+      .addInboundPermitted(PermittedOptions().setAddress(users.hearthbeat.response))
+      .addOutboundPermitted(PermittedOptions().setAddressRegex(users.typingInRoom))
+      .addInboundPermitted(PermittedOptions().setAddress(users.typing))
 
     SockJSHandler.create(vertx).bridge(options)
   }

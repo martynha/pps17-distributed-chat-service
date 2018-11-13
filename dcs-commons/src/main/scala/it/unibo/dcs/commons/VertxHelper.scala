@@ -54,8 +54,6 @@ object VertxHelper {
 
       private[this] lazy val asJava: JEventBus = eventBus.asJava.asInstanceOf[JEventBus]
 
-      private[this] val addresses = mutable.Map[String, Address]()
-
       def registerCodec(codec: MessageCodec[_, _]): RichEventBus = {
         asJava.registerCodec(codec)
         this
@@ -88,5 +86,8 @@ object VertxHelper {
     }
 
   }
+
+  private val addresses = mutable.Map[String, Address]()
+
 
 }

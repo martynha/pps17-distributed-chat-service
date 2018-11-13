@@ -2,13 +2,13 @@ package it.unibo.dcs.commons
 
 import java.nio.charset.{Charset, StandardCharsets}
 
-import io.vertx.core.json.JsonObject
+import io.vertx.lang.scala.json.{Json, JsonObject}
 import org.apache.commons.io.IOUtils
 
 object IoHelper {
 
   def readJsonObject(file: String, enc: Charset = StandardCharsets.UTF_8): JsonObject = {
-    new JsonObject(readString(file, enc))
+    Json.fromObjectString(readString(file, enc))
   }
 
   def readString(file: String, enc: Charset = StandardCharsets.UTF_8): String = {

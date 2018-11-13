@@ -33,7 +33,11 @@ package object subscriber {
       log.debug(s"Answering with user: $json")
       response.setStatus(responseStatus).end(json.encode())
     }
+  }
 
+  final class UpdateUserAccessSubscriber(protected override val response: HttpServerResponse)
+    extends Subscriber[Unit] with ErrorSubscriber {
+    override def onCompleted(): Unit = response.end()
   }
 
   object Implicits {

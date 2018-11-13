@@ -1,7 +1,6 @@
 package it.unibo.dcs.service.webapp.verticles.handler.impl.subscribers
 
 import io.netty.handler.codec.http.HttpResponseStatus
-import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.core.http.HttpServerResponse
 import it.unibo.dcs.commons.Publisher
 import it.unibo.dcs.commons.VertxWebHelper.Implicits.RichHttpServerResponse
@@ -15,11 +14,7 @@ final class RoomCreationSubscriber(protected override val response: HttpServerRe
                                    private[this] val publisher: Publisher)
   extends Subscriber[RoomCreationResult] with ErrorSubscriber with Logging {
 
-  override def onNext(result: RoomCreationResult): Unit = {
-    val jsonResult: JsonObject = result
-    response setStatus HttpResponseStatus.CREATED endWith result
-    publisher.publish(jsonResult)
-  }
+  override def onNext(result: RoomCreationResult): Unit = response setStatus HttpResponseStatus.CREATED endWith result
 
 }
 

@@ -38,7 +38,10 @@ export class TopnavComponent implements OnInit {
     });
 
     this.chat.onRoomSelected()
-      .subscribe(room => (this.selectedRoom = room.name));
+      .subscribe(room => {
+        this.selectedRoom = room.name;
+        this.roomInfoOpened = false;
+      });
 
     this.chat.onRoomDeleted().subscribe(name => {
       if (name === this.selectedRoom) {
@@ -118,6 +121,10 @@ export class TopnavComponent implements OnInit {
 
   inProfileEditPage(): boolean {
     return this.router.url.match('.*\\/users\\/.*\\/edit') != null
+  }
+
+  inRoomSelectedPage(): boolean {
+    return this.router.url.match('.*\\/rooms\\/.*') != null
   }
 
   leaveRoomButtonVisible(): boolean {

@@ -25,11 +25,11 @@ final class GetRoomParticipationsUseCaseSpec extends FlatSpec with MockFactory w
   private val firstParticipation = Participation(room, firstUsername, new Date())
   private val secondParticipation = Participation(room, secondUsername, new Date())
 
-  private val expectedResult = Set(firstParticipation, secondParticipation)
+  private val expectedResult = List(firstParticipation, secondParticipation)
 
   private val request = GetRoomParticipationsRequest(firstUsername)
 
-  private val subscriber: Subscriber[Set[Participation]] = stub[Subscriber[Set[Participation]]]
+  private val subscriber = stub[Subscriber[List[Participation]]]
 
   it should "Get all the participations for a given room" in {
     // Given

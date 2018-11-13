@@ -10,7 +10,7 @@ trait RoomDataStore {
 
   def sendMessage(request: SendMessageRequest): Observable[Message]
   
-  def getRoomParticipations(request: GetRoomParticipationsRequest): Observable[Set[Participation]]
+  def getRoomParticipations(request: GetRoomParticipationsRequest): Observable[List[Participation]]
 
   def createUser(request: CreateUserRequest): Observable[Unit]
 

@@ -28,6 +28,7 @@ final class LoginUserUseCase(private[this] val threadExecutor: ThreadExecutor,
     for {
       token <- authRepository.loginUser(loginRequest)
       user <- userRepository.getUserByUsername(loginRequest.username)
+      _ <- userRepository.updateAccess(user.username)
     } yield LoginResult(user, token)
   }
 

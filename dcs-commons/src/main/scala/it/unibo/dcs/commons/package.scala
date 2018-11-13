@@ -34,8 +34,17 @@ package object commons {
 
     final def send[T <: AnyRef, U: TypeTag](message: T,
                                             options: DeliveryOptions = DeliveryOptions(),
-                                            replyHandler: AsyncResult[Message[U]] => Unit = null): Unit =
-      eventBus.send(address, message, options, replyHandler)
+                                            replyHandler: AsyncResult[Message[U]] => Unit): Unit =
+      _send(message, options, Some(replyHandler))
+
+    final def send[T <: AnyRef, U: TypeTag](message: T,
+                                            options: DeliveryOptions): Unit =
+      _send(message, options, None)
+
+    private[this] def _send[T <: AnyRef, U: TypeTag](message: T,
+                                            options: DeliveryOptions,
+                                            replyHandler: Option[AsyncResult[Message[U]] => Unit]): Unit =
+      eventBus.send(address, message, options, replyHandler.orNull)
 
   }
 

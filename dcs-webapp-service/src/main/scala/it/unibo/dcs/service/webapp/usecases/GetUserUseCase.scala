@@ -25,9 +25,8 @@ final class GetUserUseCase(private[this] val threadExecutor: ThreadExecutor,
   extends UseCase[GetUserResult, GetUserRequest](threadExecutor, postExecutionThread) {
 
   override protected[this] def createObservable(request: GetUserRequest): Observable[GetUserResult] =
-    for {
-      user <- userRepository.getUserByUsername(request.username)
-    } yield GetUserResult(user)
+    userRepository.getUserByUsername(request.username)
+      .map(GetUserResult)
 }
 
 /** Companion object */

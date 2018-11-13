@@ -50,6 +50,12 @@ class UserRestApi(private[this] val discovery: HttpEndpointDiscovery)
       .mapImplicitly
   }
 
+  override def updateAccess(username: String): Observable[Unit] = {
+    makeRequest(client =>
+      Observable.from(client.put(userAccessURI(username)).sendFuture()))
+      .toCompletable
+  }
+
   private implicit class CustomBufferObservable(observable: Observable[HttpResponse[Buffer]]) {
 
     def mapToJson: Observable[JsonObject] =
@@ -66,6 +72,7 @@ class UserRestApi(private[this] val discovery: HttpEndpointDiscovery)
       })
 
   }
+
 }
 
 private[impl] object UserRestApi {
@@ -81,6 +88,8 @@ private[impl] object UserRestApi {
   private def editUserURI(username: String) = userURI(username)
 
   private def userURI(username: String) = s"/users/$username"
+
+  private def userAccessURI(username: String) = userURI(username) + "/access"
 
   private def toUserServiceRegistrationRequest(registerUserRequest: RegisterUserRequest): JsonObject = {
     val regRequest: JsonObject = registerUserRequest

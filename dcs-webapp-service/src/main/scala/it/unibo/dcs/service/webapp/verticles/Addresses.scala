@@ -2,7 +2,7 @@ package it.unibo.dcs.service.webapp.verticles
 
 private[verticles] object Addresses {
 
-  object Rooms {
+  object rooms {
 
     private val prefix = "rooms"
 
@@ -12,14 +12,58 @@ private[verticles] object Addresses {
 
     val joined = s"$prefix.joined"
 
-    val left = s"$prefix.leaved"
+    val left = s"$prefix.left"
 
   }
 
-  object Messages {
+  object messages {
+
     private val prefix = "messages"
 
     val sent = s"$prefix.sent"
+
+  }
+
+  object users {
+
+    private val prefix = "users"
+
+    val offline = s"$prefix.offline"
+
+    val online = s"$prefix.online"
+
+    val typing = s"$prefix.typing"
+
+    val typingInRoom = s"$prefix.typing.*"
+
+    object hearthbeat {
+
+      private val prefix = s"${users.prefix}.hearthbeat"
+
+      val request = s"$prefix.request"
+
+      val response = s"$prefix.response"
+
+    }
+
+  }
+
+  object internal {
+
+    private val prefix = "internal"
+
+    val userOffline = s"$prefix.userOffline"
+
+    object isUserOnline {
+
+      val prefix = s"${internal.prefix}.isUserOnline"
+
+      val request = s"$prefix.request"
+
+      val response = s"$prefix.response"
+
+    }
+
   }
 
 }

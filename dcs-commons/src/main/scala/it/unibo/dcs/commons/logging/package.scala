@@ -10,7 +10,7 @@ package object logging {
 
   trait Logging {
 
-    // initializeLogging()
+    initializeLogging()
 
     protected[this] lazy val log: ScalaLogger = ScalaLogger.getLogger(getClass.getName)
 

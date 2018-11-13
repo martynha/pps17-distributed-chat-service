@@ -15,4 +15,6 @@ final class UserRepositoryImpl(private[this] val userDataStore: UserDataStore) e
   override def editUser(request: EditUserRequest): Observable[User] = userDataStore.editUser(request)
 
   override def getUserByUsername(request: GetUserRequest): Observable[User] = userDataStore.getUserByUsername(request)
+
+  override def updateAccess(username: String): Observable[Unit] = userDataStore.updateAccess(username)
 }

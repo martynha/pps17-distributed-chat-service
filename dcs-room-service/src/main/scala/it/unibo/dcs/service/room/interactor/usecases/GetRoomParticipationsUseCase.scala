@@ -11,9 +11,9 @@ import rx.lang.scala.Observable
 final class GetRoomParticipationsUseCase(threadExecutor: ThreadExecutor, postExecutionThread: PostExecutionThread,
                                          private[this] val roomRepository: RoomRepository,
                                          private[this] val getParticipationsValidation: GetRoomParticipationsValidation)
-  extends UseCase[Set[Participation], GetRoomParticipationsRequest](threadExecutor, postExecutionThread) {
+  extends UseCase[List[Participation], GetRoomParticipationsRequest](threadExecutor, postExecutionThread) {
 
-  override protected[this] def createObservable(request: GetRoomParticipationsRequest): Observable[Set[Participation]] =
+  override protected[this] def createObservable(request: GetRoomParticipationsRequest): Observable[List[Participation]] =
     getParticipationsValidation(request)
       .flatMap(_ => roomRepository.getRoomParticipations(request))
 }

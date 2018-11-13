@@ -12,6 +12,8 @@ import rx.lang.scala.Observable
 /** Utility wrapper for making requests to the User Service via the network */
 trait UserApi {
 
+  def updateAccess(username: String): Observable[Unit]
+
   /** Delete a user given its username
     *
     * @param username username of the user to delete

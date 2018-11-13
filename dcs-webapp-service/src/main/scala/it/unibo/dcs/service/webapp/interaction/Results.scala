@@ -18,6 +18,8 @@ object Results {
 
   final case class RegisterResult(user: User, token: String) extends DcsResult
 
+  final case class LogoutResult(user: User) extends DcsResult
+
   final case class UserEditingResult(user: User) extends DcsResult
 
   final case class RoomCreationResult(room: Room) extends DcsResult
@@ -34,6 +36,8 @@ object Results {
 
   final case class GetUserParticipationsResult(rooms: List[Room]) extends DcsResult
 
+  final case class NotifyTypingUserResult(username: String) extends DcsResult
+  
   final case class GetUserResult(user: User) extends DcsResult
 
   final case class GetMessagesResult(messages: List[Message]) extends DcsResult
@@ -57,51 +61,49 @@ object Results {
     implicit def roomLeaveResultToJsonString(result: RoomLeaveResult): String = resultToJsonString(result.participation)
 
     private def resultToJsonString(result: Product, transformations: JsonObject => JsonObject = identity): String =
-      transformations(Json.fromObjectString(gson.toJson(result))) encode()
+      transformations(gson toJsonObject result) encode
 
     implicit def registrationResultToJsonObject(result: RegisterResult): JsonObject = {
-      Json.fromObjectString(gson.toJson(result.user)).put(tokenLabel, result.token)
+      (gson toJsonObject result.user).put(tokenLabel, result.token)
     }
 
-    implicit def loginResultToJsonObject(result: LoginResult): JsonObject = {
-      Json.fromObjectString(gson.toJson(result.user)).put(tokenLabel, result.token)
-    }
+    implicit def loginResultToJsonObject(result: LoginResult): JsonObject =
+      (gson toJsonObject result.user).put(tokenLabel, result.token)
 
-    implicit def editUserResultToJsonObject(result: UserEditingResult): JsonObject = {
-      Json.fromObjectString(gson.toJson(result.user))
-    }
+    implicit def logoutResultToJsonObject(result: LogoutResult): JsonObject =
+      gson toJsonObject result.user
 
-    implicit def roomCreationResultToJsonObject(result: RoomCreationResult): JsonObject = {
-      Json.fromObjectString(gson.toJson(result.room))
-    }
+    implicit def editUserResultToJsonObject(result: UserEditingResult): JsonObject =
+      gson toJsonObject result.user
 
-    implicit def roomJoinResultToJsonObject(result: RoomJoinResult): JsonObject = {
-      roomResultToJsonObject(result.participation)
-    }
+    implicit def roomCreationResultToJsonObject(result: RoomCreationResult): JsonObject =
+      gson toJsonObject result.room
+
+    implicit def roomJoinResultToJsonObject(result: RoomJoinResult): JsonObject =
+      gson toJsonObject result.participation
 
     implicit def sendMessageResultToJsonObject(result: SendMessageResult): JsonObject =
-      Json.fromObjectString(gson.toJson(result.message))
-
-    implicit def roomLeaveResultToJsonObject(result: RoomLeaveResult): JsonObject = {
-      roomResultToJsonObject(result.participation)
-    }
+      gson toJsonObject result.message
 
     implicit def getRoomsToJsonArray(result: GetRoomsResult): JsonArray = {
       result.rooms
         .map(x => Json.fromObjectString(gson.toJson(x)))
         .foldLeft(new JsonArray)(_ add _)
     }
+    implicit def roomLeaveResultToJsonObject(result: RoomLeaveResult): JsonObject =
+      gson toJsonObject result.participation
+
+    implicit def getRoomsToJsonArray(result: GetRoomsResult): JsonArray =
+      gson toJsonArray result.rooms
 
     implicit def roomParticipationsToJsonArray(result: GetRoomParticipationsResult): JsonArray =
-      result.participations
-        .map(x => Json.fromObjectString(gson.toJson(x)))
-        .foldLeft(Json.emptyArr())(_ add _)
+      gson toJsonArray result.participations
 
     implicit def getUserParticipationsToJsonArray(result: GetUserParticipationsResult): JsonArray =
       gson toJsonArray result.rooms
 
     implicit def getUserToJsonObject(result: GetUserResult): JsonObject =
-      Json.fromObjectString(gson.toJson(result.user))
+      gson toJsonObject result.user
 
     implicit def getMessagesToJsonArray(result: GetMessagesResult): JsonArray =
       gson toJsonArray result.messages

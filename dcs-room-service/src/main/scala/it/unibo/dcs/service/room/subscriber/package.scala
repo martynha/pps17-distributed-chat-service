@@ -52,11 +52,10 @@ package object subscriber {
   }
 
   final class RoomParticipationsSubscriber(protected override val response: HttpServerResponse)
-    extends Subscriber[Set[Participation]] with ErrorSubscriber with Logging {
+    extends Subscriber[List[Participation]] with ErrorSubscriber with Logging {
 
-    override def onNext(participations: Set[Participation]): Unit = {
-      val results = Json.arr(participations.map(participationToJsonObject).toArray)
-      response.end(results.encodePrettily())
+    override def onNext(participations: List[Participation]): Unit = {
+      response endWith participations
     }
   }
 
@@ -111,6 +110,8 @@ package object subscriber {
     implicit def roomsToJsonObject(rooms: Iterable[Room]): JsonArray = gson toJsonArray rooms
 
     implicit def participationToJsonObject(participation: Participation): JsonObject = gson toJsonObject participation
+
+    implicit def participationsToJsonArray(participations: Seq[Participation]): JsonArray = gson toJsonArray participations
 
     implicit def messageToJsonObject(message: Message): JsonObject = gson toJsonObject message
 
