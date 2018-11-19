@@ -14,5 +14,6 @@ final class SendMessageUseCase (threadExecutor: ThreadExecutor,
                           private[this] val validation: SendMessageValidation)
   extends UseCase[Message, SendMessageRequest](threadExecutor, postExecutionThread){
 
-  override protected[this] def createObservable(request: SendMessageRequest): Observable[Message] = roomRepository.sendMessage(request)
+  override protected[this] def createObservable(request: SendMessageRequest): Observable[Message] =
+    validation(request).flatMap(_ => roomRepository.sendMessage(request))
 }

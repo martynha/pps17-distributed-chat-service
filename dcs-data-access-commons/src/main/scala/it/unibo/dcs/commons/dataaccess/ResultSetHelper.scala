@@ -7,6 +7,13 @@ import scala.collection.mutable
 
 object ResultSetHelper {
 
+  def foldResult[T](whenEmpty: => T)(f: ResultSet => T): ResultSet => T = resultSet =>
+    if (resultSet.getResults.isEmpty){
+      whenEmpty
+    } else {
+      f(resultSet)
+    }
+
   object Implicits {
 
     implicit class RichResultSet(resultSet: ResultSet) {

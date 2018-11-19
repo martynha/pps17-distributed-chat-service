@@ -6,6 +6,7 @@ import it.unibo.dcs.commons.JsonHelper.Implicits.RichGson
 import it.unibo.dcs.commons.dataaccess.Implicits.dateToString
 import it.unibo.dcs.commons.dataaccess.{DataStoreDatabase, ResultSetHelper}
 import it.unibo.dcs.commons.dataaccess.ResultSetHelper.Implicits.RichResultSet
+import it.unibo.dcs.commons.dataaccess.ResultSetHelper.foldResult
 import it.unibo.dcs.exceptions.{ParticipationNotFoundException, ParticipationsNotFoundException, RoomNotFoundException}
 import it.unibo.dcs.service.room.data.RoomDataStore
 import it.unibo.dcs.service.room.data.impl.Implicits.participationDtoToParticipation
@@ -30,13 +31,7 @@ final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDa
 
   override def getRoomByName(request: GetRoomRequest): Observable[Room] =
     query(selectRoomByName, request)
-      .map { resultSet =>
-        if (resultSet.getResults.isEmpty) {
-          throw RoomNotFoundException(request.name)
-        } else {
-          resultSet.getRows.head
-        }
-      }
+      .map(foldResult(throw RoomNotFoundException(request.name))(_.getRows.head))
 
   override def getRooms(request: GetRoomsRequest): Observable[List[Room]] =
     query(selectAllRooms, request)

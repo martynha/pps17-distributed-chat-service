@@ -14,5 +14,6 @@ class GetMessagesUseCase(threadExecutor: ThreadExecutor,
                          private[this] val validation: GetMessagesValidation)
   extends UseCase[List[Message], GetMessagesRequest](threadExecutor, postExecutionThread){
 
-  override protected[this] def createObservable(request: GetMessagesRequest): Observable[List[Message]] = roomRepository.getMessages(request)
+  override protected[this] def createObservable(request: GetMessagesRequest): Observable[List[Message]] =
+    validation(request).flatMap(_ => roomRepository.getMessages(request))
 }
