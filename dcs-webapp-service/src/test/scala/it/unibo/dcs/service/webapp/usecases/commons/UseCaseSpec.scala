@@ -26,8 +26,8 @@ abstract class UseCaseSpec extends FlatSpec with MockFactory with OneInstancePer
   protected val rooms = List(Room("Room1"), Room("Room2"), Room("Room3"))
 
   /** Participations */
-  protected val participation = Participation(new Date(), room, user.username)
-  protected val secondParticipation = Participation(new Date(), room, secondUser.username)
+  protected val participation = Participation(room, user.username, new Date())
+  protected val secondParticipation = Participation(room, secondUser.username, new Date())
   protected val participations = Set(participation, secondParticipation)
 
   /** Messages */

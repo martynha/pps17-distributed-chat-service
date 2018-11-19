@@ -24,7 +24,7 @@ abstract class RepositorySpec extends FlatSpec with MockFactory with OneInstance
   protected val rooms: List[Room] = List(room, room, room)
 
   /** Participations */
-  protected val participation = Participation(new Date(), room, user.username)
+  protected val participation = Participation(room, user.username, new Date())
   protected val participations = Set(participation)
 
   /** Messages */

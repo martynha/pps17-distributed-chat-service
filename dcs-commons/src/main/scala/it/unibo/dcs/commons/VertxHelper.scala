@@ -54,24 +54,24 @@ object VertxHelper {
 
       private[this] lazy val asJava: JEventBus = eventBus.asJava.asInstanceOf[JEventBus]
 
-      def registerCodec(codec: MessageCodec[_, _]): RichEventBus = {
+      def registerCodec(codec: MessageCodec[_, _]): EventBus = {
         asJava.registerCodec(codec)
-        this
+        eventBus
       }
 
-      def unregisterCodec(name: String): RichEventBus = {
+      def unregisterCodec(name: String): EventBus = {
         asJava.unregisterCodec(name)
-        this
+        eventBus
       }
 
-      def registerDefaultCodec[T](codec: MessageCodec[T, _])(implicit ct: ClassTag[T]): RichEventBus = {
+      def registerDefaultCodec[T](codec: MessageCodec[T, _])(implicit ct: ClassTag[T]): EventBus = {
         asJava.registerDefaultCodec(asClassOf(ct), codec)
-        this
+        eventBus
       }
 
-      def unregisterDefaultCodec[T](implicit ct: ClassTag[T]): RichEventBus = {
+      def unregisterDefaultCodec[T](implicit ct: ClassTag[T]): EventBus = {
         asJava.unregisterDefaultCodec(asClassOf(ct))
-        this
+        eventBus
       }
 
       def address(name: String): Address =

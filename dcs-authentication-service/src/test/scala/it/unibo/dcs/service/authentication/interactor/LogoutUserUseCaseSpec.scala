@@ -11,7 +11,7 @@ import rx.lang.scala.{Observable, Subscriber}
 
 import scala.language.postfixOps
 
-class LogoutUserUseCaseTest extends FlatSpec with MockFactory {
+class LogoutUserUseCaseSpec extends FlatSpec with MockFactory {
 
   private val username = "ale"
   private val token = "header.eyJzdWIiOiAiYWxlIn0=.signature"

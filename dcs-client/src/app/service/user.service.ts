@@ -41,14 +41,17 @@ export class UserService {
       this.userOffline.next(msg.body);
     });
 
-    eventBus.registerHandler(UserService.USER_HEARTHBEAT_REQUEST, (err, msg) => {
-      if (auth.isAuthenticated) {
-        const username = auth.user.username;
-        eventBus.send(UserService.USER_HEARTHBEAT_RESPONSE, {
-          username
-        });
+    eventBus.registerHandler(
+      UserService.USER_HEARTHBEAT_REQUEST,
+      (err, msg) => {
+        if (auth.isAuthenticated) {
+          const username = auth.user.username;
+          eventBus.send(UserService.USER_HEARTHBEAT_RESPONSE, {
+            username
+          });
+        }
       }
-    });
+    );
   }
 
   editProfile(request: EditProfileRequest): Observable<User> {

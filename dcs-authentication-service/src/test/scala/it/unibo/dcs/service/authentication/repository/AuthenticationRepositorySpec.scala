@@ -9,7 +9,7 @@ import rx.lang.scala.{Observable, Subscriber}
 
 import scala.language.postfixOps
 
-class AuthenticationRepositoryTest extends FlatSpec with MockFactory {
+class AuthenticationRepositorySpec extends FlatSpec with MockFactory {
 
   val username = "ale"
   val password = "123"
@@ -20,16 +20,6 @@ class AuthenticationRepositoryTest extends FlatSpec with MockFactory {
   val authDataStore: AuthenticationDataStore = mock[AuthenticationDataStore]
   val authRepository = new AuthenticationRepositoryImpl(authDataStore)
   val logoutSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
-
-  it should "find the user when checkUserExistence is called" in {
-    val loginSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
-    (authDataStore checkUserExistence _) expects username returns (Observable just expectedResult)
-
-    authRepository checkUserExistence username subscribe loginSubscriber
-
-    (loginSubscriber onNext _) verify expectedResult once()
-    (() => loginSubscriber onCompleted) verify() once()
-  }
 
   it should "logout the user when invalidToken is called" in {
     (authDataStore invalidToken(_, _)) expects(token, tokenExpirationDate) returns (Observable just expectedResult)

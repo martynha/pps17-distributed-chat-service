@@ -9,5 +9,3 @@ final class CreateRoomValidation(private[this] val threadExecutor: ThreadExecuto
                                  private[this] val postExecutionThread: PostExecutionThread,
                                  private[this] val validator: Validator[CreateRoomRequest])
   extends Validation[CreateRoomRequest](threadExecutor, postExecutionThread, validator)
-
-

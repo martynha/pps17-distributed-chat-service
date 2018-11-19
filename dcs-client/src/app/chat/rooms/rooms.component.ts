@@ -25,22 +25,14 @@ export class RoomsComponent implements OnInit {
 
   ngOnInit() {
     console.log('Getting user rooms...');
-    /*
     const participationFilter = filter<Participation>(p => p.username === this.auth.user.username);
-
-    this.chat.onRoomJoined()
-      .pipe(participationFilter)
-      .subscribe(participation => {
-        console.log("received participation for room: " + participation.room.name);
-        this.rooms.unshift(participation.room);
-      });
 
     this.chat.onRoomLeft()
       .pipe(participationFilter)
       .subscribe(participation => {
         this.removeRoom(participation.room.name);
       });
-    */
+
     this.chat.getUserParticipations()
       .subscribe(rooms => this.rooms = rooms);
 

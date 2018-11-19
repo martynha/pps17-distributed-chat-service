@@ -13,7 +13,7 @@ import rx.lang.scala.{Observable, Subscriber}
 
 import scala.language.postfixOps
 
-class RegisterUserUseCaseTest extends FlatSpec with MockFactory {
+class RegisterUserUseCaseSpec extends FlatSpec with MockFactory {
 
   private val request = RegisterUserRequest("ale", "123456")
   private val expectedResult = "token"

@@ -14,10 +14,9 @@ class JwtTokenGeneratorTest extends FlatSpec with MockFactory {
   private val tokenDecoder = JwtTokenDecoder()
 
   private val jwtAuth = JWTAuth.create(Vertx.vertx, createJwtAuthOptions())
-  private val tokenGenerator = JwtTokenGenerator(jwtAuth)
 
   it should "return the correct user when the token gets decoded" in {
-    val token = tokenGenerator generateToken username
+    val token = JwtTokenGenerator(jwtAuth, username)
     assert(tokenDecoder getUsernameFromToken token equals username)
 
     val issuedAtTimestamp = tokenDecoder getTokenIssuedAtTimestamp token
