@@ -14,8 +14,8 @@ import scala.language.postfixOps
 final class CreateUserUseCaseSpec extends FlatSpec with MockFactory with OneInstancePerTest {
 
   private val createUserUseCase = {
-    val validation = new CreateUserValidation(threadExecutor, postExecutionThread, CreateUserValidator())
-    new CreateUserUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
+    val validation = CreateUserValidation(threadExecutor, postExecutionThread, CreateUserValidator())
+    CreateUserUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
   }
 
   private val subscriber = stub[Subscriber[Unit]]

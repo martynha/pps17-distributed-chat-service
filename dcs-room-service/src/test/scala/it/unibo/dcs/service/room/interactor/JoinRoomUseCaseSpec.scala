@@ -17,8 +17,8 @@ import scala.language.postfixOps
 final class JoinRoomUseCaseSpec extends FlatSpec with MockFactory with OneInstancePerTest {
 
   private val joinRoomUseCase = {
-    val validation = new JoinRoomValidation(threadExecutor, postExecutionThread, JoinRoomValidator())
-    new JoinRoomUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
+    val validation = JoinRoomValidation(threadExecutor, postExecutionThread, JoinRoomValidator())
+    JoinRoomUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
   }
 
   private val request = JoinRoomRequest("Test room", "martynha")

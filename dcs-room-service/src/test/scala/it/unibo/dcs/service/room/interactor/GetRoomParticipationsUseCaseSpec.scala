@@ -14,9 +14,9 @@ import rx.lang.scala.{Observable, Subscriber}
 
 final class GetRoomParticipationsUseCaseSpec extends FlatSpec with MockFactory with OneInstancePerTest {
 
-  private val validation = new GetRoomParticipationsValidation(threadExecutor, postExecutionThread,
+  private val validation = GetRoomParticipationsValidation(threadExecutor, postExecutionThread,
     GetRoomParticipationsValidator())
-  private val getRoomParticipationsUseCase = new GetRoomParticipationsUseCase(threadExecutor, postExecutionThread,
+  private val getRoomParticipationsUseCase = GetRoomParticipationsUseCase(threadExecutor, postExecutionThread,
     roomRepository, validation)
 
   private val firstUsername = "nik"

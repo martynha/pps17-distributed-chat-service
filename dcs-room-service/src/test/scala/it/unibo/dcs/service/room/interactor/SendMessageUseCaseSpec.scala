@@ -20,8 +20,8 @@ class SendMessageUseCaseSpec extends FlatSpec with MockFactory with OneInstanceP
   private val timestamp = new Date
 
   private val sendMessageUseCase = {
-    val validation = new SendMessageValidation(threadExecutor, postExecutionThread, SendMessageValidator())
-    new SendMessageUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
+    val validation = SendMessageValidation(threadExecutor, postExecutionThread, SendMessageValidator())
+    SendMessageUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
   }
 
   private val request = SendMessageRequest(roomName, username, content, timestamp)

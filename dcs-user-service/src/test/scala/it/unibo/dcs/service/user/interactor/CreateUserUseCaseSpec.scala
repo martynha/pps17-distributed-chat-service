@@ -24,8 +24,8 @@ class CreateUserUseCaseSpec extends FlatSpec with MockFactory {
 
   private val createUserUseCase = {
     val validator = UserCreationValidator(userRepository)
-    val validation = new ValidateUserCreation(threadExecutor, postExecutionThread, validator)
-    new CreateUserUseCase(threadExecutor, postExecutionThread, userRepository, validation)
+    val validation = ValidateUserCreation(threadExecutor, postExecutionThread, validator)
+    CreateUserUseCase(threadExecutor, postExecutionThread, userRepository, validation)
   }
 
   it should "create a new user when the use case is executed" in {

@@ -19,7 +19,7 @@ class GetUserUseCaseSpec extends FlatSpec with MockFactory {
 
   private val subscriber = stub[Subscriber[User]]
 
-  private val getUserUseCase = new GetUserUseCase(threadExecutor, postExecutionThread, userRepository)
+  private val getUserUseCase = GetUserUseCase(threadExecutor, postExecutionThread, userRepository)
 
   it should "get a user by username (request) when the use case is executed" in {
     // Given

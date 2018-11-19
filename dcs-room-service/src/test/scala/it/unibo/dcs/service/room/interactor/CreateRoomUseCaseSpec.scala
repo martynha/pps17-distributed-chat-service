@@ -17,8 +17,8 @@ import scala.language.postfixOps
 final class CreateRoomUseCaseSpec extends FlatSpec with MockFactory with OneInstancePerTest {
 
   private val createRoomUseCase = {
-    val validation = new CreateRoomValidation(threadExecutor, postExecutionThread, CreateRoomValidator())
-    new CreateRoomUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
+    val validation = CreateRoomValidation(threadExecutor, postExecutionThread, CreateRoomValidator())
+    CreateRoomUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
   }
 
   private val request = CreateRoomRequest("Test room", "martynha")

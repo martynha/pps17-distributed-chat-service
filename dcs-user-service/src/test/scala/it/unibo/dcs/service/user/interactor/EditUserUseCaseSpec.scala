@@ -22,8 +22,8 @@ class EditUserUseCaseSpec extends FlatSpec with MockFactory {
 
   private val editProfileUseCase = {
     val validator = UserEditingValidator(userRepository)
-    val validation = new ValidateUserEditing(threadExecutor, postExecutionThread, validator)
-    new EditUserUseCase(threadExecutor, postExecutionThread, userRepository, validation)
+    val validation = ValidateUserEditing(threadExecutor, postExecutionThread, validator)
+    EditUserUseCase(threadExecutor, postExecutionThread, userRepository, validation)
   }
 
   it should "edit the specified profile when the use case is executed" in {

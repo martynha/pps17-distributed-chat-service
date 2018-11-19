@@ -13,8 +13,8 @@ import rx.lang.scala.{Observable, Subscriber}
 class GetUserParticipationsUseCaseSpec extends FlatSpec with MockFactory with OneInstancePerTest {
 
   private val getUserParticipationsUseCase = {
-    val validation = new GetUserParticipationsValidation(threadExecutor, postExecutionThread, GetUserParticipationsValidator())
-    new GetUserParticipationsUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
+    val validation = GetUserParticipationsValidation(threadExecutor, postExecutionThread, GetUserParticipationsValidator())
+    GetUserParticipationsUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
   }
 
   private val request = GetUserParticipationsRequest("mvandi")

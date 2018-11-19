@@ -72,14 +72,9 @@ final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDa
 
   override def getMessages(request: GetMessagesRequest): Observable[List[Message]] =
     query(selectMessagesByRoomName, request)
-    .map { resultSet =>
-      if (resultSet.getResults.isEmpty) {
-        List()
-      } else {
-        resultSet.getRows.foreach(row => println(row.encodePrettily()))
-        resultSet.getRows.map(jsonObjectToMessage).toList
-      }
-    }
+    .map(foldResult[List[Message]](List())(_.getRows
+      .map(jsonObjectToMessage)
+      .toList))
 }
 
 private[impl] object RoomDataStoreDatabase {
